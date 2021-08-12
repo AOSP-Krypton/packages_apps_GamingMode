@@ -62,7 +62,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import lineageos.hardware.LineageHardwareManager;
+import com.android.internal.custom.hardware.LineageHardwareManager; 
 
 public class GamingService extends Service {
 
