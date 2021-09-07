@@ -11,8 +11,6 @@
     <string name="gaming_mode_off">已退出游戏模式</string>
 
     <string name="gaming_mode">游戏模式</string>
-    <string name="date_format">yyyy年MM月dd日</string>
-    <string name="time_format">HH:mm</string>
     <string name="battery_format">电量: %1$d%%</string>
 
     <string name="performance_title">性能配置</string>
