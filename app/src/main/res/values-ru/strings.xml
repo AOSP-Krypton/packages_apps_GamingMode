@@ -1,0 +1,35 @@
+<resources>
+    <string name="app_name">Игровой режим</string>
+
+    <string name="channel_gaming_mode_status">Статус игрового режима</string>
+    <string name="action_stop_gaming_mode">Остановить</string>
+    <string name="gaming_mode_running">Игровой режим включен</string>
+
+
+    <string name="gaming_mode_on">Игровой режим включен</string>
+    <string name="gaming_mode_off">Игровой режим выключен</string>
+
+    <string name="gaming_mode">Игровой режим</string>
+    <string name="battery_format">Батарея: %1$d%%</string>
+
+    <string name="performance_title">Режим энергосбережения</string>
+    <string name="performance_text_for_powersave">Сохранение энергии</string>
+    <string name="performance_text_for_performance">Производительность</string>
+
+    <string name="qs_auto_brightness">Автояркость</string>
+    <string name="qs_danmaku">Уведомления</string>
+    <string name="qs_dnd">Не беспокоить</string>
+    <string name="qs_lock_gesture">Жесты</string>
+    <string name="qs_screen_capture">Скриншот</string>
+    <string name="qs_screen_record">Запись экрана</string>
+    <string name="screenrecord_audio_label">Запись аудио</string>
+    <string name="screenrecord_taps_label">Показывать касания на экране</string>
+    <!-- Label for the option to record audio from the device [CHAR LIMIT=NONE]-->
+    <string name="screenrecord_device_audio_label">Звук устройства</string>
+    <!-- Description of what audio may be captured from the device [CHAR LIMIT=NONE]-->
+    <string name="screenrecord_device_audio_description">Звук с вашего устройства, например музыка, звонки и рингтоны</string>
+    <!-- Label for the option to enable microphone input during screen recording [CHAR LIMIT=NONE]-->
+    <string name="screenrecord_mic_label">Микрофон</string>
+    <!-- Label for an option to record audio from both device and microphone [CHAR LIMIT=NONE]-->
+    <string name="screenrecord_device_audio_and_mic_label">Звук устройства и микрофон</string>
+</resources>
