@@ -1,0 +1,35 @@
+<resources>
+    <string name="app_name">Spielemodus-Kernkomponente</string>
+
+    <string name="channel_gaming_mode_status">Spielemodusstatus</string>
+    <string name="action_stop_gaming_mode">Stopp</string>
+    <string name="gaming_mode_running">Spielemodus läuft</string>
+
+
+    <string name="gaming_mode_on">Spielemodus eingeschaltet</string>
+    <string name="gaming_mode_off">Spielemodus ausgeschaltet</string>
+
+    <string name="gaming_mode">Spielemodus</string>
+    <string name="battery_format">Akku: %1$d%%</string>
+
+    <string name="performance_title">Leistung</string>
+    <string name="performance_text_for_powersave">Stromsparend</string>
+    <string name="performance_text_for_performance">Leistungsoptimiert</string>
+
+    <string name="qs_auto_brightness">Automatische Helligkeit</string>
+    <string name="qs_danmaku">Danmaku</string>
+    <string name="qs_dnd">Nicht stören</string>
+    <string name="qs_lock_gesture">Sperrgeste</string>
+    <string name="qs_screen_capture">Screenshot</string>
+    <string name="qs_screen_record">Bildschirmaufnahme</string>
+    <string name="screenrecord_audio_label">Ton aufnehmen</string>
+    <string name="screenrecord_taps_label">Berührungen auf dem Bildschirm anzeigen</string>
+    <!-- Label for the option to record audio from the device [CHAR LIMIT=NONE]-->
+    <string name="screenrecord_device_audio_label">Geräteaudio</string>
+    <!-- Description of what audio may be captured from the device [CHAR LIMIT=NONE]-->
+    <string name="screenrecord_device_audio_description">Ton von Ihrem Gerät, wie Musik, Anrufe und Klingeltöne</string>
+    <!-- Label for the option to enable microphone input during screen recording [CHAR LIMIT=NONE]-->
+    <string name="screenrecord_mic_label">Mikrofon</string>
+    <!-- Label for an option to record audio from both device and microphone [CHAR LIMIT=NONE]-->
+    <string name="screenrecord_device_audio_and_mic_label">Geräteaudio und Mikrofon</string>
+</resources>
