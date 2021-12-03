@@ -165,7 +165,8 @@ public class GamingService extends Service {
 
         mOverlayServiceIntent = new Intent(this, OverlayService.class);
 
-        PendingIntent stopGamingIntent = PendingIntent.getBroadcast(this, 0, new Intent(Constants.Broadcasts.SYS_BROADCAST_GAMING_MODE_OFF), 0);
+        PendingIntent stopGamingIntent = PendingIntent.getBroadcast(this, 0,
+            new Intent(Constants.Broadcasts.SYS_BROADCAST_GAMING_MODE_OFF), PendingIntent.FLAG_IMMUTABLE);
         Notification.Builder builder = new Notification.Builder(this, Constants.CHANNEL_GAMING_MODE_STATUS);
         Notification.Action.Builder actionBuilder = new Notification.Action.Builder(null, getString(R.string.action_stop_gaming_mode), stopGamingIntent);
         builder.addAction(actionBuilder.build());
