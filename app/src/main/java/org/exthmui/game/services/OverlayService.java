@@ -186,8 +186,7 @@ public class OverlayService extends Service {
 
         restoreFloatingButtonOffset();
 
-        // 弹幕设置
-        mDanmakuManager.setMaxDanmakuSize(20); // 设置同屏最大弹幕数
+        // 弹幕设置同屏最大弹幕数
         DanmakuManager.Config config = mDanmakuManager.getConfig(); // 弹幕相关设置
         config.setScrollSpeed(ScreenUtil.isPortrait() ?
                 configBundle.getInt(Constants.ConfigKeys.DANMAKU_SPEED_VERTICAL, Constants.ConfigDefaultValues.DANMAKU_SPEED_VERTICAL) :

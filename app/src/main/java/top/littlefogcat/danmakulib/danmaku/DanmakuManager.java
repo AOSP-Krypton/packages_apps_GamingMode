@@ -36,14 +36,12 @@ public class DanmakuManager {
      * 弹幕容器
      */
     WeakReference<FrameLayout> mDanmakuContainer;
-    /**
-     * 弹幕池
-     */
-    private Pool<DanmakuView> mDanmakuViewPool;
 
     private Config mConfig;
 
     private DanmakuPositionCalculator mPositionCal;
+
+    private Context mContext;
 
     private DanmakuManager() {
     }
@@ -59,13 +57,7 @@ public class DanmakuManager {
      * 初始化。在使用之前必须调用该方法。
      */
     public void init(Context context, FrameLayout container) {
-        if (mDanmakuViewPool == null) {
-            mDanmakuViewPool = new CachedDanmakuViewPool(
-                    60000, // 缓存存活时间：60秒
-                    100, // 最大弹幕数：100
-                    () -> (DanmakuView) LayoutInflater.from(context).inflate(
-                        R.layout.danmaku_view, container, false));
-        }
+        mContext = context;
         setDanmakuContainer(container);
         ScreenUtil.init(context);
 
@@ -87,26 +79,6 @@ public class DanmakuManager {
         return mPositionCal;
     }
 
-    public void setDanmakuViewPool(Pool<DanmakuView> pool) {
-        if (mDanmakuViewPool != null) {
-            mDanmakuViewPool.release();
-        }
-        mDanmakuViewPool = pool;
-    }
-
-    /**
-     * 设置允许同时出现最多的弹幕数，如果屏幕上显示的弹幕数超过该数量，那么新出现的弹幕将被丢弃，
-     * 直到有旧的弹幕消失。
-     *
-     * @param max 同时出现的最多弹幕数，-1无限制
-     */
-    public void setMaxDanmakuSize(int max) {
-        if (mDanmakuViewPool == null) {
-            return;
-        }
-        mDanmakuViewPool.setMaxSize(max);
-    }
-
     /**
      * 设置弹幕的容器，所有的弹幕都在这里面显示
      */
@@ -121,21 +93,15 @@ public class DanmakuManager {
      * 发送一条弹幕
      */
     public int send(Danmaku danmaku) {
-        if (mDanmakuViewPool == null) {
-            throw new NullPointerException("Danmaku view pool is null. Did you call init() first?");
-        }
-
-        DanmakuView view = mDanmakuViewPool.get();
-
-        if (view == null) {
-            Log.w(TAG, "show: Too many danmaku, discard");
-            return RESULT_FULL_POOL;
-        }
         if (mDanmakuContainer == null || mDanmakuContainer.get() == null) {
             Log.w(TAG, "show: Root view is null.");
             return RESULT_NULL_ROOT_VIEW;
         }
 
+        final DanmakuView view = (DanmakuView) LayoutInflater.from(mContext).inflate(
+                        R.layout.danmaku_view, mDanmakuContainer.get(), false);
+        view.addOnEnterListener(DanmakuView::clearScroll);
+        view.addOnExitListener(v -> v.restore());
         view.setDanmaku(danmaku);
 
         // 字体大小
