@@ -1,17 +1,18 @@
 package top.littlefogcat.danmakulib.danmaku;
 
+import android.util.Log;
+
 import java.util.LinkedList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-
-import top.littlefogcat.danmakulib.utils.EasyL;
 
 /**
  * 一个简化版的DanmakuViewPool
  */
 public class CachedDanmakuViewPool implements Pool<DanmakuView> {
     private static final String TAG = "CachedDanmakuViewPool";
+    private static final boolean DEBUG = false;
 
     /**
      * 缓存DanmakuView队列。显示已经完毕的DanmakuView会被添加到缓存中进行复用。
@@ -58,7 +59,7 @@ public class CachedDanmakuViewPool implements Pool<DanmakuView> {
      */
     private void scheduleCheckUnusedViews() {
         mChecker.scheduleWithFixedDelay(() -> {
-            EasyL.v(TAG, "scheduleCheckUnusedViews: mInUseSize=" + mInUseSize + ", mCacheSize=" + mCache.size());
+            if (DEBUG) Log.v(TAG, "scheduleCheckUnusedViews: mInUseSize=" + mInUseSize + ", mCacheSize=" + mCache.size());
             long current = System.currentTimeMillis();
             while (!mCache.isEmpty()) {
                 DanmakuViewWithExpireTime first = mCache.getFirst();

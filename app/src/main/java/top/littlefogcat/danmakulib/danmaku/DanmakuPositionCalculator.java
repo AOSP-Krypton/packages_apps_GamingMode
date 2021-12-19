@@ -1,17 +1,15 @@
 package top.littlefogcat.danmakulib.danmaku;
 
+import android.util.Log;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import top.littlefogcat.danmakulib.utils.EasyL;
-
-/**
- * 用于计算弹幕位置，来保证弹幕不重叠又不浪费空间。
- */
 class DanmakuPositionCalculator {
     private static final String TAG = "DanPositionCalculator";
+    private static final boolean DEBUG = false;
+
     private DanmakuManager mDanmakuManager;
     private List<DanmakuView> mLastDanmakus = new ArrayList<>();// 保存每一行最后一个弹幕消失的时间
     private boolean[] mTops;
@@ -53,7 +51,7 @@ class DanmakuPositionCalculator {
             int timeDisappear = calTimeDisappear(last); // 最后一条弹幕还需多久消失
             int timeArrive = calTimeArrive(view); // 这条弹幕需要多久到达屏幕边缘
             boolean isFullyShown = isFullyShown(last);
-            EasyL.d(TAG, "getScrollY: 行: " + i + ", 消失时间: " + timeDisappear + ", 到达时间: " + timeArrive + ", isFullyshown: " + isFullyShown);
+            if (DEBUG) Log.d(TAG, "getScrollY: 行: " + i + ", 消失时间: " + timeDisappear + ", 到达时间: " + timeArrive + ", isFullyshown: " + isFullyShown);
             if (timeDisappear <= timeArrive && isFullyShown) {
                 // 如果最后一个弹幕在这个弹幕到达之前消失，并且最后一个字已经显示完毕，
                 // 那么新的弹幕就可以在这一行显示
@@ -106,7 +104,7 @@ class DanmakuPositionCalculator {
         }
         int scrollX = view.getScrollX();
         int textLength = view.getTextLength();
-        EasyL.d(TAG, "isFullyShown? scrollX=" + scrollX + ", textLength=" + textLength + ", parentWidth=" + getParentWidth());
+        if (DEBUG) Log.d(TAG, "isFullyShown? scrollX=" + scrollX + ", textLength=" + textLength + ", parentWidth=" + getParentWidth());
         return textLength - scrollX < getParentWidth();
     }
 

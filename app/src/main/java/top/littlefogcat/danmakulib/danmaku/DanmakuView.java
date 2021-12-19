@@ -228,7 +228,6 @@ public class DanmakuView extends TextView {
     @Override
     public void computeScroll() {
         if (mScroller != null && mScroller.computeScrollOffset()) {
-//            EasyL.v(TAG, "computeScroll: " + mScroller.getCurrX());
             scrollTo(mScroller.getCurrX(), mScroller.getCurrY());
             postInvalidate();
         }

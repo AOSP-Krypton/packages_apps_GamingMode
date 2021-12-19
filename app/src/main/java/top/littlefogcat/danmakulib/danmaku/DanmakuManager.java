@@ -2,13 +2,13 @@ package top.littlefogcat.danmakulib.danmaku;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import java.lang.ref.WeakReference;
 
-import top.littlefogcat.danmakulib.utils.EasyL;
 import top.littlefogcat.danmakulib.utils.ScreenUtil;
 
 /**
@@ -124,11 +124,11 @@ public class DanmakuManager {
         DanmakuView view = mDanmakuViewPool.get();
 
         if (view == null) {
-            EasyL.w(TAG, "show: Too many danmaku, discard");
+            Log.w(TAG, "show: Too many danmaku, discard");
             return RESULT_FULL_POOL;
         }
         if (mDanmakuContainer == null || mDanmakuContainer.get() == null) {
-            EasyL.w(TAG, "show: Root view is null.");
+            Log.w(TAG, "show: Root view is null.");
             return RESULT_NULL_ROOT_VIEW;
         }
 
@@ -151,8 +151,7 @@ public class DanmakuManager {
         int marginTop = dpc.getMarginTop(view);
 
         if (marginTop == -1) {
-            // 屏幕放不下了
-            EasyL.d(TAG, "send: screen is full, too many danmaku [" + danmaku + "]");
+            Log.w(TAG, "send: screen is full, too many danmaku [" + danmaku + "]");
             return TOO_MANY_DANMAKU;
         }
         FrameLayout.LayoutParams p = (FrameLayout.LayoutParams) view.getLayoutParams();
