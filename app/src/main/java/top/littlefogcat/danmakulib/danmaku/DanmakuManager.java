@@ -4,8 +4,11 @@ import android.content.Context;
 import android.graphics.Color;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+
+import org.exthmui.game.R;
 
 import java.lang.ref.WeakReference;
 
@@ -60,7 +63,8 @@ public class DanmakuManager {
             mDanmakuViewPool = new CachedDanmakuViewPool(
                     60000, // 缓存存活时间：60秒
                     100, // 最大弹幕数：100
-                    () -> DanmakuViewFactory.createDanmakuView(context, container));
+                    () -> (DanmakuView) LayoutInflater.from(context).inflate(
+                        R.layout.danmaku_view, container, false));
         }
         setDanmakuContainer(container);
         ScreenUtil.init(context);
