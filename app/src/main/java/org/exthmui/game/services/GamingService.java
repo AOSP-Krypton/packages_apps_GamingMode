@@ -62,8 +62,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import com.android.internal.lineage.hardware.LineageHardwareManager;
-
 public class GamingService extends Service {
 
     private static final String TAG = "GamingService";
@@ -81,7 +79,6 @@ public class GamingService extends Service {
 
     private AudioManager mAudioManager;
     private IStatusBarService mStatusBarService;
-    private LineageHardwareManager mLineageHardware;
     private TelephonyManager mTelephonyManager;
     private TelecomManager mTelecomManager;
 
@@ -148,11 +145,6 @@ public class GamingService extends Service {
         mTelephonyManager = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
         mTelecomManager = (TelecomManager) getSystemService(TELECOM_SERVICE);
         mStatusBarService = IStatusBarService.Stub.asInterface(ServiceManager.getService(Context.STATUS_BAR_SERVICE));
-        try {
-            mLineageHardware = LineageHardwareManager.getInstance(this);
-        } catch (Error e) {
-            Log.e(TAG, "get LineageHardwareManager failed!", e);
-        }
 
         registerReceiver(mGamingModeOffReceiver, new IntentFilter(Constants.Broadcasts.SYS_BROADCAST_GAMING_MODE_OFF));
         LocalBroadcastManager.getInstance(this).registerReceiver(mCallControlReceiver, new IntentFilter(Constants.Broadcasts.BROADCAST_CALL_CONTROL));
