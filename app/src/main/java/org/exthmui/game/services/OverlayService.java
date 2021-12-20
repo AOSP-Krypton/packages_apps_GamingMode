@@ -22,6 +22,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.graphics.PixelFormat;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -53,7 +54,6 @@ import org.exthmui.game.ui.QuickStartAppView;
 
 import top.littlefogcat.danmakulib.danmaku.Danmaku;
 import top.littlefogcat.danmakulib.danmaku.DanmakuManager;
-import top.littlefogcat.danmakulib.utils.ScreenUtil;
 
 public class OverlayService extends Service {
 
@@ -64,6 +64,8 @@ public class OverlayService extends Service {
 
     /** Default alpha value for hiding the floating button hidden */
     private static final float FLOATING_BUTTON_HIDE_ALPHA = 0.1f;
+
+    private static final int sDesignWidth = 1080;
 
     private View mGamingFloatingLayout;
     private ImageView mGamingFloatingButton;
@@ -91,18 +93,14 @@ public class OverlayService extends Service {
 
     private boolean mPerformanceProfilesSupported;
 
+    private boolean isPortrait;
+
     private enum CoordinateType {
         X,
         Y
     }
 
     private OMReceiver mOMReceiver = new OMReceiver();
-    private BroadcastReceiver mSysConfigChangedReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (Intent.ACTION_CONFIGURATION_CHANGED.equals(intent.getAction())) updateConfig();
-        }
-    };
 
     private BroadcastReceiver mCallStatusReceiver = new BroadcastReceiver() {
         @Override
@@ -127,19 +125,12 @@ public class OverlayService extends Service {
 
     private SharedPreferences mPreferences;
 
-    public OverlayService() {
-    }
-
-    @Override
-    public IBinder onBind(Intent intent) {
-        return null;
-    }
-
     @Override
     public void onCreate() {
         super.onCreate();
         configBundle = new Bundle();
         mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        isPortrait = getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT;
         if (Settings.canDrawOverlays(this)) {
             initView();
         }
@@ -149,7 +140,6 @@ public class OverlayService extends Service {
         intentFilter.addAction(Constants.Broadcasts.BROADCAST_GAMING_MENU_CONTROL);
         LocalBroadcastManager.getInstance(this).registerReceiver(mOMReceiver, intentFilter);
         LocalBroadcastManager.getInstance(this).registerReceiver(mCallStatusReceiver, new IntentFilter(Constants.Broadcasts.BROADCAST_CALL_STATUS));
-        registerReceiver(mSysConfigChangedReceiver, new IntentFilter(Intent.ACTION_CONFIGURATION_CHANGED));
     }
 
     @Override
@@ -157,6 +147,17 @@ public class OverlayService extends Service {
         if (intent.getExtras() != null) configBundle.putAll(intent.getExtras());
         updateConfig();
         return super.onStartCommand(intent, flags, startId);
+    }
+
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        isPortrait = newConfig.orientation == Configuration.ORIENTATION_PORTRAIT;
+        updateConfig();
     }
 
     private void initView() {
@@ -173,7 +174,6 @@ public class OverlayService extends Service {
     }
 
     private void updateConfig() {
-        ScreenUtil.init(this);
         mWindowManager.getDefaultDisplay().getRealMetrics(mDisplayMetric);
 
         if (mQSView != null) {
@@ -188,13 +188,13 @@ public class OverlayService extends Service {
 
         // 弹幕设置同屏最大弹幕数
         DanmakuManager.Config config = mDanmakuManager.getConfig(); // 弹幕相关设置
-        config.setScrollSpeed(ScreenUtil.isPortrait() ?
+        config.setScrollSpeed(isPortrait ?
                 configBundle.getInt(Constants.ConfigKeys.DANMAKU_SPEED_VERTICAL, Constants.ConfigDefaultValues.DANMAKU_SPEED_VERTICAL) :
                 configBundle.getInt(Constants.ConfigKeys.DANMAKU_SPEED_HORIZONTAL, Constants.ConfigDefaultValues.DANMAKU_SPEED_HORIZONTAL));
-        config.setLineHeight(ScreenUtil.autoSize(ScreenUtil.isPortrait() ?
+        config.setLineHeight(isPortrait ?
                 configBundle.getInt(Constants.ConfigKeys.DANMAKU_SIZE_VERTICAL,Constants.ConfigDefaultValues.DANMAKU_SIZE_VERTICAL) + 4 :
-                configBundle.getInt(Constants.ConfigKeys.DANMAKU_SIZE_HORIZONTAL,Constants.ConfigDefaultValues.DANMAKU_SIZE_HORIZONTAL) + 4)); // 设置行高
-        config.setMaxScrollLine(ScreenUtil.getScreenHeight() / 2 / config.getLineHeight());
+                configBundle.getInt(Constants.ConfigKeys.DANMAKU_SIZE_HORIZONTAL,Constants.ConfigDefaultValues.DANMAKU_SIZE_HORIZONTAL) + 4); // 设置行高
+        config.setMaxScrollLine(mDisplayMetric.heightPixels / 2 / config.getLineHeight());
 
         // 性能配置
         if (performanceController != null) {
@@ -219,7 +219,7 @@ public class OverlayService extends Service {
         // 悬浮球位置调整
         if (mGamingFloatingLayout != null && mGamingFBLayoutParams != null) {
             int defaultX = ((int) mFloatingButtonSize - mDisplayMetric.widthPixels) / 2;
-            if (isInPortrait()) {
+            if (isPortrait) {
                 setButtonOffset(CoordinateType.X, mGamingFBLayoutParams,
                         mPreferences.getInt(Constants.LocalConfigKeys.FLOATING_BUTTON_COORDINATE_VERTICAL_X, defaultX));
                 setButtonOffset(CoordinateType.Y, mGamingFBLayoutParams,
@@ -234,10 +234,6 @@ public class OverlayService extends Service {
                 mWindowManager.updateViewLayout(mGamingFloatingLayout, mGamingFBLayoutParams);
             }
         }
-    }
-
-    private boolean isInPortrait() {
-        return mDisplayMetric.heightPixels > mDisplayMetric.widthPixels;
     }
 
     private WindowManager.LayoutParams getBaseLayoutParams() {
@@ -318,7 +314,7 @@ public class OverlayService extends Service {
                             if (calcDistance(origX, origY, mGamingFBLayoutParams.x, mGamingFBLayoutParams.y) < 5) {
                                 v.performClick();
                             } else {
-                                if (ScreenUtil.isPortrait()) {
+                                if (isPortrait) {
                                     mPreferences.edit()
                                             .putInt(Constants.LocalConfigKeys.FLOATING_BUTTON_COORDINATE_VERTICAL_X, mGamingFBLayoutParams.x)
                                             .putInt(Constants.LocalConfigKeys.FLOATING_BUTTON_COORDINATE_VERTICAL_Y, mGamingFBLayoutParams.y)
@@ -363,10 +359,10 @@ public class OverlayService extends Service {
 
         if (type == CoordinateType.X) {
             param.x = MathUtils.clamp(value,
-                    isInPortrait() ? -rScreenX : -rScreenX-mDeviceCutoutSize, rScreenX);
+                    isPortrait ? -rScreenX : -rScreenX-mDeviceCutoutSize, rScreenX);
         } else {
             param.y = MathUtils.clamp(value,
-                    isInPortrait() ? -rScreenY-mDeviceCutoutSize : -rScreenY, rScreenY);
+                    isPortrait ? -rScreenY-mDeviceCutoutSize : -rScreenY, rScreenY);
         }
     }
 
@@ -378,8 +374,6 @@ public class OverlayService extends Service {
      * mode: 0=auto, 1=show, 2=hide
      */
     private void showHideGamingMenu(int mode) {
-        // reinit display metrics getter
-        ScreenUtil.init(this);
 
         if (mGamingOverlayView.getVisibility() == View.VISIBLE && mode != 1) {
             // hide
@@ -411,7 +405,7 @@ public class OverlayService extends Service {
             mGamingFloatingLayout.setVisibility(View.GONE);
             mGamingOverlayView.setGravity(gravity);
             ViewGroup.LayoutParams gamingMenuLayoutParams =  mGamingMenu.getLayoutParams();
-            gamingMenuLayoutParams.width = ScreenUtil.isPortrait() ?
+            gamingMenuLayoutParams.width = isPortrait ?
                     WindowManager.LayoutParams.MATCH_PARENT : WindowManager.LayoutParams.WRAP_CONTENT;
             mGamingMenu.setLayoutParams(gamingMenuLayoutParams);
 
@@ -439,17 +433,24 @@ public class OverlayService extends Service {
         Danmaku danmaku = new Danmaku();
         danmaku.text = danmakuText;
         danmaku.mode = Danmaku.Mode.scroll;
-        danmaku.size = ScreenUtil.autoSize(
-                configBundle.getInt(Constants.ConfigKeys.DANMAKU_SIZE_HORIZONTAL,Constants.ConfigDefaultValues.DANMAKU_SIZE_HORIZONTAL),
-                configBundle.getInt(Constants.ConfigKeys.DANMAKU_SIZE_VERTICAL,Constants.ConfigDefaultValues.DANMAKU_SIZE_VERTICAL));
+        danmaku.size = autoSize(isPortrait ?
+                configBundle.getInt(Constants.ConfigKeys.DANMAKU_SIZE_VERTICAL,Constants.ConfigDefaultValues.DANMAKU_SIZE_VERTICAL) :
+                configBundle.getInt(Constants.ConfigKeys.DANMAKU_SIZE_HORIZONTAL,Constants.ConfigDefaultValues.DANMAKU_SIZE_HORIZONTAL));
         mDanmakuManager.send(danmaku);
+    }
+
+    private int autoSize(int origin) {
+        int autoSize = origin * mDisplayMetric.widthPixels / sDesignWidth;
+        if (origin != 0 && autoSize == 0) {
+            return 1;
+        }
+        return autoSize;
     }
 
     @Override
     public void onDestroy() {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mOMReceiver);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mCallStatusReceiver);
-        unregisterReceiver(mSysConfigChangedReceiver);
         if (mWindowManager != null) {
             if (mGamingFloatingLayout != null) mWindowManager.removeViewImmediate(mGamingFloatingLayout);
             if (mDanmakuContainer != null) mWindowManager.removeViewImmediate(mDanmakuContainer);

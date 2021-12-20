@@ -12,8 +12,6 @@ import org.exthmui.game.R;
 
 import java.lang.ref.WeakReference;
 
-import top.littlefogcat.danmakulib.utils.ScreenUtil;
-
 /**
  * 用法示例：
  * DanmakuManager dm = DanmakuManager.getInstance();
@@ -59,7 +57,6 @@ public class DanmakuManager {
     public void init(Context context, FrameLayout container) {
         mContext = context;
         setDanmakuContainer(container);
-        ScreenUtil.init(context);
 
         mConfig = new Config();
         mPositionCal = new DanmakuPositionCalculator(this);

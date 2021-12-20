@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.animation.LinearInterpolator;
 import android.widget.Scroller;
 import android.widget.TextView;
@@ -11,8 +12,6 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
-
-import top.littlefogcat.danmakulib.utils.ScreenUtil;
 
 /**
  * DanmakuView的基类，继承自TextView，一个弹幕对应一个DanmakuView。
@@ -58,16 +57,21 @@ public class DanmakuView extends TextView {
      */
     private int mDuration;
 
+    private final int mScreenWidth;
+
     public DanmakuView(Context context) {
         super(context);
+        mScreenWidth = getScreenWidth();
     }
 
     public DanmakuView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        mScreenWidth = getScreenWidth();
     }
 
     public DanmakuView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        mScreenWidth = getScreenWidth();
     }
 
     /**
@@ -124,10 +128,14 @@ public class DanmakuView extends TextView {
         }, duration);
     }
 
+    private int getScreenWidth() {
+        return getContext().getSystemService(WindowManager.class)
+            .getCurrentWindowMetrics().getBounds().width();
+    }
+
     private void showScrollDanmaku(ViewGroup parent, int duration) {
-        int screenWidth = ScreenUtil.getScreenWidth();
         int textLength = getTextLength();
-        scrollTo(-screenWidth, 0);
+        scrollTo(-mScreenWidth, 0);
         parent.addView(this);
         smoothScrollTo(textLength, 0, duration);
     }
