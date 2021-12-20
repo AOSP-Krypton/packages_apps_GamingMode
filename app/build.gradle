@@ -52,14 +52,3 @@ dependencies {
     implementation "com.google.dagger:hilt-android:$hilt_version"
     kapt "com.google.dagger:hilt-android-compiler:$hilt_version"
 }
-
-allprojects{
-    gradle.projectsEvaluated {
-        tasks.withType(JavaCompile) {
-            options.compilerArgs.add('-Xbootclasspath/p:app/system_libs/framework.jar')
-        }
-    }
-}
-repositories {
-    mavenCentral()
-}
