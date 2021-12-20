@@ -27,6 +27,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.Configuration;
 import android.database.ContentObserver;
 import android.media.AudioDeviceInfo;
 import android.media.AudioManager;
@@ -56,13 +57,19 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import com.android.internal.statusbar.IStatusBarService;
 
 import org.exthmui.game.R;
+import org.exthmui.game.controller.OverlayController;
 import org.exthmui.game.misc.Constants;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class GamingService extends Service {
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint(Service.class)
+public class GamingService extends Hilt_GamingService {
 
     private static final String TAG = "GamingService";
 
@@ -72,7 +79,6 @@ public class GamingService extends Service {
 
     private static final int NOTIFICATION_ID = 1;
 
-    private Intent mOverlayServiceIntent;
     private Notification mGamingNotification;
 
     private Intent mCallStatusIntent;
@@ -89,6 +95,9 @@ public class GamingService extends Service {
     private GamingPhoneStateListener mPhoneStateListener;
 
     private boolean mMenuOverlay;
+
+    @Inject
+    OverlayController mOverlayController;
 
     private final BroadcastReceiver mGamingModeOffReceiver = new BroadcastReceiver() {
         @Override
@@ -160,8 +169,6 @@ public class GamingService extends Service {
 
         mCallStatusIntent = new Intent(Constants.Broadcasts.BROADCAST_CALL_STATUS);
 
-        mOverlayServiceIntent = new Intent(this, OverlayService.class);
-
         PendingIntent stopGamingIntent = PendingIntent.getBroadcast(this, 0,
             new Intent(SYS_BROADCAST_GAMING_MODE_OFF), PendingIntent.FLAG_IMMUTABLE);
         Notification.Builder builder = new Notification.Builder(this, CHANNEL_GAMING_MODE_STATUS);
@@ -184,8 +191,7 @@ public class GamingService extends Service {
         }
 
         mMenuOverlay = getIntSetting(Constants.ConfigKeys.MENU_OVERLAY, Constants.ConfigDefaultValues.MENU_OVERLAY) == 1 ? true : false;
-        mOverlayServiceIntent.putExtras(mCurrentConfig);
-        if (mMenuOverlay) startServiceAsUser(mOverlayServiceIntent, UserHandle.CURRENT);
+        if (mMenuOverlay) mOverlayController.initController(mCurrentConfig);
         Settings.System.putInt(getContentResolver(), Settings.System.GAMING_MODE_ACTIVE, 1);
         if (mTelephonyManager != null) {
             mCallStatusIntent.putExtra("state", mTelephonyManager.getCallState());
@@ -323,7 +329,7 @@ public class GamingService extends Service {
     public void onDestroy() {
         unregisterReceiver(mGamingModeOffReceiver);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mCallControlReceiver);
-        if (mMenuOverlay) stopServiceAsUser(mOverlayServiceIntent, UserHandle.CURRENT);
+        if (mMenuOverlay) mOverlayController.destroy();
         mTelephonyManager.listen(mPhoneStateListener, PhoneStateListener.LISTEN_NONE);
         setDisableGesture(false);
         setDisableAutoBrightness(false, true);
@@ -339,6 +345,11 @@ public class GamingService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         return null;
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        mOverlayController.updateConfiguration(newConfig);
     }
 
     private static void createNotificationChannel(Context context, String channelId, String channelName, int importance) {
