@@ -29,11 +29,11 @@ class DanmakuPositionCalculator {
 
     int getMarginTop(DanmakuView view) {
         switch (view.getDanmaku().mode) {
-            case scroll:
+            case SCROLL:
                 return getScrollY(view);
-            case top:
+            case TOP:
                 return getTopY(view);
-            case bottom:
+            case BOTTOM:
                 return getBottomY(view);
         }
         return -1;
@@ -140,7 +140,7 @@ class DanmakuPositionCalculator {
         int width = getParentWidth();
         float s = textLength + width + 0.0f;
         int t = mDanmakuManager.getDisplayDuration(view.getDanmaku());
-        if (view.getDanmaku().mode == Danmaku.Mode.scroll) {
+        if (view.getDanmaku().mode == Danmaku.Mode.SCROLL) {
             return t / 1000.0f;
         } else {
             return s / t;

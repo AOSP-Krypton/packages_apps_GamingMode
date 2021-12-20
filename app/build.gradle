@@ -1,8 +1,9 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
 
 android {
     compileSdkVersion 31
-    buildToolsVersion "29.0.3"
+    buildToolsVersion "30.0.2"
 
     defaultConfig {
         applicationId "org.exthmui.game"
@@ -22,6 +23,9 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
     sourceSets {
         main {
             aidl.srcDirs = ['src/main/java']
@@ -36,9 +40,11 @@ dependencies {
 
     implementation 'androidx.appcompat:appcompat:1.4.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.2'
-    implementation 'androidx.preference:preference:1.1.1'
+    implementation 'androidx.preference:preference-ktx:1.1.1'
     implementation 'com.google.android.material:material:1.4.0'
     implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.0.0'
+    implementation "androidx.core:core-ktx:1.7.0"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
 }
 
@@ -48,4 +54,7 @@ allprojects{
             options.compilerArgs.add('-Xbootclasspath/p:app/system_libs/framework.jar')
         }
     }
+}
+repositories {
+    mavenCentral()
 }

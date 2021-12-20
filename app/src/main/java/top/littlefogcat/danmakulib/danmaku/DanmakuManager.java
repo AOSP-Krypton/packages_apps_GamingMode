@@ -129,7 +129,7 @@ public class DanmakuManager {
         view.setLayoutParams(p);
         view.setMinHeight((int) (getConfig().getLineHeight() * 1.35));
         int duration = getDisplayDuration(danmaku);
-        if (danmaku.mode == Danmaku.Mode.scroll) {
+        if (danmaku.mode == Danmaku.Mode.SCROLL) {
             duration = (view.getTextLength() + dpc.getParentWidth()) / duration * 1000;
         }
         view.show(mDanmakuContainer.get(), duration);
@@ -143,13 +143,13 @@ public class DanmakuManager {
         Config config = getConfig();
         int duration;
         switch (danmaku.mode) {
-            case top:
+            case TOP:
                 duration = config.getDurationTop();
                 break;
-            case bottom:
+            case BOTTOM:
                 duration = config.getDurationBottom();
                 break;
-            case scroll:
+            case SCROLL:
             default:
                 duration = config.getScrollSpeed();
                 break;

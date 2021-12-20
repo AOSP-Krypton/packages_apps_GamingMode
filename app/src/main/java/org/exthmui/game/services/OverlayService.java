@@ -432,7 +432,7 @@ public class OverlayService extends Service {
         if (mDanmakuManager == null) return;
         Danmaku danmaku = new Danmaku();
         danmaku.text = danmakuText;
-        danmaku.mode = Danmaku.Mode.scroll;
+        danmaku.mode = Danmaku.Mode.SCROLL;
         danmaku.size = autoSize(isPortrait ?
                 configBundle.getInt(Constants.ConfigKeys.DANMAKU_SIZE_VERTICAL,Constants.ConfigDefaultValues.DANMAKU_SIZE_VERTICAL) :
                 configBundle.getInt(Constants.ConfigKeys.DANMAKU_SIZE_HORIZONTAL,Constants.ConfigDefaultValues.DANMAKU_SIZE_HORIZONTAL));
