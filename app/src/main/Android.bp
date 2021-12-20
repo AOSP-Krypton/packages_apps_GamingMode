@@ -1,8 +1,6 @@
 android_app {
     name: "GamingMode",
 
-    resource_dirs: ["res"],
-
     srcs: [
         "java/**/*.java",
         "java/**/*.kt",
@@ -20,6 +18,8 @@ android_app {
         "androidx-constraintlayout_constraintlayout",
         "com.google.android.material_material",
         "androidx.localbroadcastmanager_localbroadcastmanager",
+        "hilt_android",
+        "jsr330",
     ],
 
     platform_apis: true,
@@ -28,11 +28,13 @@ android_app {
 
     required: ["privapp_whitelist_org.exthmui.game.xml"],
 
+    plugins: [
+        "dagger2-compiler",
+    ],
 }
 
 prebuilt_etc {
     name: "privapp_whitelist_org.exthmui.game.xml",
     src: "privapp_whitelist_org.exthmui.game.xml",
     sub_dir: "permissions",
-
 }
