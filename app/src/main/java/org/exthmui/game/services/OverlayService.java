@@ -46,6 +46,10 @@ import android.widget.ScrollView;
 import androidx.core.math.MathUtils;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import dagger.hilt.android.AndroidEntryPoint;
+
+import javax.inject.Inject;
+
 import org.exthmui.game.R;
 import org.exthmui.game.misc.Constants;
 import org.exthmui.game.ui.GamingPerformanceView;
@@ -55,7 +59,8 @@ import org.exthmui.game.ui.QuickStartAppView;
 import top.littlefogcat.danmakulib.danmaku.Danmaku;
 import top.littlefogcat.danmakulib.danmaku.DanmakuManager;
 
-public class OverlayService extends Service {
+@AndroidEntryPoint(Service.class)
+public class OverlayService extends Hilt_OverlayService {
 
     private static final String TAG = "OverlayService";
 
@@ -76,7 +81,8 @@ public class OverlayService extends Service {
     private QuickSettingsView mQSView;
     private QuickStartAppView mQSAppView;
 
-    private DanmakuManager mDanmakuManager;
+    @Inject
+    DanmakuManager mDanmakuManager;
 
     private WindowManager mWindowManager;
     private WindowManager.LayoutParams mGamingFBLayoutParams;
@@ -423,8 +429,7 @@ public class OverlayService extends Service {
             mDanmakuLayoutParams.flags |= WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE;
             mWindowManager.addView(mDanmakuContainer, mDanmakuLayoutParams);
 
-            mDanmakuManager = DanmakuManager.getInstance();
-            mDanmakuManager.init(this, mDanmakuContainer);
+            mDanmakuManager.init(mDanmakuContainer);
         }
     }
 

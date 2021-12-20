@@ -48,14 +48,14 @@ class DanmakuView(
     /**
      * 弹幕进场时的监听
      */
-    interface OnEnterListener {
+    fun interface OnEnterListener {
         fun onEnter(view: DanmakuView)
     }
 
     /**
      * 弹幕离场后的监听
      */
-    interface OnExitListener {
+    fun interface OnExitListener {
         fun onExit(view: DanmakuView)
     }
 
