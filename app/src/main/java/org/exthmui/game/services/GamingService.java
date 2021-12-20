@@ -66,6 +66,10 @@ public class GamingService extends Service {
 
     private static final String TAG = "GamingService";
 
+    private static final String SYS_BROADCAST_GAMING_MODE_OFF = "exthmui.intent.action.GAMING_MODE_OFF";
+    private static final String CHANNEL_GAMING_MODE_STATUS = "gaming_mode_status";
+    private static final String PROP_GAMING_PERFORMANCE = "sys.performance.level";
+
     private static final int NOTIFICATION_ID = 1;
 
     private Intent mOverlayServiceIntent;
@@ -86,10 +90,10 @@ public class GamingService extends Service {
 
     private boolean mMenuOverlay;
 
-    private BroadcastReceiver mGamingModeOffReceiver = new BroadcastReceiver() {
+    private final BroadcastReceiver mGamingModeOffReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (Constants.Broadcasts.SYS_BROADCAST_GAMING_MODE_OFF.equals(intent.getAction())) {
+            if (intent != null && intent.getAction().equals(SYS_BROADCAST_GAMING_MODE_OFF)) {
                 stopSelf();
             }
         }
@@ -136,7 +140,8 @@ public class GamingService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        createNotificationChannel(this, Constants.CHANNEL_GAMING_MODE_STATUS, getString(R.string.channel_gaming_mode_status), NotificationManager.IMPORTANCE_LOW);
+        createNotificationChannel(this, CHANNEL_GAMING_MODE_STATUS,
+            getString(R.string.channel_gaming_mode_status), NotificationManager.IMPORTANCE_LOW);
 
         checkNotificationListener();
         checkFreeFormSettings();
@@ -146,7 +151,7 @@ public class GamingService extends Service {
         mTelecomManager = (TelecomManager) getSystemService(TELECOM_SERVICE);
         mStatusBarService = IStatusBarService.Stub.asInterface(ServiceManager.getService(Context.STATUS_BAR_SERVICE));
 
-        registerReceiver(mGamingModeOffReceiver, new IntentFilter(Constants.Broadcasts.SYS_BROADCAST_GAMING_MODE_OFF));
+        registerReceiver(mGamingModeOffReceiver, new IntentFilter(SYS_BROADCAST_GAMING_MODE_OFF));
         LocalBroadcastManager.getInstance(this).registerReceiver(mCallControlReceiver, new IntentFilter(Constants.Broadcasts.BROADCAST_CALL_CONTROL));
         LocalBroadcastManager.getInstance(this).registerReceiver(mGamingActionReceiver, new IntentFilter(Constants.Broadcasts.BROADCAST_GAMING_ACTION));
 
@@ -158,8 +163,8 @@ public class GamingService extends Service {
         mOverlayServiceIntent = new Intent(this, OverlayService.class);
 
         PendingIntent stopGamingIntent = PendingIntent.getBroadcast(this, 0,
-            new Intent(Constants.Broadcasts.SYS_BROADCAST_GAMING_MODE_OFF), PendingIntent.FLAG_IMMUTABLE);
-        Notification.Builder builder = new Notification.Builder(this, Constants.CHANNEL_GAMING_MODE_STATUS);
+            new Intent(SYS_BROADCAST_GAMING_MODE_OFF), PendingIntent.FLAG_IMMUTABLE);
+        Notification.Builder builder = new Notification.Builder(this, CHANNEL_GAMING_MODE_STATUS);
         Notification.Action.Builder actionBuilder = new Notification.Action.Builder(null, getString(R.string.action_stop_gaming_mode), stopGamingIntent);
         builder.addAction(actionBuilder.build());
         builder.setContentText(getString(R.string.gaming_mode_running));
@@ -270,7 +275,7 @@ public class GamingService extends Service {
     }
 
     private void setPerformanceLevel(int level) {
-        SystemProperties.set(Constants.PROP_GAMING_PERFORMANCE, String.valueOf(level));
+        SystemProperties.set(PROP_GAMING_PERFORMANCE, String.valueOf(level));
         mCurrentConfig.putInt(Constants.ConfigKeys.PERFORMANCE_LEVEL, level);
     }
 

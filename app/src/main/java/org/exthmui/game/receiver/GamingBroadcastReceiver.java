@@ -26,14 +26,14 @@ import org.exthmui.game.services.GamingService;
 
 public class GamingBroadcastReceiver extends BroadcastReceiver {
 
+    private static final String SYS_BROADCAST_GAMING_MODE_ON = "exthmui.intent.action.GAMING_MODE_ON";
+
     @Override
     public void onReceive(Context context, Intent intent) {
-        if (intent != null) {
-            if (Constants.Broadcasts.SYS_BROADCAST_GAMING_MODE_ON.equals(intent.getAction())) {
-                Intent serviceIntent = new Intent(context, GamingService.class);
-                serviceIntent.putExtras(intent);
-                context.startForegroundServiceAsUser(serviceIntent, UserHandle.CURRENT);
-            }
+        if (intent != null && intent.getAction().equals(SYS_BROADCAST_GAMING_MODE_ON)) {
+            Intent serviceIntent = new Intent(context, GamingService.class);
+            serviceIntent.putExtras(intent);
+            context.startForegroundServiceAsUser(serviceIntent, UserHandle.CURRENT);
         }
     }
 }

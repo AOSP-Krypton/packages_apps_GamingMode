@@ -20,14 +20,7 @@ import android.provider.Settings;
 
 public class Constants {
 
-    // Notification
-    public final static String CHANNEL_GAMING_MODE_STATUS = "gaming_mode_status";
-
-    public final static String PROP_GAMING_PERFORMANCE = "sys.performance.level";
-
     public static class Broadcasts {
-        public static final String SYS_BROADCAST_GAMING_MODE_ON = "exthmui.intent.action.GAMING_MODE_ON";
-        public static final String SYS_BROADCAST_GAMING_MODE_OFF = "exthmui.intent.action.GAMING_MODE_OFF";
 
         // Local broadcast
         public static final String BROADCAST_CONFIG_CHANGED = "org.exthmui.game.CONFIG_CHANGED";
