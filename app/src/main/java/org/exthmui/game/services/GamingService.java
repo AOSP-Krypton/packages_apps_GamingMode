@@ -140,10 +140,14 @@ public class GamingService extends Hilt_GamingService {
             }
             configChangedIntent.putExtras(mCurrentConfig);
             LocalBroadcastManager.getInstance(GamingService.this).sendBroadcast(configChangedIntent);
+            mOverlayController.updateConfig(mCurrentConfig);
         }
     };
 
+    private final DanmakuService mDanmakuService;
+
     public GamingService() {
+        mDanmakuService = new DanmakuService();
     }
 
     @Override
@@ -152,7 +156,8 @@ public class GamingService extends Hilt_GamingService {
         createNotificationChannel(this, CHANNEL_GAMING_MODE_STATUS,
             getString(R.string.channel_gaming_mode_status), NotificationManager.IMPORTANCE_LOW);
 
-        checkNotificationListener();
+        mDanmakuService.setShowDanmakuCallback(danmakuText -> mOverlayController.showDanmaku(danmakuText));
+        registerNotificationListener();
         checkFreeFormSettings();
 
         mAudioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
@@ -200,21 +205,20 @@ public class GamingService extends Hilt_GamingService {
         return super.onStartCommand(intent, flags, startId);
     }
 
-    private void checkNotificationListener() {
-        String notificationListeners = Settings.Secure.getString(getContentResolver(), Settings.Secure.ENABLED_NOTIFICATION_LISTENERS);
-        List<String> listenersList;
-        listenersList = new ArrayList<>();
-        if (!TextUtils.isEmpty(notificationListeners)) {
-            listenersList.addAll(Arrays.asList(notificationListeners.split(":")));
+    private void registerNotificationListener() {
+        final ComponentName danmakuComponent = new ComponentName(this, DanmakuService.class);
+        try {
+            mDanmakuService.registerAsSystemService(this, danmakuComponent, UserHandle.USER_CURRENT);
+        } catch (RemoteException e) {
+            Log.e(TAG, "RemoteException while registering danmaku service");
         }
-        ComponentName danmakuComponent = new ComponentName(this, DanmakuService.class);
-        if (!listenersList.contains(danmakuComponent.flattenToString())) {
-            listenersList.add(danmakuComponent.flattenToString());
-            Settings.Secure.putString(getContentResolver(), Settings.Secure.ENABLED_NOTIFICATION_LISTENERS, String.join(":", listenersList));
-        }
-        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        if (!notificationManager.isNotificationListenerAccessGranted(danmakuComponent)) {
-            notificationManager.setNotificationListenerAccessGranted(danmakuComponent, true);
+    }
+
+    private void unregisterNotificationListener() {
+        try {
+            mDanmakuService.unregisterAsSystemService();
+        } catch (RemoteException e) {
+            Log.e(TAG, "RemoteException while unregistering danmaku service");
         }
     }
 
@@ -225,13 +229,14 @@ public class GamingService extends Hilt_GamingService {
 
     private void updateConfig() {
         // danmaku
-        mCurrentConfig.putBoolean(Constants.ConfigKeys.SHOW_DANMAKU, getBooleanSetting(Constants.ConfigKeys.SHOW_DANMAKU, Constants.ConfigDefaultValues.SHOW_DANMAKU));
+        setShowDanmaku(getBooleanSetting(Constants.ConfigKeys.SHOW_DANMAKU, Constants.ConfigDefaultValues.SHOW_DANMAKU));
+        setDynamicFilterEnabled(getBooleanSetting(Constants.ConfigKeys.DYNAMIC_NOTIFICATION_FILTER,
+            Constants.ConfigDefaultValues.DYNAMIC_NOTIFICATION_FILTER));
+        updateDanmakuBlacklist(getStringArraySetting(Constants.ConfigKeys.NOTIFICATION_APP_BLACKLIST));
         mCurrentConfig.putInt(Constants.ConfigKeys.DANMAKU_SPEED_HORIZONTAL, getIntSetting(Constants.ConfigKeys.DANMAKU_SPEED_HORIZONTAL, Constants.ConfigDefaultValues.DANMAKU_SPEED_HORIZONTAL));
         mCurrentConfig.putInt(Constants.ConfigKeys.DANMAKU_SPEED_VERTICAL, getIntSetting(Constants.ConfigKeys.DANMAKU_SPEED_VERTICAL, Constants.ConfigDefaultValues.DANMAKU_SPEED_VERTICAL));
         mCurrentConfig.putInt(Constants.ConfigKeys.DANMAKU_SIZE_HORIZONTAL, getIntSetting(Constants.ConfigKeys.DANMAKU_SIZE_HORIZONTAL, Constants.ConfigDefaultValues.DANMAKU_SIZE_HORIZONTAL));
         mCurrentConfig.putInt(Constants.ConfigKeys.DANMAKU_SIZE_VERTICAL, getIntSetting(Constants.ConfigKeys.DANMAKU_SIZE_VERTICAL, Constants.ConfigDefaultValues.DANMAKU_SIZE_VERTICAL));
-        mCurrentConfig.putBoolean(Constants.ConfigKeys.DYNAMIC_NOTIFICATION_FILTER, getBooleanSetting(Constants.ConfigKeys.DYNAMIC_NOTIFICATION_FILTER, Constants.ConfigDefaultValues.DYNAMIC_NOTIFICATION_FILTER));
-        mCurrentConfig.putStringArray(Constants.ConfigKeys.NOTIFICATION_APP_BLACKLIST, getStringArraySetting(Constants.ConfigKeys.NOTIFICATION_APP_BLACKLIST));
 
         // performance
         boolean changePerformance = getBooleanSetting(Constants.ConfigKeys.CHANGE_PERFORMANCE_LEVEL, Constants.ConfigDefaultValues.CHANGE_PERFORMANCE_LEVEL);
@@ -277,7 +282,15 @@ public class GamingService extends Hilt_GamingService {
     }
 
     private void setShowDanmaku(boolean show) {
-        mCurrentConfig.putBoolean(Constants.ConfigKeys.SHOW_DANMAKU, show);
+        mDanmakuService.setShowDanmaku(show);
+    }
+
+    private void setDynamicFilterEnabled(boolean enabled) {
+        mDanmakuService.setDynamicFilterEnabled(enabled);
+    }
+
+    private void updateDanmakuBlacklist(String[] blacklist) {
+        mDanmakuService.updateBlacklist(blacklist);
     }
 
     private void setPerformanceLevel(int level) {
@@ -328,6 +341,7 @@ public class GamingService extends Hilt_GamingService {
     @Override
     public void onDestroy() {
         unregisterReceiver(mGamingModeOffReceiver);
+        unregisterNotificationListener();
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mCallControlReceiver);
         if (mMenuOverlay) mOverlayController.destroy();
         mTelephonyManager.listen(mPhoneStateListener, PhoneStateListener.LISTEN_NONE);

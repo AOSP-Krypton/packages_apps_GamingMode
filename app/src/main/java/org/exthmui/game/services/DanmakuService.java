@@ -17,18 +17,10 @@
 package org.exthmui.game.services;
 
 import android.app.Notification;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
 import android.text.TextUtils;
-
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-
-import org.exthmui.game.misc.Constants;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -40,36 +32,11 @@ public class DanmakuService extends NotificationListenerService {
     private Map<String, String> mLastNotificationMap = new HashMap<>();
 
     private int filterThreshold = 3;
-    private boolean showDanmaku = Constants.ConfigDefaultValues.SHOW_DANMAKU;
-    private boolean useFilter = Constants.ConfigDefaultValues.DYNAMIC_NOTIFICATION_FILTER;
-    private String[] mNotificationBlacklist = new String[]{};
-    private BroadcastReceiver configReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (Constants.Broadcasts.BROADCAST_CONFIG_CHANGED.equals(intent.getAction())) {
-                updateConfig(intent);
-            }
-        }
-    };
+    private boolean showDanmaku;
+    private boolean useFilter;
+    private String[] mNotificationBlacklist = {};
 
-    public DanmakuService() {
-    }
-
-    @Override
-    public void onListenerConnected() {
-        super.onListenerConnected();
-        LocalBroadcastManager.getInstance(this).registerReceiver(configReceiver, new IntentFilter(Constants.Broadcasts.BROADCAST_CONFIG_CHANGED));
-    }
-
-    @Override
-    public void onListenerDisconnected() {
-        try {
-            unregisterReceiver(configReceiver);
-        } catch (Exception e) {
-            // do nothing
-        }
-        super.onListenerDisconnected();
-    }
+    private Callback mShowDanmakuCallback;
 
     @Override
     public void onNotificationPosted(StatusBarNotification sbn) {
@@ -91,10 +58,26 @@ public class DanmakuService extends NotificationListenerService {
             }
             String danmakuText = builder.toString();
             if (!TextUtils.isEmpty(danmakuText) && (!useFilter || compareDanmaku(danmakuText, lastNotification))) {
-                sendDanmaku(danmakuText);
+                if (mShowDanmakuCallback != null) mShowDanmakuCallback.onShowDanmaku(danmakuText);
             }
             mLastNotificationMap.put(sbn.getPackageName(), danmakuText);
         }
+    }
+
+    void setShowDanmakuCallback(Callback callback) {
+        mShowDanmakuCallback = callback;
+    }
+
+    void setShowDanmaku(boolean show) {
+        showDanmaku = show;
+    }
+
+    void setDynamicFilterEnabled(boolean enable) {
+        useFilter = enable;
+    }
+
+    void updateBlacklist(String[] blacklist) {
+        mNotificationBlacklist = blacklist;
     }
 
     private boolean isInBlackList(String packageName) {
@@ -107,12 +90,6 @@ public class DanmakuService extends NotificationListenerService {
         return false;
     }
 
-    private void sendDanmaku(String text) {
-        Intent intent = new Intent(Constants.Broadcasts.BROADCAST_NEW_DANMAKU);
-        intent.putExtra("danmaku_text", text);
-        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
-    }
-
     private boolean compareDanmaku(String a, String b) {
         String tA = a.replaceAll("[\\d]+\\.[\\d]+|[\\d]", "");
         String tB = b.replaceAll("[\\d]+\\.[\\d]+|[\\d]", "");
@@ -123,16 +100,8 @@ public class DanmakuService extends NotificationListenerService {
         }
     }
 
-    private void updateConfig(Intent intent) {
-        if (intent != null) {
-            showDanmaku = intent.getBooleanExtra(Constants.ConfigKeys.SHOW_DANMAKU, showDanmaku);
-            useFilter = intent.getBooleanExtra(Constants.ConfigKeys.DYNAMIC_NOTIFICATION_FILTER, useFilter);
-            mNotificationBlacklist = intent.getStringArrayExtra(Constants.ConfigKeys.NOTIFICATION_APP_BLACKLIST);
-        }
-    }
-
     // 最小编辑距离
-    public static int levenshtein(CharSequence a, CharSequence b) {
+    private static int levenshtein(CharSequence a, CharSequence b) {
         if (TextUtils.isEmpty(a)) {
             return TextUtils.isEmpty(b) ? 0 : b.length();
         } else if (TextUtils.isEmpty(b)) {
@@ -157,6 +126,10 @@ public class DanmakuService extends NotificationListenerService {
             }
         }
         return dp[lenA][lenB];
+    }
+
+    interface Callback {
+        void onShowDanmaku(String danmakuText);
     }
 
 }

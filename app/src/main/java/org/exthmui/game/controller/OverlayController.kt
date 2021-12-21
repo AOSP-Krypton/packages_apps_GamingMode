@@ -46,6 +46,9 @@ import androidx.preference.PreferenceManager
 import dagger.hilt.android.qualifiers.ApplicationContext
 
 import javax.inject.Inject
+import javax.inject.Singleton
+
+import kotlin.math.sqrt
 
 import org.exthmui.game.R
 import org.exthmui.game.misc.Constants
@@ -56,9 +59,8 @@ import org.exthmui.game.ui.QuickStartAppView
 import top.littlefogcat.danmakulib.danmaku.Danmaku
 import top.littlefogcat.danmakulib.danmaku.DanmakuManager
 
-import kotlin.math.sqrt
-
 // TODO Replace deprecated LocalBroadcastManager with a different impl
+@Singleton
 class OverlayController @Inject constructor(
     @ApplicationContext private val context: Context,
     private val mDanmakuManager: DanmakuManager,
@@ -98,16 +100,6 @@ class OverlayController @Inject constructor(
     private val mOMReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             when (intent.action) {
-                Constants.Broadcasts.BROADCAST_NEW_DANMAKU -> {
-                    intent.getStringExtra("danmaku_text")
-                        ?.takeIf { it.isNotBlank() }
-                        ?.let { sendDanmaku(it) }
-                }
-                Constants.Broadcasts.BROADCAST_CONFIG_CHANGED -> {
-                    if (intent.extras == null) return
-                    configBundle.putAll(intent.extras)
-                    updateConfig()
-                }
                 Constants.Broadcasts.BROADCAST_GAMING_MENU_CONTROL -> {
                     val cmd = intent.getStringExtra("cmd")
                     if (cmd == "hide") {
@@ -143,25 +135,47 @@ class OverlayController @Inject constructor(
     }
 
     fun initController(bundle: Bundle) {
-        configBundle.putAll(bundle)
         if (Settings.canDrawOverlays(context)) {
             initView()
         }
         val intentFilter = IntentFilter()
-        intentFilter.addAction(Constants.Broadcasts.BROADCAST_NEW_DANMAKU)
-        intentFilter.addAction(Constants.Broadcasts.BROADCAST_CONFIG_CHANGED)
         intentFilter.addAction(Constants.Broadcasts.BROADCAST_GAMING_MENU_CONTROL)
         LocalBroadcastManager.getInstance(context).registerReceiver(mOMReceiver, intentFilter)
         LocalBroadcastManager.getInstance(context).registerReceiver(
             callStatusReceiver,
             IntentFilter(Constants.Broadcasts.BROADCAST_CALL_STATUS)
         )
-        updateConfig()
+        updateConfig(bundle)
     }
 
     fun updateConfiguration(newConfig: Configuration) {
         isPortrait = newConfig.orientation == Configuration.ORIENTATION_PORTRAIT
         updateConfig()
+    }
+
+    fun updateConfig(bundle: Bundle) {
+        configBundle.putAll(bundle)
+        updateConfig()
+    }
+
+    fun showDanmaku(danmakuText: String) {
+        val danmaku = Danmaku().apply {
+            text = danmakuText
+            mode = Danmaku.Mode.SCROLL
+            size = autoSize(
+                if (isPortrait)
+                    configBundle.getInt(
+                        Constants.ConfigKeys.DANMAKU_SIZE_VERTICAL,
+                        Constants.ConfigDefaultValues.DANMAKU_SIZE_VERTICAL
+                    )
+                else
+                    configBundle.getInt(
+                        Constants.ConfigKeys.DANMAKU_SIZE_HORIZONTAL,
+                        Constants.ConfigDefaultValues.DANMAKU_SIZE_HORIZONTAL
+                    )
+            )
+        }
+        mDanmakuManager.send(danmaku)
     }
 
     private fun initView() {
@@ -472,26 +486,6 @@ class OverlayController @Inject constructor(
         }
         windowManager.addView(danmakuContainer, danmakuLayoutParams)
         mDanmakuManager.init(danmakuContainer)
-    }
-
-    private fun sendDanmaku(danmakuText: String) {
-        val danmaku = Danmaku().apply {
-            text = danmakuText
-            mode = Danmaku.Mode.SCROLL
-            size = autoSize(
-                if (isPortrait)
-                    configBundle.getInt(
-                        Constants.ConfigKeys.DANMAKU_SIZE_VERTICAL,
-                        Constants.ConfigDefaultValues.DANMAKU_SIZE_VERTICAL
-                    )
-                else
-                    configBundle.getInt(
-                        Constants.ConfigKeys.DANMAKU_SIZE_HORIZONTAL,
-                        Constants.ConfigDefaultValues.DANMAKU_SIZE_HORIZONTAL
-                    )
-            )
-        }
-        mDanmakuManager.send(danmaku)
     }
 
     private fun autoSize(origin: Int): Int {

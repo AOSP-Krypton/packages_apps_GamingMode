@@ -24,7 +24,6 @@ public class Constants {
 
         // Local broadcast
         public static final String BROADCAST_CONFIG_CHANGED = "org.exthmui.game.CONFIG_CHANGED";
-        public static final String BROADCAST_NEW_DANMAKU = "org.exthmui.game.NEW_DANMAKU";
 
         /*
         * GAMING_ACTION 需要携带的extra: String target, value
