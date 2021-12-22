@@ -61,7 +61,6 @@ public class GamingService extends Hilt_GamingService {
 
     private static final String SYS_BROADCAST_GAMING_MODE_OFF = "exthmui.intent.action.GAMING_MODE_OFF";
     private static final String CHANNEL_GAMING_MODE_STATUS = "gaming_mode_status";
-    private static final String PROP_GAMING_PERFORMANCE = "sys.performance.level";
 
     private static final int NOTIFICATION_ID = 1;
 
@@ -101,8 +100,6 @@ public class GamingService extends Hilt_GamingService {
             Intent configChangedIntent = new Intent(Constants.Broadcasts.BROADCAST_CONFIG_CHANGED);
             if (Constants.GamingActionTargets.DISABLE_RINGTONE.equals(target)) {
                 setDisableRingtone(intent.getBooleanExtra("value", Constants.ConfigDefaultValues.DISABLE_RINGTONE));
-            } else if (Constants.GamingActionTargets.PERFORMANCE_LEVEL.equals(target)) {
-                setPerformanceLevel(intent.getIntExtra("value", Constants.ConfigDefaultValues.PERFORMANCE_LEVEL));
             } else {
                 return;
             }
@@ -181,15 +178,6 @@ public class GamingService extends Hilt_GamingService {
     }
 
     private void updateConfig() {
-        // performance
-        boolean changePerformance = getBooleanSetting(Constants.ConfigKeys.CHANGE_PERFORMANCE_LEVEL, Constants.ConfigDefaultValues.CHANGE_PERFORMANCE_LEVEL);
-        int performanceLevel = getIntSetting(Constants.ConfigKeys.PERFORMANCE_LEVEL, Constants.ConfigDefaultValues.PERFORMANCE_LEVEL);
-        if (changePerformance) {
-            setPerformanceLevel(performanceLevel);
-        } else {
-            mCurrentConfig.putInt(Constants.ConfigKeys.PERFORMANCE_LEVEL, performanceLevel);
-        }
-
         // gesture
         boolean disableGesture = getBooleanSetting(Constants.ConfigKeys.DISABLE_GESTURE, Constants.ConfigDefaultValues.DISABLE_GESTURE);
         setDisableGesture(disableGesture);
@@ -221,11 +209,6 @@ public class GamingService extends Hilt_GamingService {
         } catch (RemoteException e) {
             Log.e(TAG, "Failed to disable/enable gesture!", e);
         }
-    }
-
-    private void setPerformanceLevel(int level) {
-        SystemProperties.set(PROP_GAMING_PERFORMANCE, String.valueOf(level));
-        mCurrentConfig.putInt(Constants.ConfigKeys.PERFORMANCE_LEVEL, level);
     }
 
     private void setDisableRingtone(boolean disable) {
@@ -280,7 +263,6 @@ public class GamingService extends Hilt_GamingService {
         setDisableGesture(false);
         setDisableAutoBrightness(false, true);
         setDisableRingtone(false);
-        setPerformanceLevel(-1);
         setAutoRotation(true);
         Settings.System.putInt(getContentResolver(), Settings.System.GAMING_MODE_ACTIVE, 0);
         Toast.makeText(this, R.string.gaming_mode_off, Toast.LENGTH_SHORT).show();

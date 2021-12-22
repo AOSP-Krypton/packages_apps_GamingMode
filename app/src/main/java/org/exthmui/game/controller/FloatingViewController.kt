@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
 import android.content.res.Configuration
+import android.os.SystemProperties
 import android.provider.Settings
 import android.view.*
 import android.widget.ImageView
@@ -32,7 +33,7 @@ class FloatingViewController @Inject constructor(
     @ApplicationContext private val context: Context,
     private val callViewController: CallViewController,
     private val danmakuController: DanmakuController,
-): ViewController(context) {
+) : ViewController(context) {
 
     private var gamingFloatingLayout: View? = null
     private var gamingFloatingButton: ImageView? = null
@@ -47,7 +48,9 @@ class FloatingViewController @Inject constructor(
     private var qsApps: List<String>? = null
     private var menuOpacity = DEFAULT_MENU_OPACITY
     private var floatingButtonSize = 0f
+
     private var perfProfilesSupported = false
+    private var changePerfLevel = true
     private var performanceLevel = DEFAULT_PERFORMANCE_LEVEL
 
     private lateinit var sharedPrefs: SharedPreferences
@@ -81,23 +84,35 @@ class FloatingViewController @Inject constructor(
         gamingMenu = null
         qsView = null
         qsAppView = null
+        gamingPerfView?.setOnUpdateListener(null)
         gamingPerfView = null
     }
 
     private fun loadSettings() {
-        val qsAppsFlattened: String? = Settings.System.getString(context.contentResolver,
-            Settings.System.GAMING_MODE_QS_APP_LIST)
+        val qsAppsFlattened: String? = Settings.System.getString(
+            context.contentResolver,
+            Settings.System.GAMING_MODE_QS_APP_LIST
+        )
         qsApps = qsAppsFlattened?.takeIf { it.isNotEmpty() }?.split(",")
-        performanceLevel = Settings.System.getInt(context.contentResolver,
+        changePerfLevel = Settings.System.getInt(
+            context.contentResolver,
+            Settings.System.GAMING_MODE_CHANGE_PERFORMANCE_LEVEL,
+            1
+        ) == 1
+        performanceLevel = Settings.System.getInt(
+            context.contentResolver,
             Settings.System.GAMING_MODE_PERFORMANCE_LEVEL,
-            DEFAULT_PERFORMANCE_LEVEL)
-        menuOpacity = Settings.System.getInt(context.contentResolver,
-            Settings.System.GAMING_MODE_MENU_OPACITY, DEFAULT_MENU_OPACITY)
+            DEFAULT_PERFORMANCE_LEVEL
+        )
+        menuOpacity = Settings.System.getInt(
+            context.contentResolver,
+            Settings.System.GAMING_MODE_MENU_OPACITY, DEFAULT_MENU_OPACITY
+        )
     }
 
     private fun updateViewWithConfig() {
         // 性能配置
-        if (perfProfilesSupported) {
+        if (perfProfilesSupported && changePerfLevel) {
             gamingPerfView?.setLevel(performanceLevel)
         }
         gamingMenu?.background?.alpha = menuOpacity * 255 / 100
@@ -151,11 +166,14 @@ class FloatingViewController @Inject constructor(
             it.setQSApps(qsApps)
         }
 
-        gamingPerfView = gamingOverlayView!!.findViewById(R.id.performance_controller)
-
-        if (!perfProfilesSupported) {
-            gamingPerfView!!.visibility = View.GONE
-        }
+        gamingPerfView =
+            gamingOverlayView!!.findViewById<GamingPerformanceView>(R.id.performance_controller)
+                .also {
+                    it.setOnUpdateListener { level ->
+                        SystemProperties.set(PROP_GAMING_PERFORMANCE, level.toString())
+                    }
+                    if (!perfProfilesSupported || !changePerfLevel) it.visibility = View.GONE
+                }
 
         gamingMenu = gamingOverlayView!!.findViewById(R.id.gaming_menu)
         gamingMenu!!.background.alpha = Constants.ConfigDefaultValues.MENU_OPACITY * 255 / 100
@@ -360,5 +378,7 @@ class FloatingViewController @Inject constructor(
         private const val DEFAULT_PERFORMANCE_LEVEL = 5
 
         private const val DEFAULT_MENU_OPACITY = 75
+
+        private const val PROP_GAMING_PERFORMANCE = "sys.performance.level"
     }
 }
