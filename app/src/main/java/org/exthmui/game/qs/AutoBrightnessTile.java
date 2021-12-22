@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2020 The exTHmUI Open Source Project
+ * Copyright (C) 2021 AOSP-Krypton Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,13 +18,25 @@
 package org.exthmui.game.qs;
 
 import android.content.Context;
+import android.provider.Settings;
 
 import org.exthmui.game.R;
-import org.exthmui.game.misc.Constants;
 
 public class AutoBrightnessTile extends TileBase {
     public AutoBrightnessTile(Context context) {
-        super(context, context.getString(R.string.qs_auto_brightness), Constants.GamingActionTargets.DISABLE_AUTO_BRIGHTNESS, R.drawable.ic_qs_auto_brightness);
-        setNeedInverse(true);
+        super(context, R.string.qs_auto_brightness, R.drawable.ic_qs_auto_brightness);
+        setSelected(Settings.System.getInt(getContext().getContentResolver(),
+                Settings.System.SCREEN_BRIGHTNESS_MODE,
+                Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL) ==
+                Settings.System.SCREEN_BRIGHTNESS_MODE_AUTOMATIC);
+    }
+
+    @Override
+    protected void handleClick(boolean isSelected) {
+        super.handleClick(isSelected);
+        Settings.System.putInt(getContext().getContentResolver(),
+                Settings.System.SCREEN_BRIGHTNESS_MODE,
+                isSelected ? Settings.System.SCREEN_BRIGHTNESS_MODE_AUTOMATIC
+                        : Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL);
     }
 }

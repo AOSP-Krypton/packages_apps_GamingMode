@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2020 The exTHmUI Open Source Project
+ * Copyright (C) 2021 AOSP-Krypton Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,12 +18,28 @@
 package org.exthmui.game.qs;
 
 import android.content.Context;
+import android.provider.Settings;
 
 import org.exthmui.game.R;
-import org.exthmui.game.misc.Constants;
+import org.exthmui.game.controller.DanmakuController;
 
 public class DanmakuTile extends TileBase {
+
+    private DanmakuController mDanmakuController;
+
     public DanmakuTile(Context context) {
-        super(context, context.getString(R.string.qs_danmaku), Constants.GamingActionTargets.SHOW_DANMAKU, R.drawable.ic_qs_danmaku);
+        super(context, R.string.qs_danmaku, R.drawable.ic_qs_danmaku);
+        setSelected(Settings.System.getInt(getContext().getContentResolver(),
+                Settings.System.GAMING_MODE_SHOW_DANMAKU, 0) == 1);
+    }
+
+    @Override
+    protected void handleClick(boolean isSelected) {
+        super.handleClick(isSelected);
+        if (mDanmakuController != null) mDanmakuController.setShowDanmaku(isSelected);
+    }
+
+    public void setDanmakuController(DanmakuController controller) {
+        mDanmakuController = controller;
     }
 }

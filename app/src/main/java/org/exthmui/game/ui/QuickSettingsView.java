@@ -17,24 +17,25 @@
 package org.exthmui.game.ui;
 
 import android.content.Context;
-import android.os.Bundle;
 import android.util.AttributeSet;
 import android.widget.LinearLayout;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.content.res.AppCompatResources;
 
 import org.exthmui.game.R;
+import org.exthmui.game.controller.DanmakuController;
 import org.exthmui.game.qs.AutoBrightnessTile;
 import org.exthmui.game.qs.DNDTile;
 import org.exthmui.game.qs.DanmakuTile;
 import org.exthmui.game.qs.LockGestureTile;
 import org.exthmui.game.qs.ScreenCaptureTile;
 import org.exthmui.game.qs.ScreenRecordTile;
-import org.exthmui.game.qs.TileBase;
 
 public class QuickSettingsView extends LinearLayout {
 
-    private TileBase[] qsTiles;
+    private DanmakuController mDanmakuController;
 
     public QuickSettingsView(Context context) {
         this(context, null);
@@ -51,33 +52,24 @@ public class QuickSettingsView extends LinearLayout {
     public QuickSettingsView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
 
-        this.setDividerDrawable(context.getDrawable(R.drawable.qs_divider));
-        this.setShowDividers(SHOW_DIVIDER_MIDDLE);
-        this.setPadding(0,0, 0,8);
-
-        qsTiles = new TileBase[]{
-                new ScreenCaptureTile(context),
-                new ScreenRecordTile(context),
-                new DanmakuTile(context),
-                new DNDTile(context),
-                new LockGestureTile(context),
-                new AutoBrightnessTile(context)
-        };
-
-        for (TileBase tileBase : qsTiles) {
-            addView(tileBase);
-        }
+        setDividerDrawable(AppCompatResources.getDrawable(getContext(), R.drawable.qs_divider));
+        setShowDividers(SHOW_DIVIDER_MIDDLE);
+        setPadding(0, 0, 0, 8);
     }
 
-    public void setConfig(Bundle config) {
-        for (TileBase tileBase : qsTiles) {
-            tileBase.setConfig(config);
-        }
+    public void setDanmakuController(@NonNull DanmakuController danmakuController) {
+        mDanmakuController = danmakuController;
     }
 
-    public void onDestroy() {
-        for (TileBase tileBase : qsTiles) {
-            tileBase.onDestroy();
-        }
+    public void addTiles() {
+        final Context context = getContext();
+        addView(new ScreenCaptureTile(context));
+        addView(new ScreenRecordTile(context));
+        final DanmakuTile danmakuTile = new DanmakuTile(context);
+        danmakuTile.setDanmakuController(mDanmakuController);
+        addView(danmakuTile);
+        addView(new DNDTile(context));
+        addView(new LockGestureTile(context));
+        addView(new AutoBrightnessTile(context));
     }
 }

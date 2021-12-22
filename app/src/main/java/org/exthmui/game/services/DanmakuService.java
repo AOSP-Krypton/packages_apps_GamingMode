@@ -17,7 +17,9 @@
 package org.exthmui.game.services;
 
 import android.app.Notification;
+import android.content.Context;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
 import android.text.TextUtils;
@@ -25,22 +27,20 @@ import android.text.TextUtils;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.exthmui.game.controller.DanmakuController;
+
 public class DanmakuService extends NotificationListenerService {
 
-    private static final String TAG = "DanmakuService";
+    private final Map<String, String> mLastNotificationMap = new HashMap<>();
 
-    private Map<String, String> mLastNotificationMap = new HashMap<>();
+    private boolean mUseFilter;
+    private String[] mNotificationBlacklist;
 
-    private int filterThreshold = 3;
-    private boolean showDanmaku;
-    private boolean useFilter;
-    private String[] mNotificationBlacklist = {};
-
-    private Callback mShowDanmakuCallback;
+    private DanmakuController mDanmakuController;
 
     @Override
     public void onNotificationPosted(StatusBarNotification sbn) {
-        if (!showDanmaku) return;
+        if (mDanmakuController == null || !mDanmakuController.shouldShowDanmaku()) return;
         Bundle extras = sbn.getNotification().extras;
         if (!isInBlackList(sbn.getPackageName())){
             String lastNotification = mLastNotificationMap.getOrDefault(sbn.getPackageName(), "");
@@ -57,31 +57,26 @@ public class DanmakuService extends NotificationListenerService {
                 builder.append(text);
             }
             String danmakuText = builder.toString();
-            if (!TextUtils.isEmpty(danmakuText) && (!useFilter || compareDanmaku(danmakuText, lastNotification))) {
-                if (mShowDanmakuCallback != null) mShowDanmakuCallback.onShowDanmaku(danmakuText);
+            if (!TextUtils.isEmpty(danmakuText) && (!mUseFilter || compareDanmaku(danmakuText, lastNotification))) {
+                mDanmakuController.showDanmaku(danmakuText);
             }
             mLastNotificationMap.put(sbn.getPackageName(), danmakuText);
         }
     }
 
-    void setShowDanmakuCallback(Callback callback) {
-        mShowDanmakuCallback = callback;
-    }
-
-    void setShowDanmaku(boolean show) {
-        showDanmaku = show;
-    }
-
-    void setDynamicFilterEnabled(boolean enable) {
-        useFilter = enable;
-    }
-
-    void updateBlacklist(String[] blacklist) {
-        mNotificationBlacklist = blacklist;
+    public void init(Context context, DanmakuController controller) {
+        mDanmakuController = controller;
+        final String blacklist = Settings.System.getString(context.getContentResolver(),
+                Settings.System.GAMING_MODE_DANMAKU_APP_BLACKLIST);
+        if (blacklist != null && !blacklist.isEmpty()) {
+            mNotificationBlacklist = blacklist.split(",");
+        }
+        mUseFilter = Settings.System.getInt(context.getContentResolver(),
+                Settings.System.GAMING_MODE_DANMAKU_DYNAMIC_NOTIFICATION_FILTER, 1) == 1;
     }
 
     private boolean isInBlackList(String packageName) {
-        if (mNotificationBlacklist == null) return false;
+        if (mNotificationBlacklist == null || mNotificationBlacklist.length == 0) return false;
         for (String str : mNotificationBlacklist) {
             if (TextUtils.equals(str, packageName)) {
                 return true;
@@ -93,6 +88,7 @@ public class DanmakuService extends NotificationListenerService {
     private boolean compareDanmaku(String a, String b) {
         String tA = a.replaceAll("[\\d]+\\.[\\d]+|[\\d]", "");
         String tB = b.replaceAll("[\\d]+\\.[\\d]+|[\\d]", "");
+        int filterThreshold = 3;
         if (TextUtils.isEmpty(tA) || TextUtils.isEmpty(tB)) {
             return levenshtein(a, b) > filterThreshold;
         } else {
@@ -127,9 +123,4 @@ public class DanmakuService extends NotificationListenerService {
         }
         return dp[lenA][lenB];
     }
-
-    interface Callback {
-        void onShowDanmaku(String danmakuText);
-    }
-
 }

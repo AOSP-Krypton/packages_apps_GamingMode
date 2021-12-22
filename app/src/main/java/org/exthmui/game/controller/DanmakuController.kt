@@ -1,53 +1,149 @@
-package top.littlefogcat.danmakulib.danmaku
+package org.exthmui.game.controller
 
 import android.content.Context
+import android.content.res.Configuration
+import android.provider.Settings
 import android.util.Log
 import android.util.TypedValue
-import android.view.LayoutInflater
+import android.view.Gravity
+import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.FrameLayout
 
 import dagger.hilt.android.qualifiers.ApplicationContext
 
-import java.lang.ref.WeakReference
-
 import javax.inject.Inject
+import javax.inject.Singleton
 
 import org.exthmui.game.R
 
-class DanmakuManager @Inject constructor(
-    @ApplicationContext val context: Context,
-) {
+import top.littlefogcat.danmakulib.danmaku.Danmaku
+import top.littlefogcat.danmakulib.danmaku.DanmakuView
 
-    private val layoutInflater = LayoutInflater.from(context)
+@Singleton
+class DanmakuController @Inject constructor(
+    @ApplicationContext private val context: Context,
+) : ViewController(context) {
 
     /**
      * 弹幕容器
      */
-    private lateinit var danmakuContainer: WeakReference<FrameLayout>
-
-    val config = Config()
+    private var danmakuContainer: FrameLayout? = null
 
     private val positionCalculator = DanmakuPositionCalculator()
 
+    private var danmakuLayoutParams: WindowManager.LayoutParams? = null
+
+    private var showDanmaku = false
+
     /**
-     * 初始化。在使用之前必须调用该方法。
+     * 行高，单位px
      */
-    fun init(container: FrameLayout) {
-        danmakuContainer = WeakReference(container)
+    private var lineHeight = 0
+
+    /**
+     * 滚动弹幕速度 (px/s)
+     */
+    private var scrollSpeed = 0
+
+    /**
+     * 顶部弹幕显示时长
+     */
+    private var durationTop = 5000
+
+    /**
+     * 底部弹幕的显示时长
+     */
+    private var durationBottom = 5000
+
+    /**
+     * 滚动弹幕的最大行数
+     */
+    private var maxScrollLine = 12
+
+    private var sizeLandscape = DEFAULT_DANMAKU_SIZE_LANDSCAPE
+    private var sizePortrait = DEFAULT_DANMAKU_SIZE_PORTRAIT
+
+    private var speedLandscape = DEFAULT_DANMAKU_SPEED_LANDSCAPE
+    private var speedPortrait = DEFAULT_DANMAKU_SPEED_PORTRAIT
+
+    override fun initController() {
+        loadSettings()
+        danmakuContainer = FrameLayout(context)
+        danmakuContainer?.visibility = if (showDanmaku) View.VISIBLE else View.GONE
+        danmakuLayoutParams = getBaseLayoutParams().apply {
+            width = WindowManager.LayoutParams.MATCH_PARENT
+            height = WindowManager.LayoutParams.WRAP_CONTENT
+            gravity = Gravity.START or Gravity.TOP
+            flags = flags or WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+        }
+        windowManager.addView(danmakuContainer, danmakuLayoutParams)
+        updateViewConfig()
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        updateViewConfig()
+    }
+    fun setShowDanmaku(show: Boolean) {
+        showDanmaku = show
+    }
+
+    fun shouldShowDanmaku() = showDanmaku
+
+    fun showDanmaku(danmakuText: String) {
+        val danmaku = Danmaku().apply {
+            text = danmakuText
+            mode = Danmaku.Mode.SCROLL
+            size = autoSize(
+                if (isPortrait) sizePortrait
+                else sizeLandscape
+            )
+        }
+        show(danmaku)
+    }
+
+    private fun loadSettings() {
+        sizePortrait = Settings.System.getInt(
+            context.contentResolver,
+            Settings.System.GAMING_MODE_DANMAKU_SIZE_VERTICAL, DEFAULT_DANMAKU_SIZE_PORTRAIT
+        )
+        sizeLandscape = Settings.System.getInt(
+            context.contentResolver,
+            Settings.System.GAMING_MODE_DANMAKU_SIZE_HORIZONTAL, DEFAULT_DANMAKU_SIZE_LANDSCAPE
+        )
+        speedLandscape = Settings.System.getInt(
+            context.contentResolver,
+            Settings.System.GAMING_MODE_DANMAKU_SPEED_HORIZONTAL, DEFAULT_DANMAKU_SPEED_LANDSCAPE
+        )
+        speedPortrait = Settings.System.getInt(
+            context.contentResolver,
+            Settings.System.GAMING_MODE_DANMAKU_SPEED_VERTICAL, DEFAULT_DANMAKU_SPEED_PORTRAIT
+        )
+        // Danmaku Container visibility
+        showDanmaku = Settings.System.getInt(
+            context.contentResolver,
+            Settings.System.GAMING_MODE_SHOW_DANMAKU, 1
+        ) == 1
+    }
+
+    private fun updateViewConfig() {
+        scrollSpeed = if (isPortrait) speedPortrait else speedLandscape
+        lineHeight = (if (isPortrait) sizePortrait else sizeLandscape) + 4 // 设置行高
+        maxScrollLine = bounds.height() / 2 / lineHeight
     }
 
     /**
      * 发送一条弹幕
      */
-    fun send(danmaku: Danmaku): Int {
-        if (danmakuContainer.get() == null) {
-            Log.w(TAG, "show: Root view is null.")
+    private fun show(danmaku: Danmaku): Int {
+        if (danmakuContainer == null) {
+            Log.w(TAG, "show: Container is null.")
             return RESULT_NULL_ROOT_VIEW
         }
 
         val view = (layoutInflater.inflate(
-            R.layout.danmaku_view, danmakuContainer.get(), false
+            R.layout.danmaku_view, danmakuContainer, false
         ) as DanmakuView).also {
             it.addOnEnterListener { view -> view.clearScroll() }
             it.addOnExitListener { view -> view.restore() }
@@ -83,58 +179,41 @@ class DanmakuManager @Inject constructor(
             duration =
                 (view.getTextLength() + positionCalculator.getParentWidth()) / duration * 1000
         }
-        view.show(danmakuContainer.get()!!, duration)
+        view.show(danmakuContainer!!, duration)
         return RESULT_OK
     }
 
     /**
      * @return 返回这个弹幕显示时长 (对于滚动弹幕返回速度)
      */
-    fun getDisplayDuration(danmaku: Danmaku?): Int =
+    private fun getDisplayDuration(danmaku: Danmaku?): Int =
         when (danmaku?.mode) {
-            Danmaku.Mode.TOP -> config.durationTop
-            Danmaku.Mode.BOTTOM -> config.durationBottom
-            Danmaku.Mode.SCROLL -> config.scrollSpeed
-            else -> config.scrollSpeed
+            Danmaku.Mode.TOP -> durationTop
+            Danmaku.Mode.BOTTOM -> durationBottom
+            Danmaku.Mode.SCROLL -> scrollSpeed
+            else -> scrollSpeed
         }
 
-    /**
-     * 一些配置
-     */
-    class Config {
-        /**
-         * 行高，单位px
-         */
-        var lineHeight = 0
+    override fun onDestroy() {
+        windowManager.removeViewImmediate(danmakuContainer)
+        danmakuContainer = null
+    }
 
-        /**
-         * 滚动弹幕速度 (px/s)
-         */
-        var scrollSpeed = 0
-
-        /**
-         * 顶部弹幕显示时长
-         */
-        var durationTop = 5000
-
-        /**
-         * 底部弹幕的显示时长
-         */
-        var durationBottom = 5000
-
-        /**
-         * 滚动弹幕的最大行数
-         */
-        var maxScrollLine = 12
+    private fun autoSize(origin: Int): Int {
+        val autoSize = origin * bounds.width() / DESIGN_WIDTH
+        if (origin != 0 && autoSize == 0) {
+            return 1
+        }
+        return autoSize
     }
 
     private inner class DanmakuPositionCalculator {
 
         private val lastDanmakus = mutableListOf<DanmakuView>() // 保存每一行最后一个弹幕消失的时间
-        private val tops = Array(config.maxScrollLine) { false }
-        private val bottoms = Array(config.maxScrollLine) { false }
+        private val tops = Array(maxScrollLine) { false }
+        private val bottoms = Array(maxScrollLine) { false }
 
-        fun getLineHeightWithPadding() = (config.lineHeight * 1.35).toInt()
+        fun getLineHeightWithPadding() = (lineHeight * 1.35).toInt()
 
         fun getMarginTop(view: DanmakuView) =
             when (view.danmaku?.mode) {
@@ -169,7 +248,7 @@ class DanmakuManager @Inject constructor(
                 i++
             }
 
-            val maxLine = config.maxScrollLine
+            val maxLine = maxScrollLine
             if (maxLine == 0 || i < maxLine) {
                 lastDanmakus.add(view)
                 return i * getLineHeightWithPadding()
@@ -241,22 +320,13 @@ class DanmakuManager @Inject constructor(
         }
 
         private fun getParentHeight(): Int {
-            val parent = danmakuContainer.get()
-            if (parent == null || parent.height == 0) {
-                return 1080
-            }
-            return parent.height
+            return danmakuContainer?.height ?: 1080
         }
 
         fun getParentWidth(): Int {
-            val parent = danmakuContainer.get()
-            if (parent == null || parent.width == 0) {
-                return 1920
-            }
-            return parent.width
+            return danmakuContainer?.width ?: 1920
         }
     }
-
 
     companion object {
         private const val TAG = "DanmakuManager"
@@ -265,5 +335,15 @@ class DanmakuManager @Inject constructor(
         const val RESULT_OK = 0
         const val RESULT_NULL_ROOT_VIEW = 1
         const val TOO_MANY_DANMAKU = 2
+
+        private const val DESIGN_WIDTH = 1080
+
+        // 弹幕速度
+        private const val DEFAULT_DANMAKU_SPEED_LANDSCAPE = 300
+        private const val DEFAULT_DANMAKU_SPEED_PORTRAIT = 300
+
+        // 弹幕大小
+        private const val DEFAULT_DANMAKU_SIZE_LANDSCAPE = 36
+        private const val DEFAULT_DANMAKU_SIZE_PORTRAIT = 36
     }
 }

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2020 The exTHmUI Open Source Project
+ * Copyright (C) 2021 AOSP-Krypton Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,54 +18,49 @@
 package org.exthmui.game.qs;
 
 import static android.view.WindowManager.ScreenshotSource.SCREENSHOT_GLOBAL_ACTIONS;
+import static android.view.WindowManager.TAKE_SCREENSHOT_FULLSCREEN;
 
 import android.content.Context;
-import android.content.Intent;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
-import android.view.View;
-import android.view.WindowManager;
 
 import com.android.internal.util.ScreenshotHelper;
 
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-
 import org.exthmui.game.R;
-import org.exthmui.game.misc.Constants;
 
 public class ScreenCaptureTile extends TileBase {
 
     private static final String TAG = "ScreenCaptureTile";
-
-    private static final Intent hideMenuIntent = new Intent(Constants.Broadcasts.BROADCAST_GAMING_MENU_CONTROL).putExtra("cmd", "hide");
     
-    private Handler mHandler;
-    private ScreenshotHelper mScreenshotHelper;
+    private final Handler mHandler;
+    private final ScreenshotHelper mScreenshotHelper;
+
+    private final Runnable takeScreenshot;
 
     public ScreenCaptureTile(Context context) {
-        super(context, context.getString(R.string.qs_screen_capture), "", R.drawable.ic_qs_screenshot);
-        qsIcon.setSelected(true);
-        mHandler = new Handler(Looper.getMainLooper());
+        super(context, R.string.qs_screen_capture, R.drawable.ic_qs_screenshot);
         mScreenshotHelper = new ScreenshotHelper(context);
-    }
-
-    @Override
-    public void setConfig(Bundle bundle) {
-
-    }
-
-    @Override
-    public void onClick(View v) {
-        LocalBroadcastManager.getInstance(mContext).sendBroadcastSync(hideMenuIntent);
-        mHandler.postDelayed(() -> {
+        mHandler = new Handler(Looper.getMainLooper());
+        takeScreenshot = () -> {
             try {
-                mScreenshotHelper.takeScreenshot(WindowManager.TAKE_SCREENSHOT_FULLSCREEN, true, true,
-                    SCREENSHOT_GLOBAL_ACTIONS, mHandler, null);
+                mScreenshotHelper.takeScreenshot(TAKE_SCREENSHOT_FULLSCREEN, true, true,
+                        SCREENSHOT_GLOBAL_ACTIONS, mHandler, null);
             } catch (Exception e) {
                 Log.e(TAG, "Error while trying to take screenshot.", e);
             }
-        }, 500);
+        };
+        setToggleable(false);
+        setSelected(true);
+    }
+
+    @Override
+    protected void handleClick(boolean isSelected) {
+        mHandler.postDelayed(takeScreenshot, 300);
+    }
+
+    @Override
+    public void onDestroy() {
+        mHandler.removeCallbacks(takeScreenshot);
     }
 }

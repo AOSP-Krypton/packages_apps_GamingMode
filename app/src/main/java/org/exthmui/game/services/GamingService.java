@@ -23,30 +23,18 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
-import android.database.ContentObserver;
-import android.media.AudioDeviceInfo;
 import android.media.AudioManager;
-import android.media.AudioSystem;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.IBinder;
-import android.os.Looper;
 import android.os.RemoteException;
 import android.os.ServiceManager;
 import android.os.SystemProperties;
 import android.os.UserHandle;
 import android.provider.Settings;
-import android.telecom.CallAudioState;
-import android.telecom.InCallService;
-import android.telecom.TelecomManager;
-import android.telephony.PhoneStateListener;
-import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
@@ -56,17 +44,15 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.android.internal.statusbar.IStatusBarService;
 
-import org.exthmui.game.R;
-import org.exthmui.game.controller.OverlayController;
-import org.exthmui.game.misc.Constants;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import dagger.hilt.android.AndroidEntryPoint;
 
 import javax.inject.Inject;
 
-import dagger.hilt.android.AndroidEntryPoint;
+import org.exthmui.game.R;
+import org.exthmui.game.controller.CallViewController;
+import org.exthmui.game.controller.DanmakuController;
+import org.exthmui.game.controller.FloatingViewController;
+import org.exthmui.game.misc.Constants;
 
 @AndroidEntryPoint(Service.class)
 public class GamingService extends Hilt_GamingService {
@@ -79,25 +65,14 @@ public class GamingService extends Hilt_GamingService {
 
     private static final int NOTIFICATION_ID = 1;
 
-    private Notification mGamingNotification;
-
-    private Intent mCallStatusIntent;
-
     private String mCurrentPackage;
 
-    private Bundle mCurrentConfig = new Bundle();
+    private final Bundle mCurrentConfig = new Bundle();
 
     private AudioManager mAudioManager;
     private IStatusBarService mStatusBarService;
-    private TelephonyManager mTelephonyManager;
-    private TelecomManager mTelecomManager;
-
-    private GamingPhoneStateListener mPhoneStateListener;
 
     private boolean mMenuOverlay;
-
-    @Inject
-    OverlayController mOverlayController;
 
     private final BroadcastReceiver mGamingModeOffReceiver = new BroadcastReceiver() {
         @Override
@@ -108,31 +83,24 @@ public class GamingService extends Hilt_GamingService {
         }
     };
 
-    private BroadcastReceiver mCallControlReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (mTelecomManager == null) return;
-            if (intent.getIntExtra("cmd", 1) == 1) {
-                mTelecomManager.endCall();
-            } else {
-                mTelecomManager.acceptRingingCall();
-            }
-        }
-    };
+    @Inject
+    CallViewController mCallViewController;
 
-    private BroadcastReceiver mGamingActionReceiver = new BroadcastReceiver() {
+    @Inject
+    DanmakuController mDanmakuController;
+
+    @Inject
+    FloatingViewController mFloatingViewController;
+
+    private final DanmakuService mDanmakuService = new DanmakuService();
+
+    private final BroadcastReceiver mGamingActionReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             String target = intent.getStringExtra("target");
             Intent configChangedIntent = new Intent(Constants.Broadcasts.BROADCAST_CONFIG_CHANGED);
-            if (Constants.GamingActionTargets.DISABLE_AUTO_BRIGHTNESS.equals(target)) {
-                setDisableAutoBrightness(intent.getBooleanExtra("value", Constants.ConfigDefaultValues.DISABLE_AUTO_BRIGHTNESS), false);
-            } else if (Constants.GamingActionTargets.DISABLE_GESTURE.equals(target)) {
-                setDisableGesture(intent.getBooleanExtra("value", Constants.ConfigDefaultValues.DISABLE_GESTURE));
-            } else if (Constants.GamingActionTargets.DISABLE_RINGTONE.equals(target)) {
+            if (Constants.GamingActionTargets.DISABLE_RINGTONE.equals(target)) {
                 setDisableRingtone(intent.getBooleanExtra("value", Constants.ConfigDefaultValues.DISABLE_RINGTONE));
-            } else if (Constants.GamingActionTargets.SHOW_DANMAKU.equals(target)) {
-                setShowDanmaku(intent.getBooleanExtra("value", Constants.ConfigDefaultValues.SHOW_DANMAKU));
             } else if (Constants.GamingActionTargets.PERFORMANCE_LEVEL.equals(target)) {
                 setPerformanceLevel(intent.getIntExtra("value", Constants.ConfigDefaultValues.PERFORMANCE_LEVEL));
             } else {
@@ -140,49 +108,33 @@ public class GamingService extends Hilt_GamingService {
             }
             configChangedIntent.putExtras(mCurrentConfig);
             LocalBroadcastManager.getInstance(GamingService.this).sendBroadcast(configChangedIntent);
-            mOverlayController.updateConfig(mCurrentConfig);
         }
     };
-
-    private final DanmakuService mDanmakuService;
-
-    public GamingService() {
-        mDanmakuService = new DanmakuService();
-    }
 
     @Override
     public void onCreate() {
         super.onCreate();
-        createNotificationChannel(this, CHANNEL_GAMING_MODE_STATUS,
-            getString(R.string.channel_gaming_mode_status), NotificationManager.IMPORTANCE_LOW);
+        createNotificationChannel(getString(R.string.channel_gaming_mode_status));
 
-        mDanmakuService.setShowDanmakuCallback(danmakuText -> mOverlayController.showDanmaku(danmakuText));
         registerNotificationListener();
         checkFreeFormSettings();
 
-        mAudioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
-        mTelephonyManager = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
-        mTelecomManager = (TelecomManager) getSystemService(TELECOM_SERVICE);
-        mStatusBarService = IStatusBarService.Stub.asInterface(ServiceManager.getService(Context.STATUS_BAR_SERVICE));
+        mAudioManager = getSystemService(AudioManager.class);
+        mStatusBarService = IStatusBarService.Stub.asInterface(ServiceManager.getService(STATUS_BAR_SERVICE));
 
         registerReceiver(mGamingModeOffReceiver, new IntentFilter(SYS_BROADCAST_GAMING_MODE_OFF));
-        LocalBroadcastManager.getInstance(this).registerReceiver(mCallControlReceiver, new IntentFilter(Constants.Broadcasts.BROADCAST_CALL_CONTROL));
         LocalBroadcastManager.getInstance(this).registerReceiver(mGamingActionReceiver, new IntentFilter(Constants.Broadcasts.BROADCAST_GAMING_ACTION));
 
-        mPhoneStateListener = new GamingPhoneStateListener();
-        mTelephonyManager.listen(mPhoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
-
-        mCallStatusIntent = new Intent(Constants.Broadcasts.BROADCAST_CALL_STATUS);
 
         PendingIntent stopGamingIntent = PendingIntent.getBroadcast(this, 0,
-            new Intent(SYS_BROADCAST_GAMING_MODE_OFF), PendingIntent.FLAG_IMMUTABLE);
+                new Intent(SYS_BROADCAST_GAMING_MODE_OFF), PendingIntent.FLAG_IMMUTABLE);
         Notification.Builder builder = new Notification.Builder(this, CHANNEL_GAMING_MODE_STATUS);
         Notification.Action.Builder actionBuilder = new Notification.Action.Builder(null, getString(R.string.action_stop_gaming_mode), stopGamingIntent);
         builder.addAction(actionBuilder.build());
         builder.setContentText(getString(R.string.gaming_mode_running));
         builder.setSmallIcon(R.drawable.ic_notification_game);
 
-        mGamingNotification = builder.build();
+        Notification mGamingNotification = builder.build();
         startForeground(NOTIFICATION_ID, mGamingNotification);
 
         Toast.makeText(this, R.string.gaming_mode_on, Toast.LENGTH_SHORT).show();
@@ -195,20 +147,21 @@ public class GamingService extends Hilt_GamingService {
             updateConfig();
         }
 
-        mMenuOverlay = getIntSetting(Constants.ConfigKeys.MENU_OVERLAY, Constants.ConfigDefaultValues.MENU_OVERLAY) == 1 ? true : false;
-        if (mMenuOverlay) mOverlayController.initController(mCurrentConfig);
-        Settings.System.putInt(getContentResolver(), Settings.System.GAMING_MODE_ACTIVE, 1);
-        if (mTelephonyManager != null) {
-            mCallStatusIntent.putExtra("state", mTelephonyManager.getCallState());
-            LocalBroadcastManager.getInstance(this).sendBroadcast(mCallStatusIntent);
+        mMenuOverlay = getIntSetting(Constants.ConfigKeys.MENU_OVERLAY, Constants.ConfigDefaultValues.MENU_OVERLAY) == 1;
+        if (mMenuOverlay) {
+            mDanmakuController.init();
+            mDanmakuService.init(this, mDanmakuController);
+            mFloatingViewController.init();
+            mCallViewController.init();
         }
+        Settings.System.putInt(getContentResolver(), Settings.System.GAMING_MODE_ACTIVE, 1);
         return super.onStartCommand(intent, flags, startId);
     }
 
     private void registerNotificationListener() {
-        final ComponentName danmakuComponent = new ComponentName(this, DanmakuService.class);
+        final ComponentName componentName = new ComponentName(this, GamingService.class);
         try {
-            mDanmakuService.registerAsSystemService(this, danmakuComponent, UserHandle.USER_CURRENT);
+            mDanmakuService.registerAsSystemService(this, componentName, UserHandle.USER_CURRENT);
         } catch (RemoteException e) {
             Log.e(TAG, "RemoteException while registering danmaku service");
         }
@@ -228,16 +181,6 @@ public class GamingService extends Hilt_GamingService {
     }
 
     private void updateConfig() {
-        // danmaku
-        setShowDanmaku(getBooleanSetting(Constants.ConfigKeys.SHOW_DANMAKU, Constants.ConfigDefaultValues.SHOW_DANMAKU));
-        setDynamicFilterEnabled(getBooleanSetting(Constants.ConfigKeys.DYNAMIC_NOTIFICATION_FILTER,
-            Constants.ConfigDefaultValues.DYNAMIC_NOTIFICATION_FILTER));
-        updateDanmakuBlacklist(getStringArraySetting(Constants.ConfigKeys.NOTIFICATION_APP_BLACKLIST));
-        mCurrentConfig.putInt(Constants.ConfigKeys.DANMAKU_SPEED_HORIZONTAL, getIntSetting(Constants.ConfigKeys.DANMAKU_SPEED_HORIZONTAL, Constants.ConfigDefaultValues.DANMAKU_SPEED_HORIZONTAL));
-        mCurrentConfig.putInt(Constants.ConfigKeys.DANMAKU_SPEED_VERTICAL, getIntSetting(Constants.ConfigKeys.DANMAKU_SPEED_VERTICAL, Constants.ConfigDefaultValues.DANMAKU_SPEED_VERTICAL));
-        mCurrentConfig.putInt(Constants.ConfigKeys.DANMAKU_SIZE_HORIZONTAL, getIntSetting(Constants.ConfigKeys.DANMAKU_SIZE_HORIZONTAL, Constants.ConfigDefaultValues.DANMAKU_SIZE_HORIZONTAL));
-        mCurrentConfig.putInt(Constants.ConfigKeys.DANMAKU_SIZE_VERTICAL, getIntSetting(Constants.ConfigKeys.DANMAKU_SIZE_VERTICAL, Constants.ConfigDefaultValues.DANMAKU_SIZE_VERTICAL));
-
         // performance
         boolean changePerformance = getBooleanSetting(Constants.ConfigKeys.CHANGE_PERFORMANCE_LEVEL, Constants.ConfigDefaultValues.CHANGE_PERFORMANCE_LEVEL);
         int performanceLevel = getIntSetting(Constants.ConfigKeys.PERFORMANCE_LEVEL, Constants.ConfigDefaultValues.PERFORMANCE_LEVEL);
@@ -252,7 +195,6 @@ public class GamingService extends Hilt_GamingService {
         setDisableGesture(disableGesture);
 
         // quick-start apps
-        mCurrentConfig.putStringArray(Constants.ConfigKeys.QUICK_START_APPS, getStringArraySetting(Constants.ConfigKeys.QUICK_START_APPS));
         setAutoRotation(false);
 
         // misc
@@ -279,18 +221,6 @@ public class GamingService extends Hilt_GamingService {
         } catch (RemoteException e) {
             Log.e(TAG, "Failed to disable/enable gesture!", e);
         }
-    }
-
-    private void setShowDanmaku(boolean show) {
-        mDanmakuService.setShowDanmaku(show);
-    }
-
-    private void setDynamicFilterEnabled(boolean enabled) {
-        mDanmakuService.setDynamicFilterEnabled(enabled);
-    }
-
-    private void updateDanmakuBlacklist(String[] blacklist) {
-        mDanmakuService.updateBlacklist(blacklist);
     }
 
     private void setPerformanceLevel(int level) {
@@ -342,9 +272,11 @@ public class GamingService extends Hilt_GamingService {
     public void onDestroy() {
         unregisterReceiver(mGamingModeOffReceiver);
         unregisterNotificationListener();
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(mCallControlReceiver);
-        if (mMenuOverlay) mOverlayController.destroy();
-        mTelephonyManager.listen(mPhoneStateListener, PhoneStateListener.LISTEN_NONE);
+        if (mMenuOverlay) {
+            mDanmakuController.destroy();
+            mCallViewController.destroy();
+            mFloatingViewController.destroy();
+        }
         setDisableGesture(false);
         setDisableAutoBrightness(false, true);
         setDisableRingtone(false);
@@ -363,12 +295,17 @@ public class GamingService extends Hilt_GamingService {
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
-        mOverlayController.updateConfiguration(newConfig);
+        if (mMenuOverlay) {
+            mDanmakuController.updateConfiguration(newConfig);
+            mFloatingViewController.updateConfiguration(newConfig);
+            mCallViewController.updateConfiguration(newConfig);
+        }
     }
 
-    private static void createNotificationChannel(Context context, String channelId, String channelName, int importance) {
-        NotificationChannel channel = new NotificationChannel(channelId, channelName, importance);
-        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+    private void createNotificationChannel(String channelName) {
+        NotificationChannel channel = new NotificationChannel(GamingService.CHANNEL_GAMING_MODE_STATUS,
+                channelName, NotificationManager.IMPORTANCE_LOW);
+        NotificationManager notificationManager = getSystemService(NotificationManager.class);
         notificationManager.createNotificationChannel(channel);
     }
 
@@ -379,67 +316,4 @@ public class GamingService extends Hilt_GamingService {
     private int getIntSetting(String key, int def) {
         return Settings.System.getInt(getContentResolver(), key, def);
     }
-
-    private String[] getStringArraySetting(String key) {
-        String val = Settings.System.getString(getContentResolver(), key);
-        if (!TextUtils.isEmpty(val)) {
-            return val.split(";");
-        } else {
-            return null;
-        }
-    }
-
-    private class GamingPhoneStateListener extends PhoneStateListener {
-        private int mPrevState = -1;
-        private int mPrevMode = AudioManager.MODE_NORMAL;
-        private AudioManager mAudioManager = getSystemService(AudioManager.class);
-
-        private boolean isHeadsetPluggedIn() {
-            AudioDeviceInfo[] audioDeviceInfoArr = mAudioManager.getDevices(AudioManager.GET_DEVICES_ALL);
-            for (AudioDeviceInfo info : audioDeviceInfoArr) {
-                if (info.getType() == AudioDeviceInfo.TYPE_WIRED_HEADPHONES || info.getType() == AudioDeviceInfo.TYPE_WIRED_HEADSET ||
-                    info.getType() == AudioDeviceInfo.TYPE_USB_HEADSET) {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        @Override
-        public void onCallStateChanged(int state, String phoneNumber) {
-            if (Settings.System.getInt(getContentResolver(), Settings.System.GAMING_MODE_AUTO_ANSWER_CALL, 0) != 0) {
-                switch (state) {
-                    case TelephonyManager.CALL_STATE_RINGING:
-                        mTelecomManager.acceptRingingCall();
-                        break;
-                    case TelephonyManager.CALL_STATE_OFFHOOK:
-                        if (mPrevState == TelephonyManager.CALL_STATE_RINGING) {
-                            mPrevMode = mAudioManager.getMode();
-                            mAudioManager.setMode(AudioManager.MODE_IN_COMMUNICATION);
-                            if (isHeadsetPluggedIn()) {
-                                mAudioManager.setSpeakerphoneOn(false);
-                                AudioSystem.setForceUse(AudioSystem.FOR_COMMUNICATION, AudioSystem.FORCE_NONE);
-                            } else {
-                                mAudioManager.setSpeakerphoneOn(true);
-                                AudioSystem.setForceUse(AudioSystem.FOR_COMMUNICATION, AudioSystem.FORCE_SPEAKER);
-                            }
-                            mAudioManager.setMode(AudioManager.MODE_IN_COMMUNICATION);
-                        }
-                        break;
-                    case TelephonyManager.CALL_STATE_IDLE:
-                        if (mPrevState == TelephonyManager.CALL_STATE_OFFHOOK) {
-                            mAudioManager.setMode(mPrevMode);
-                            AudioSystem.setForceUse(AudioSystem.FOR_COMMUNICATION, AudioSystem.FORCE_NONE);
-                            mAudioManager.setSpeakerphoneOn(false);
-                        }
-                        break;
-                }
-            }
-            mCallStatusIntent.putExtra("state", state);
-            LocalBroadcastManager.getInstance(GamingService.this).sendBroadcast(mCallStatusIntent);
-            mPrevState = state;
-            super.onCallStateChanged(state, phoneNumber);
-        }
-    }
-
 }
