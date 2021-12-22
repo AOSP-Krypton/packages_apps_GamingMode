@@ -41,10 +41,6 @@ public class Constants {
         // 屏蔽手势
         public static final String DISABLE_GESTURE = Settings.System.GAMING_MODE_DISABLE_GESTURE;
 
-        // 性能配置
-        public static final String CHANGE_PERFORMANCE_LEVEL = Settings.System.GAMING_MODE_CHANGE_PERFORMANCE_LEVEL;
-        public static final String PERFORMANCE_LEVEL = Settings.System.GAMING_MODE_PERFORMANCE_LEVEL;
-
         public static final String MENU_OPACITY = Settings.System.GAMING_MODE_MENU_OPACITY;
 
         public static final String MENU_OVERLAY = Settings.System.GAMING_MODE_USE_OVERLAY_MENU;
@@ -60,10 +56,6 @@ public class Constants {
         // 屏蔽手势
         public static final boolean DISABLE_GESTURE = true;
 
-        // 性能配置
-        public static final boolean CHANGE_PERFORMANCE_LEVEL = true;
-        public static final int PERFORMANCE_LEVEL = 5;
-
         // Opacity of Gaming Menu (in percent)
         public static final int MENU_OPACITY = 75;
 
@@ -74,12 +66,6 @@ public class Constants {
     public static class GamingActionTargets {
         // 请勿打扰模式
         public static final String DISABLE_RINGTONE = ConfigKeys.DISABLE_RINGTONE;
-        // 屏蔽手势
-        public static final String DISABLE_GESTURE = ConfigKeys.DISABLE_GESTURE;
-        // 自动亮度
-        public static final String DISABLE_AUTO_BRIGHTNESS = ConfigKeys.DISABLE_AUTO_BRIGHTNESS;
-        // 性能配置
-        public static final String PERFORMANCE_LEVEL = ConfigKeys.PERFORMANCE_LEVEL;
     }
 
     public static class LocalConfigKeys {
