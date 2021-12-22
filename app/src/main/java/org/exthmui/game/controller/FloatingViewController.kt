@@ -92,7 +92,7 @@ class FloatingViewController @Inject constructor(
             context.contentResolver,
             Settings.System.GAMING_MODE_QS_APP_LIST
         )
-        qsApps = qsAppsFlattened?.takeIf { it.isNotEmpty() }?.split(",")
+        qsApps = qsAppsFlattened?.takeIf { it.isNotEmpty() }?.split(";")?.filter { it.isNotBlank() }
         changePerfLevel = Settings.System.getInt(
             context.contentResolver,
             Settings.System.GAMING_MODE_CHANGE_PERFORMANCE_LEVEL,
