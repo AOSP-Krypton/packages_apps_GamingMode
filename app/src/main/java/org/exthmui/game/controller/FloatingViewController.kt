@@ -63,10 +63,9 @@ class FloatingViewController @Inject constructor(
         }
         sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context)
 
+        loadSettings()
         initGamingMenu()
         initFloatingLayout()
-        loadSettings()
-        updateViewWithConfig()
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
@@ -108,14 +107,6 @@ class FloatingViewController @Inject constructor(
             context.contentResolver,
             Settings.System.GAMING_MODE_MENU_OPACITY, DEFAULT_MENU_OPACITY
         )
-    }
-
-    private fun updateViewWithConfig() {
-        // 性能配置
-        if (perfProfilesSupported && changePerfLevel) {
-            gamingPerfView?.setLevel(performanceLevel)
-        }
-        gamingMenu?.background?.alpha = menuOpacity * 255 / 100
     }
 
     private fun restoreFloatingButtonOffset() {
@@ -169,14 +160,19 @@ class FloatingViewController @Inject constructor(
         gamingPerfView =
             gamingOverlayView!!.findViewById<GamingPerformanceView>(R.id.performance_controller)
                 .also {
+                    if (perfProfilesSupported && changePerfLevel) {
+                        it.setLevel(performanceLevel)
+                    } else {
+                        it.visibility = View.GONE
+                    }
                     it.setOnUpdateListener { level ->
                         SystemProperties.set(PROP_GAMING_PERFORMANCE, level.toString())
                     }
-                    if (!perfProfilesSupported || !changePerfLevel) it.visibility = View.GONE
                 }
 
-        gamingMenu = gamingOverlayView!!.findViewById(R.id.gaming_menu)
-        gamingMenu!!.background.alpha = Constants.ConfigDefaultValues.MENU_OPACITY * 255 / 100
+        gamingMenu = gamingOverlayView!!.findViewById<ScrollView>(R.id.gaming_menu).also {
+            it.background.alpha = menuOpacity * 255 / 100
+        }
     }
 
     @SuppressLint("InflateParams", "ClickableViewAccessibility")
