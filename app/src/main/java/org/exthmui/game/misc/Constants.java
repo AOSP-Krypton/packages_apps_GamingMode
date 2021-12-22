@@ -41,8 +41,6 @@ public class Constants {
         // 屏蔽手势
         public static final String DISABLE_GESTURE = Settings.System.GAMING_MODE_DISABLE_GESTURE;
 
-        public static final String MENU_OPACITY = Settings.System.GAMING_MODE_MENU_OPACITY;
-
         public static final String MENU_OVERLAY = Settings.System.GAMING_MODE_USE_OVERLAY_MENU;
     }
 
@@ -55,9 +53,6 @@ public class Constants {
 
         // 屏蔽手势
         public static final boolean DISABLE_GESTURE = true;
-
-        // Opacity of Gaming Menu (in percent)
-        public static final int MENU_OPACITY = 75;
 
         // Whether to show menu overlay or not (1/0)
         public static final int MENU_OVERLAY = 1;

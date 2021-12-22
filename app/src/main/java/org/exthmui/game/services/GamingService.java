@@ -191,10 +191,7 @@ public class GamingService extends Hilt_GamingService {
         boolean disableAutoBrightness = getBooleanSetting(Constants.ConfigKeys.DISABLE_AUTO_BRIGHTNESS, Constants.ConfigDefaultValues.DISABLE_AUTO_BRIGHTNESS);
         setDisableAutoBrightness(disableAutoBrightness, false);
 
-        // menu opacity
-        mCurrentConfig.putInt(Constants.ConfigKeys.MENU_OPACITY, getIntSetting(Constants.ConfigKeys.MENU_OPACITY, Constants.ConfigDefaultValues.MENU_OPACITY));
-
-        // menu opacity
+        // enabled overlay menu
         mCurrentConfig.putInt(Constants.ConfigKeys.MENU_OVERLAY, getIntSetting(Constants.ConfigKeys.MENU_OVERLAY, Constants.ConfigDefaultValues.MENU_OVERLAY));
 
         Intent intent = new Intent(Constants.Broadcasts.BROADCAST_CONFIG_CHANGED);
