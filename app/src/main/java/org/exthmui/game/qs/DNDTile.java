@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2020 The exTHmUI Open Source Project
+ * Copyright (C) 2021 AOSP-Krypton Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,12 +18,26 @@
 package org.exthmui.game.qs;
 
 import android.content.Context;
+import android.media.AudioManager;
 
 import org.exthmui.game.R;
 import org.exthmui.game.misc.Constants;
 
 public class DNDTile extends TileBase {
+
+    private final AudioManager mAudioManager;
+
     public DNDTile(Context context) {
-        super(context, context.getString(R.string.qs_dnd), Constants.GamingActionTargets.DISABLE_RINGTONE, R.drawable.ic_qs_dnd);
+        super(context, R.string.qs_dnd, R.drawable.ic_qs_dnd);
+        mAudioManager = context.getSystemService(AudioManager.class);
+        setSelected(mAudioManager.getRingerModeInternal() == AudioManager.RINGER_MODE_SILENT);
+    }
+
+    @Override
+    protected void handleClick(boolean isSelected) {
+        super.handleClick(isSelected);
+        mAudioManager.setRingerModeInternal(isSelected
+            ? AudioManager.RINGER_MODE_SILENT
+            : AudioManager.RINGER_MODE_NORMAL);
     }
 }
