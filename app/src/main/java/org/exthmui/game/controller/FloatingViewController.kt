@@ -137,12 +137,13 @@ class FloatingViewController @Inject constructor(
 
     @SuppressLint("InflateParams")
     private fun initGamingMenu() {
-        gamingOverlayView = layoutInflater.inflate(
+        gamingOverlayView = (layoutInflater.inflate(
             R.layout.gaming_overlay_layout,
             null
-        ) as LinearLayout
-        gamingOverlayView!!.visibility = View.GONE
-        gamingOverlayView!!.setOnClickListener { showHideGamingMenu(0) }
+        ) as LinearLayout).also {
+            it.visibility = View.GONE
+            it.setOnClickListener { showHideGamingMenu(0) }
+        }
 
         val gamingViewLayoutParams = getBaseLayoutParams().apply {
             width = WindowManager.LayoutParams.WRAP_CONTENT
@@ -346,19 +347,10 @@ class FloatingViewController @Inject constructor(
             }
 
             gamingOverlayView?.let {
-                val menuLayoutParams = getBaseLayoutParams().apply {
-                    width = WindowManager.LayoutParams.MATCH_PARENT
-                    height = WindowManager.LayoutParams.MATCH_PARENT
-                }
-                windowManager.updateViewLayout(it, menuLayoutParams)
                 it.gravity = gravity
                 it.visibility = View.VISIBLE
             }
-
-            val gamingMenuLayoutParams = gamingMenu?.layoutParams
-            gamingMenuLayoutParams?.width = if (isPortrait)
-                WindowManager.LayoutParams.MATCH_PARENT else WindowManager.LayoutParams.WRAP_CONTENT
-            gamingMenu?.layoutParams = gamingMenuLayoutParams
+            windowManager.updateViewLayout(gamingOverlayView, getBaseLayoutParams())
 
             gamingFloatingLayout?.visibility = View.GONE
         }
