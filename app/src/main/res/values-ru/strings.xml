@@ -21,15 +21,4 @@
     <string name="qs_dnd">Не беспокоить</string>
     <string name="qs_lock_gesture">Жесты</string>
     <string name="qs_screen_capture">Скриншот</string>
-    <string name="qs_screen_record">Запись экрана</string>
-    <string name="screenrecord_audio_label">Запись аудио</string>
-    <string name="screenrecord_taps_label">Показывать касания на экране</string>
-    <!-- Label for the option to record audio from the device [CHAR LIMIT=NONE]-->
-    <string name="screenrecord_device_audio_label">Звук устройства</string>
-    <!-- Description of what audio may be captured from the device [CHAR LIMIT=NONE]-->
-    <string name="screenrecord_device_audio_description">Звук с вашего устройства, например музыка, звонки и рингтоны</string>
-    <!-- Label for the option to enable microphone input during screen recording [CHAR LIMIT=NONE]-->
-    <string name="screenrecord_mic_label">Микрофон</string>
-    <!-- Label for an option to record audio from both device and microphone [CHAR LIMIT=NONE]-->
-    <string name="screenrecord_device_audio_and_mic_label">Звук устройства и микрофон</string>
 </resources>

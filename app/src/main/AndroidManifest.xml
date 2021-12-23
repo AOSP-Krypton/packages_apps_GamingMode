@@ -15,7 +15,6 @@
         tools:ignore="ProtectedPermissions" />
     <uses-permission android:name="android.permission.ANSWER_PHONE_CALLS" />
     <uses-permission android:name="android.permission.PROCESS_INCOMING_CALLS" />
-    <uses-permission android:name="com.android.systemui.permission.SCREEN_RECORDING" />
 
     <application
         android:name=".GamingModeApp"
@@ -25,10 +24,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="AllowBackup">
-        <activity
-            android:name=".ui.ScreenRecordConfDialogActivity"
-            android:theme="@style/dialog"
-            android:exported="true" />
 
         <receiver
             android:name=".receiver.GamingBroadcastReceiver"

@@ -4,11 +4,7 @@ android_app {
     srcs: [
         "java/**/*.java",
         "java/**/*.kt",
-        "java/**/I*.aidl",
     ],
-    aidl: {
-        local_include_dirs: ["java"],
-    },
 
     static_libs: [
         "androidx.annotation_annotation",
