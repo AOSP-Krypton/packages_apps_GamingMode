@@ -41,7 +41,7 @@ public class TileBase extends LinearLayout implements View.OnClickListener {
         qsIcon = findViewById(R.id.qs_icon);
         qsIcon.setImageResource(iconResId);
         qsText = findViewById(R.id.qs_text);
-        qsText.setText(textResId);
+        if (textResId != 0) qsText.setText(textResId);
         setOnClickListener(this);
     }
 
