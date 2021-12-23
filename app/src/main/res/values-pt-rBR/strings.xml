@@ -1,0 +1,37 @@
+<resources>
+    <string name="app_name">Núcleo do modo de jogo</string>
+
+    <string name="channel_gaming_mode_status">Status do modo de jogo</string>
+    <string name="action_stop_gaming_mode">Parar</string>
+    <string name="gaming_mode_running">O modo de jogo está em execução</string>
+
+
+    <string name="gaming_mode_on">Modo de jogo ativado</string>
+    <string name="gaming_mode_off">Modo de jogo desativado</string>
+
+    <string name="gaming_mode">Modo de jogo</string>
+    <string name="date_format" translatable="false">dd.MM.yyyy</string>
+    <string name="time_format" translatable="false">HH:mm</string>
+    <string name="battery_format">Bateria: %1$d%%</string>
+
+    <string name="performance_title">Desempenho</string>
+    <string name="performance_text_for_powersave">Economia de energia</string>
+    <string name="performance_text_for_performance">Desempenho</string>
+
+    <string name="qs_auto_brightness">Brilho automático</string>
+    <string name="qs_danmaku">Notificação de pop-ups</string>
+    <string name="qs_dnd">Não perturbe</string>
+    <string name="qs_lock_gesture">Bloquear gestos</string>
+    <string name="qs_screen_capture">Captura de tela</string>
+    <string name="qs_screen_record">Gravação de tela</string>
+    <string name="screenrecord_audio_label">Gravar áudio</string>
+    <string name="screenrecord_taps_label">Mostrar toques na tela</string>
+    <!-- Label for the option to record audio from the device [CHAR LIMIT=NONE]-->
+    <string name="screenrecord_device_audio_label">Áudio do dispositivo</string>
+    <!-- Description of what audio may be captured from the device [CHAR LIMIT=NONE]-->
+    <string name="screenrecord_device_audio_description">Som de seu dispositivo, como música, chamadas e toques musicais</string>
+    <!-- Label for the option to enable microphone input during screen recording [CHAR LIMIT=NONE]-->
+    <string name="screenrecord_mic_label">Microfone</string>
+    <!-- Label for an option to record audio from both device and microphone [CHAR LIMIT=NONE]-->
+    <string name="screenrecord_device_audio_and_mic_label">Áudio e microfone do aparelho</string>
+</resources>
