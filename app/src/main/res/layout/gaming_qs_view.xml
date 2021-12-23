@@ -13,7 +13,8 @@
         android:background="@drawable/qs_background"
         android:cropToPadding="false"
         android:padding="@dimen/gaming_qs_icon_padding"
-        android:scaleType="fitCenter" />
+        android:scaleType="fitCenter"
+        android:contentDescription="@string/gaming_qs_icon" />
 
     <TextView
         android:id="@+id/qs_text"

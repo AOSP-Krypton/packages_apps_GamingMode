@@ -34,4 +34,5 @@
     <string name="screenrecord_mic_label">Microphone</string>
     <!-- Label for an option to record audio from both device and microphone [CHAR LIMIT=NONE]-->
     <string name="screenrecord_device_audio_and_mic_label">Device audio and microphone</string>
+    <string name="gaming_qs_icon">Icon of the qs button</string>
 </resources>
