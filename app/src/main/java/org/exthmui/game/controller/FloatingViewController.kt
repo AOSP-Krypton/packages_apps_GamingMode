@@ -87,6 +87,10 @@ class FloatingViewController @Inject constructor(
         gamingPerfView = null
     }
 
+    fun hideGamingMenu() {
+        showHideGamingMenu(2)
+    }
+
     private fun loadSettings() {
         val qsAppsFlattened: String? = Settings.System.getString(
             context.contentResolver,
@@ -148,6 +152,7 @@ class FloatingViewController @Inject constructor(
 
         qsView = gamingOverlayView!!.findViewById<QuickSettingsView>(R.id.gaming_qs).also {
             it.setDanmakuController(danmakuController)
+            it.setFloatingViewController(this)
             it.addTiles()
         }
         qsAppView = gamingOverlayView!!.findViewById<QuickStartAppView>(R.id.gaming_qsapp).also {

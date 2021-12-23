@@ -23,12 +23,14 @@ import android.view.WindowManager.TAKE_SCREENSHOT_FULLSCREEN
 import com.android.internal.util.ScreenshotHelper
 
 import org.exthmui.game.R
+import org.exthmui.game.controller.FloatingViewController
 
 class ScreenCaptureTile(context: Context?) :
     TileBase(context, R.string.qs_screen_capture, R.drawable.ic_qs_screenshot) {
 
     private val screenshotHelper: ScreenshotHelper
     private val takeScreenshot: Runnable
+    private var viewController: FloatingViewController? = null
 
     init {
         screenshotHelper = ScreenshotHelper(context)
@@ -43,10 +45,15 @@ class ScreenCaptureTile(context: Context?) :
     }
 
     override fun handleClick(isSelected: Boolean) {
+        viewController?.hideGamingMenu()
         handler.postDelayed(takeScreenshot, 300)
     }
 
     override fun onDestroy() {
         handler.removeCallbacks(takeScreenshot)
+    }
+
+    fun setViewController(controller: FloatingViewController) {
+        viewController = controller
     }
 }

@@ -26,6 +26,7 @@ import androidx.appcompat.content.res.AppCompatResources;
 
 import org.exthmui.game.R;
 import org.exthmui.game.controller.DanmakuController;
+import org.exthmui.game.controller.FloatingViewController;
 import org.exthmui.game.qs.AutoBrightnessTile;
 import org.exthmui.game.qs.DNDTile;
 import org.exthmui.game.qs.DanmakuTile;
@@ -36,6 +37,7 @@ import org.exthmui.game.qs.ScreenRecordTile;
 public class QuickSettingsView extends LinearLayout {
 
     private DanmakuController mDanmakuController;
+    private FloatingViewController mFloatingViewController;
 
     public QuickSettingsView(Context context) {
         this(context, null);
@@ -61,13 +63,23 @@ public class QuickSettingsView extends LinearLayout {
         mDanmakuController = danmakuController;
     }
 
+    public void setFloatingViewController(@NonNull FloatingViewController floatingViewController) {
+        mFloatingViewController = floatingViewController;
+    }
+
     public void addTiles() {
         final Context context = getContext();
-        addView(new ScreenCaptureTile(context));
+
+        final ScreenCaptureTile screenCaptureTile = new ScreenCaptureTile(context);
+        screenCaptureTile.setViewController(mFloatingViewController);
+        addView(screenCaptureTile);
+
         addView(new ScreenRecordTile(context));
+
         final DanmakuTile danmakuTile = new DanmakuTile(context);
         danmakuTile.setDanmakuController(mDanmakuController);
         addView(danmakuTile);
+
         addView(new DNDTile(context));
         addView(new LockGestureTile(context));
         addView(new AutoBrightnessTile(context));
