@@ -2,7 +2,6 @@ android_app {
     name: "GamingMode",
 
     srcs: [
-        "java/**/*.java",
         "java/**/*.kt",
     ],
 
