@@ -4,25 +4,24 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal">
 
-    <TextView
+    <TextClock
         android:id="@+id/current_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="18:00"
         android:textSize="32sp" />
 
-    <TextView
+    <TextClock
         android:id="@+id/current_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/time_battery_margin_horizontal"
-        android:text="2020年7月22日" />
+        android:format12Hour="@string/date_format"
+        android:format24Hour="@string/date_format" />
 
     <TextView
         android:id="@+id/current_battery"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="end"
-        android:text="电量: 100%" />
+        android:gravity="end" />
 
 </LinearLayout>

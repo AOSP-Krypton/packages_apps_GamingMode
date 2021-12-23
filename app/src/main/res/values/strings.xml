@@ -11,7 +11,6 @@
 
     <string name="gaming_mode">Gaming Mode</string>
     <string name="date_format" translatable="false">dd.MM.yyyy</string>
-    <string name="time_format" translatable="false">HH:mm</string>
     <string name="battery_format">Battery: %1$d%%</string>
 
     <string name="performance_title">Performance</string>

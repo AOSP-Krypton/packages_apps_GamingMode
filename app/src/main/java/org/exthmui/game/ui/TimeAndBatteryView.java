@@ -21,7 +21,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.BatteryManager;
-import android.text.format.DateFormat;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.LinearLayout;
@@ -37,11 +36,8 @@ public class TimeAndBatteryView extends LinearLayout {
 
     private Context mContext;
 
-    private TextView currentTime;
-    private TextView currentDate;
     private TextView currentBattery;
 
-    private TimeChangeReceiver timeChangeReceiver = new TimeChangeReceiver();
     private BatteryChangeReceiver batteryChangeReceiver = new BatteryChangeReceiver();
 
     public TimeAndBatteryView(Context context) {
@@ -63,38 +59,18 @@ public class TimeAndBatteryView extends LinearLayout {
         LayoutInflater.from(context).inflate(R.layout.time_battery_layout, this, true);
 
         currentBattery = findViewById(R.id.current_battery);
-        currentDate = findViewById(R.id.current_date);
-        currentTime = findViewById(R.id.current_time);
 
-        mContext.registerReceiver(timeChangeReceiver, new IntentFilter(Intent.ACTION_TIME_TICK));
         mContext.registerReceiver(batteryChangeReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
-        updateTime();
 
         BatteryManager batteryManager = (BatteryManager) mContext.getSystemService(BATTERY_SERVICE);
         currentBattery.setText(mContext.getString(R.string.battery_format, batteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY)));
 
     }
 
-    private void updateTime() {
-        long sysTime = System.currentTimeMillis();
-        currentDate.setText(DateFormat.format(mContext.getString(R.string.date_format), sysTime));
-        currentTime.setText(DateFormat.format(mContext.getString(R.string.time_format), sysTime));
-    }
-
     @Override
     public void onDetachedFromWindow() {
-        mContext.unregisterReceiver(timeChangeReceiver);
         mContext.unregisterReceiver(batteryChangeReceiver);
         super.onDetachedFromWindow();
-    }
-
-    private class TimeChangeReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (Intent.ACTION_TIME_TICK.equals(intent.getAction())) {
-                updateTime();
-            }
-        }
     }
 
     private class BatteryChangeReceiver extends BroadcastReceiver {
