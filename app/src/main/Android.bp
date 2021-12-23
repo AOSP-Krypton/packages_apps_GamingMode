@@ -13,7 +13,6 @@ android_app {
         "androidx.preference_preference",
         "androidx-constraintlayout_constraintlayout",
         "com.google.android.material_material",
-        "androidx.localbroadcastmanager_localbroadcastmanager",
         "hilt_android",
         "jsr330",
     ],

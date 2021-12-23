@@ -23,7 +23,6 @@ import javax.inject.Singleton
 import kotlin.math.sqrt
 
 import org.exthmui.game.R
-import org.exthmui.game.misc.Constants
 import org.exthmui.game.ui.GamingPerformanceView
 import org.exthmui.game.ui.QuickSettingsView
 import org.exthmui.game.ui.QuickStartAppView
@@ -119,16 +118,16 @@ class FloatingViewController @Inject constructor(
         setButtonOffset(
             CoordinateType.X, gamingFBLayoutParams,
             sharedPrefs.getInt(
-                if (isPortrait) Constants.LocalConfigKeys.FLOATING_BUTTON_COORDINATE_VERTICAL_X
-                else Constants.LocalConfigKeys.FLOATING_BUTTON_COORDINATE_HORIZONTAL_X,
+                if (isPortrait) FLOATING_BUTTON_COORDINATE_VERTICAL_X
+                else FLOATING_BUTTON_COORDINATE_HORIZONTAL_X,
                 defaultX
             )
         )
         setButtonOffset(
             CoordinateType.Y, gamingFBLayoutParams,
             sharedPrefs.getInt(
-                if (isPortrait) Constants.LocalConfigKeys.FLOATING_BUTTON_COORDINATE_VERTICAL_Y
-                else Constants.LocalConfigKeys.FLOATING_BUTTON_COORDINATE_HORIZONTAL_Y,
+                if (isPortrait) FLOATING_BUTTON_COORDINATE_VERTICAL_Y
+                else FLOATING_BUTTON_COORDINATE_HORIZONTAL_Y,
                 10
             )
         )
@@ -243,22 +242,22 @@ class FloatingViewController @Inject constructor(
                                 if (isPortrait) {
                                     sharedPrefs.edit(commit = true) {
                                         putInt(
-                                            Constants.LocalConfigKeys.FLOATING_BUTTON_COORDINATE_VERTICAL_X,
+                                            FLOATING_BUTTON_COORDINATE_VERTICAL_X,
                                             gamingFBLayoutParams.x
                                         )
                                         putInt(
-                                            Constants.LocalConfigKeys.FLOATING_BUTTON_COORDINATE_VERTICAL_Y,
+                                            FLOATING_BUTTON_COORDINATE_VERTICAL_Y,
                                             gamingFBLayoutParams.y
                                         )
                                     }
                                 } else {
                                     sharedPrefs.edit(commit = true) {
                                         putInt(
-                                            Constants.LocalConfigKeys.FLOATING_BUTTON_COORDINATE_HORIZONTAL_X,
+                                            FLOATING_BUTTON_COORDINATE_HORIZONTAL_X,
                                             gamingFBLayoutParams.x
                                         )
                                         putInt(
-                                            Constants.LocalConfigKeys.FLOATING_BUTTON_COORDINATE_HORIZONTAL_Y,
+                                            FLOATING_BUTTON_COORDINATE_HORIZONTAL_Y,
                                             gamingFBLayoutParams.y
                                         )
                                     }
@@ -373,5 +372,11 @@ class FloatingViewController @Inject constructor(
         private const val DEFAULT_MENU_OPACITY = 75
 
         private const val PROP_GAMING_PERFORMANCE = "sys.performance.level"
+
+        // 悬浮球位置
+        private const val FLOATING_BUTTON_COORDINATE_HORIZONTAL_X = "floating_button_horizontal_x"
+        private const val FLOATING_BUTTON_COORDINATE_HORIZONTAL_Y = "floating_button_horizontal_y"
+        private const val FLOATING_BUTTON_COORDINATE_VERTICAL_X = "floating_button_vertical_x"
+        private const val FLOATING_BUTTON_COORDINATE_VERTICAL_Y = "floating_button_vertical_y"
     }
 }
