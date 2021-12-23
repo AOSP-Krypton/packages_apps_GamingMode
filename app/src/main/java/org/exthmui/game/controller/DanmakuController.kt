@@ -200,7 +200,7 @@ class DanmakuController @Inject constructor(
     }
 
     private fun autoSize(origin: Int): Int {
-        val autoSize = origin * bounds.width() / DESIGN_WIDTH
+        val autoSize = origin * bounds.width() / (if (isPortrait) DESIGN_WIDTH else DESIGN_HEIGHT)
         if (origin != 0 && autoSize == 0) {
             return 1
         }
@@ -337,6 +337,7 @@ class DanmakuController @Inject constructor(
         const val TOO_MANY_DANMAKU = 2
 
         private const val DESIGN_WIDTH = 1080
+        private const val DESIGN_HEIGHT = 1920
 
         // 弹幕速度
         private const val DEFAULT_DANMAKU_SPEED_LANDSCAPE = 300
