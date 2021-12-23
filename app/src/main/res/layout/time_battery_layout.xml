@@ -5,13 +5,13 @@
     android:orientation="horizontal">
 
     <TextClock
-        android:id="@+id/current_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="32sp" />
+        android:textSize="32sp"
+        android:format12Hour="h:mm"
+        android:format24Hour="H:mm" />
 
     <TextClock
-        android:id="@+id/current_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/time_battery_margin_horizontal"
