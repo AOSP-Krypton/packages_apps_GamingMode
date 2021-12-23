@@ -36,7 +36,7 @@ class GamingPerformanceView(
     private var listener: ((level: Int) -> Unit)? = null
     
     init {
-        LayoutInflater.from(context).inflate(R.layout.gaming_perofrmance_layout, this, true)
+        LayoutInflater.from(context).inflate(R.layout.gaming_performance_layout, this, true)
         seekBar = findViewById<SeekBar>(R.id.performance_seek).also {
             it.setOnSeekBarChangeListener(this)
         }
