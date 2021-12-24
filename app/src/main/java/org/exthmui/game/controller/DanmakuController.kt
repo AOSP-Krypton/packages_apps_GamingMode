@@ -102,6 +102,12 @@ class DanmakuController @Inject constructor(
     override fun onConfigurationChanged(newConfig: Configuration) {
         updateViewConfig()
     }
+
+    override fun onDestroy() {
+        windowManager.removeViewImmediate(danmakuContainer)
+        danmakuContainer = null
+    }
+
     fun setShowDanmaku(show: Boolean) {
         showDanmaku = show
     }
@@ -153,10 +159,10 @@ class DanmakuController @Inject constructor(
     /**
      * 发送一条弹幕
      */
-    private fun show(danmaku: Danmaku): Int {
+    private fun show(danmaku: Danmaku) {
         if (danmakuContainer == null) {
             Log.w(TAG, "show: Container is null.")
-            return RESULT_NULL_ROOT_VIEW
+            return
         }
 
         val view = (layoutInflater.inflate(
@@ -176,7 +182,7 @@ class DanmakuController @Inject constructor(
 
         if (marginTop == -1) {
             Log.w(TAG, "send(): screen is full, too many danmaku $danmaku")
-            return TOO_MANY_DANMAKU
+            return
         }
 
         var lp = view.layoutParams as? FrameLayout.LayoutParams
@@ -197,7 +203,6 @@ class DanmakuController @Inject constructor(
                 (view.getTextLength() + positionCalculator.getParentWidth()) / duration * 1000
         }
         view.show(danmakuContainer!!, duration)
-        return RESULT_OK
     }
 
     /**
@@ -210,11 +215,6 @@ class DanmakuController @Inject constructor(
             Danmaku.Mode.SCROLL -> scrollSpeed
             else -> scrollSpeed
         }
-
-    override fun onDestroy() {
-        windowManager.removeViewImmediate(danmakuContainer)
-        danmakuContainer = null
-    }
 
     private fun autoSize(origin: Int): Int {
         val autoSize = origin * bounds.width() / (if (isPortrait) DESIGN_WIDTH else DESIGN_HEIGHT)
@@ -348,10 +348,6 @@ class DanmakuController @Inject constructor(
     companion object {
         private const val TAG = "DanmakuManager"
         private const val DEBUG = false
-
-        const val RESULT_OK = 0
-        const val RESULT_NULL_ROOT_VIEW = 1
-        const val TOO_MANY_DANMAKU = 2
 
         private const val DESIGN_WIDTH = 1080
         private const val DESIGN_HEIGHT = 1920
