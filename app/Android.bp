@@ -2,18 +2,26 @@ android_app {
     name: "GamingMode",
 
     srcs: [
-        "java/**/*.kt",
+        "src/main/java/**/*.kt",
+    ],
+    resource_dirs: [
+        "src/main/res"
+    ],
+
+    defaults: [
+        "SettingsLibDefaults",
     ],
 
     static_libs: [
         "androidx.annotation_annotation",
         "androidx.core_core-ktx",
-        "androidx.appcompat_appcompat",
-        "androidx.preference_preference",
+        "androidx.preference_preference-ktx",
+        "androidx.recyclerview_recyclerview",
         "androidx-constraintlayout_constraintlayout",
         "com.google.android.material_material",
         "hilt_android",
         "jsr330",
+        "PreferenceExtensions",
     ],
 
     platform_apis: true,
@@ -22,9 +30,17 @@ android_app {
 
     required: ["privapp_whitelist_org.exthmui.game.xml"],
 
+    manifest: "src/main/AndroidManifest.xml",
+
     plugins: [
         "dagger2-compiler",
     ],
+
+    optimize: {
+        proguard_flags_files: [
+            "proguard-rules.pro"
+        ],
+    },
 }
 
 prebuilt_etc {
