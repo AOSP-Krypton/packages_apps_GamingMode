@@ -1,12 +1,41 @@
 <resources>
-    <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat">
-        <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:textColor">#ffffffff</item>
-        <item name="android:textColorSecondary">#ffe0e0e0</item>
+    <style name="Theme.Settings" parent="Theme.SettingsBase">
+        <item name="android:clipToPadding">false</item>
+        <item name="android:clipChildren">false</item>
+
+        <!-- For edge-to-edge -->
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+
+        <!-- For AppBarLayout -->
+        <item name="colorPrimary">@*android:color/primary_device_default_settings_light</item>
+        <item name="colorPrimaryVariant">@android:color/white</item>
+    </style>
+
+    <!-- Variant of the settings theme with no action bar. -->
+    <style name="Theme.Settings.NoActionBar">
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
+    <style name="Theme.Settings.HomeBase" parent="Theme.Settings.NoActionBar">
+        <item name="colorPrimary">@*android:color/primary_device_default_settings_light</item>
+        <item name="colorAccent">@*android:color/accent_device_default_light</item>
+
+        <!-- action bar, needed for search bar icon tinting -->
+        <item name="android:actionBarTheme">@*android:style/ThemeOverlay.DeviceDefault.ActionBar</item>
+
+        <!-- Define this color for material design -->
+        <item name="colorPrimaryVariant">@android:color/white</item>
+    </style>
+
+    <style name="Theme.Settings.Home" parent="Theme.Settings.HomeBase">
+        <item name="colorPrimaryDark">@*android:color/primary_dark_device_default_settings_light</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:navigationBarDividerColor">@*android:color/ripple_material_light</item>
+        <!-- Homepage should follow device default design, the values is same as device default theme.-->
+        <item name="android:navigationBarColor">@android:color/white</item>
+        <item name="android:statusBarColor">?attr/colorPrimaryDark</item>
     </style>
 
     <style name="dialog" parent="@*android:style/Theme.DeviceDefault.Dialog.Alert.DayNight">

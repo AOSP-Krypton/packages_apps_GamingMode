@@ -1,6 +1,4 @@
 <resources>
-    <string name="app_name">Игровой режим</string>
-
     <string name="channel_gaming_mode_status">Статус игрового режима</string>
     <string name="action_stop_gaming_mode">Остановить</string>
     <string name="gaming_mode_running">Игровой режим включен</string>

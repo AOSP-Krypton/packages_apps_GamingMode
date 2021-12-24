@@ -1,6 +1,4 @@
 <resources>
-    <string name="app_name">Spielemodus-Kernkomponente</string>
-
     <string name="channel_gaming_mode_status">Spielemodusstatus</string>
     <string name="action_stop_gaming_mode">Stopp</string>
     <string name="gaming_mode_running">Spielemodus läuft</string>

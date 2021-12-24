@@ -19,3 +19,6 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# Keep all Fragments in this package, which are used by reflection.
+-keep public class org.exthmui.game.fragment.** extends androidx.fragment.app.Fragment
