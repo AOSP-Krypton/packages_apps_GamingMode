@@ -31,13 +31,10 @@ open class ViewController(private val context: Context) {
     protected var bounds = windowManager.currentWindowMetrics.bounds
     protected var layoutInflater: LayoutInflater = LayoutInflater.from(context)
 
-    protected var initDone = false
-
     fun init() {
         if (Settings.canDrawOverlays(context)) {
             initController()
         }
-        initDone = true
     }
 
     protected open fun initController() {}
@@ -61,7 +58,6 @@ open class ViewController(private val context: Context) {
 
     fun destroy() {
         onDestroy()
-        initDone = false
     }
 
     protected open fun onDestroy() {}
