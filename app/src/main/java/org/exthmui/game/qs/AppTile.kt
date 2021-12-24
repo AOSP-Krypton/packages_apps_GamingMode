@@ -19,6 +19,7 @@ package org.exthmui.game.qs
 
 import android.app.ActivityManager
 import android.app.ActivityOptions
+import android.app.ActivityTaskManager
 import android.app.WindowConfiguration
 import android.content.Context
 import android.content.Intent
@@ -76,27 +77,32 @@ class AppTile(context: Context) : TileBase(context) {
         val width = if (isPortrait) bounds.width() - 100 else bounds.height() - 100
         val height = width * if (isPortrait) 4 / 3 else 3 / 4
         activityOptions.launchBounds = Rect(50, 50, 50 + width, 50 + height)
-        val am: ActivityManager = context.getSystemService(ActivityManager::class.java)
         try {
-            @Suppress("DEPRECATION")
             val recentTaskInfoList: List<ActivityManager.RecentTaskInfo> =
-                am.getRecentTasks(100, ActivityManager.RECENT_IGNORE_UNAVAILABLE)
-            for (info in recentTaskInfoList) {
-                if (info.isRunning && info.topActivity != null && packageName == info.topActivity?.packageName) {
-                    ActivityManager.getService().startActivityFromRecents(info.taskId, activityOptions.toBundle())
+                ActivityTaskManager.getInstance().getRecentTasks(
+                    100,
+                    ActivityManager.RECENT_IGNORE_UNAVAILABLE,
+                    UserHandle.USER_CURRENT
+                )
+            recentTaskInfoList.firstOrNull { it.isRunning && it.topActivity?.packageName == packageName }
+                ?.let {
+                    ActivityManager.getService()
+                        .startActivityFromRecents(it.taskId, activityOptions.toBundle())
                     return
                 }
-            }
         } catch (e: RemoteException) {
             Log.e(TAG, "RemoteException while launching app", e)
+            return
         }
-        val startAppIntent: Intent? = packageManager.getLaunchIntentForPackage(packageName!!)?.apply {
-            addFlags(
-                Intent.FLAG_ACTIVITY_LAUNCH_ADJACENT or
-                        Intent.FLAG_ACTIVITY_NEW_TASK or
-                        Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED)
-            setPackage(null)
-        }
+        val startAppIntent: Intent? =
+            packageManager.getLaunchIntentForPackage(packageName!!)?.apply {
+                addFlags(
+                    Intent.FLAG_ACTIVITY_LAUNCH_ADJACENT or
+                            Intent.FLAG_ACTIVITY_NEW_TASK or
+                            Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED
+                )
+                setPackage(null)
+            }
         context.startActivityAsUser(startAppIntent, activityOptions.toBundle(), UserHandle.CURRENT)
     }
 
