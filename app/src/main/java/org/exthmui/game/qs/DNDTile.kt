@@ -24,6 +24,13 @@ import org.exthmui.game.R
 
 class DNDTile(context: Context) : TileBase(context) {
     private val audioManager = context.getSystemService(AudioManager::class.java)
+    private val initialMode = audioManager.ringerModeInternal
+
+    init {
+        setText(R.string.qs_dnd)
+        setIcon(R.drawable.ic_qs_dnd)
+        isSelected = audioManager.ringerModeInternal == AudioManager.RINGER_MODE_SILENT
+    }
 
     override fun handleClick(isSelected: Boolean) {
         super.handleClick(isSelected)
@@ -31,9 +38,7 @@ class DNDTile(context: Context) : TileBase(context) {
             if (isSelected) AudioManager.RINGER_MODE_SILENT else AudioManager.RINGER_MODE_NORMAL
     }
 
-    init {
-        setText(R.string.qs_dnd)
-        setIcon(R.drawable.ic_qs_dnd)
-        isSelected = audioManager.ringerModeInternal == AudioManager.RINGER_MODE_SILENT
+    override fun onDestroy() {
+        audioManager.ringerModeInternal = initialMode
     }
 }

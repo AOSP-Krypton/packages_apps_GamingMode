@@ -47,6 +47,10 @@ class LockGestureTile(context: Context) : TileBase(context) {
         }
     }
 
+    override fun onDestroy() {
+        statusBarService.setBlockedGesturalNavigation(false)
+    }
+
     companion object {
         private const val TAG = "LockGestureTile"
     }

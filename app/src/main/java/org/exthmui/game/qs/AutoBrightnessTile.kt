@@ -23,14 +23,17 @@ import android.provider.Settings
 import org.exthmui.game.R
 
 class AutoBrightnessTile(context: Context) : TileBase(context) {
+
+    private val initialMode = Settings.System.getInt(
+        context.contentResolver,
+        Settings.System.SCREEN_BRIGHTNESS_MODE,
+        Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL
+    )
+
     init {
         setText(R.string.qs_auto_brightness)
         setIcon(R.drawable.ic_qs_auto_brightness)
-        isSelected = Settings.System.getInt(
-            context.contentResolver,
-            Settings.System.SCREEN_BRIGHTNESS_MODE,
-            Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL
-        ) == Settings.System.SCREEN_BRIGHTNESS_MODE_AUTOMATIC
+        isSelected = initialMode == Settings.System.SCREEN_BRIGHTNESS_MODE_AUTOMATIC
     }
 
     override fun handleClick(isSelected: Boolean) {
@@ -40,6 +43,14 @@ class AutoBrightnessTile(context: Context) : TileBase(context) {
             Settings.System.SCREEN_BRIGHTNESS_MODE,
             if (isSelected) Settings.System.SCREEN_BRIGHTNESS_MODE_AUTOMATIC
             else Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL
+        )
+    }
+
+    override fun onDestroy() {
+        Settings.System.putInt(
+            context.contentResolver,
+            Settings.System.SCREEN_BRIGHTNESS_MODE,
+            initialMode
         )
     }
 }
