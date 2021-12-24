@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">遊戲模式核心</string>
+
+    <string name="channel_gaming_mode_status">遊戲模式狀態</string>
+    <string name="action_stop_gaming_mode">停止</string>
+    <string name="gaming_mode_running">遊戲模式正在執行</string>
+
+
+    <string name="gaming_mode_on">遊戲模式已啟動</string>
+    <string name="gaming_mode_off">已退出遊戲模式</string>
+
+    <string name="gaming_mode">遊戲模式</string>
+    <string name="battery_format">電量: %1$d%%</string>
+
+    <string name="performance_title">效能配置</string>
+    <string name="performance_text_for_powersave">更長續航</string>
+    <string name="performance_text_for_performance">最高效能</string>
+    <string name="qs_auto_brightness">自動亮度</string>
+    <string name="qs_danmaku">通知彈幕</string>
+    <string name="qs_dnd">勿擾模式</string>
+    <string name="qs_lock_gesture">遮蔽手勢</string>
+    <string name="qs_screen_capture">螢幕截圖</string>
+</resources>
