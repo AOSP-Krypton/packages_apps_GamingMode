@@ -22,11 +22,8 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
-import android.content.BroadcastReceiver
 import android.content.ComponentName
-import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.content.res.Configuration
 import android.os.IBinder
 import android.os.RemoteException
@@ -49,13 +46,6 @@ import org.exthmui.game.controller.FloatingViewController
 class GamingService : Hilt_GamingService() {
 
     private var enabledMenuOverlay = false
-    private val gamingModeOffReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
-            if (intent.action == SYS_BROADCAST_GAMING_MODE_OFF) {
-                stopSelf()
-            }
-        }
-    }
 
     @Inject
     lateinit var callViewController: CallViewController
@@ -67,14 +57,18 @@ class GamingService : Hilt_GamingService() {
     lateinit var floatingViewController: FloatingViewController
 
     private val mDanmakuService = DanmakuService()
+
     override fun onCreate() {
         super.onCreate()
         createNotificationChannel(getString(R.string.channel_gaming_mode_status))
         registerNotificationListener()
-        registerReceiver(gamingModeOffReceiver, IntentFilter(SYS_BROADCAST_GAMING_MODE_OFF))
-        val stopGamingIntent = PendingIntent.getBroadcast(
-            this, 0,
-            Intent(SYS_BROADCAST_GAMING_MODE_OFF), PendingIntent.FLAG_IMMUTABLE
+        val stopGamingIntent = PendingIntent.getService(
+            this,
+            STOP_SERVICE_REQUEST_CODE,
+            Intent(this, GamingService::class.java).apply {
+                action = STOP_SERVICE_ACTION
+            },
+            PendingIntent.FLAG_IMMUTABLE
         )
         val notification = Notification.Builder(this, CHANNEL_GAMING_MODE_STATUS).let {
             it.addAction(
@@ -93,6 +87,10 @@ class GamingService : Hilt_GamingService() {
     }
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
+        if (intent.action == STOP_SERVICE_ACTION) {
+            stopSelf()
+            return START_NOT_STICKY
+        }
         enabledMenuOverlay = Settings.System.getInt(
             contentResolver,
             Settings.System.GAMING_MODE_USE_OVERLAY_MENU, 1
@@ -125,7 +123,6 @@ class GamingService : Hilt_GamingService() {
     }
 
     override fun onDestroy() {
-        unregisterReceiver(gamingModeOffReceiver)
         unregisterNotificationListener()
         if (enabledMenuOverlay) {
             danmakuController.destroy()
@@ -162,7 +159,8 @@ class GamingService : Hilt_GamingService() {
 
     companion object {
         private const val TAG = "GamingService"
-        private const val SYS_BROADCAST_GAMING_MODE_OFF = "exthmui.intent.action.GAMING_MODE_OFF"
+        private const val STOP_SERVICE_REQUEST_CODE = 1001
+        private const val STOP_SERVICE_ACTION = "org.exthmui.game.GamingService.ACTION_STOP_SELF"
         private const val CHANNEL_GAMING_MODE_STATUS = "gaming_mode_status"
         private const val NOTIFICATION_ID = 1
     }

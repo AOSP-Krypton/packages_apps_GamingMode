@@ -27,15 +27,16 @@ import org.exthmui.game.services.GamingService
 class GamingBroadcastReceiver: BroadcastReceiver() {
     
     override fun onReceive(context: Context, intent: Intent) {
+        val serviceIntent = Intent(context, GamingService::class.java)
         if (intent.action == SYS_BROADCAST_GAMING_MODE_ON) {
-            val serviceIntent = Intent(context, GamingService::class.java).apply {
-                putExtras(intent)
-            }
             context.startServiceAsUser(serviceIntent, UserHandle.CURRENT)
+        } else if (intent.action == SYS_BROADCAST_GAMING_MODE_OFF) {
+            context.stopServiceAsUser(serviceIntent, UserHandle.CURRENT)
         }
     }
 
     companion object {
         private const val SYS_BROADCAST_GAMING_MODE_ON = "exthmui.intent.action.GAMING_MODE_ON"
+        private const val SYS_BROADCAST_GAMING_MODE_OFF = "exthmui.intent.action.GAMING_MODE_OFF"
     }
 }
