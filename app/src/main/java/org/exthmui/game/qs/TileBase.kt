@@ -17,8 +17,9 @@
 
 package org.exthmui.game.qs
 
-import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.drawable.Drawable
+import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -27,24 +28,60 @@ import android.widget.ImageView
 
 import org.exthmui.game.R
 
-@SuppressLint("ViewConstructor", "InflateParams")
-open class TileBase(
-    context: Context?,
-    textResId: Int,
-    iconResId: Int,
-) : LinearLayout(context), View.OnClickListener {
+open class TileBase @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0,
+    defStyleRes: Int = 0,
+) : LinearLayout(context, attrs, defStyleAttr, defStyleRes), View.OnClickListener {
 
     private var isSelected = false
     private var isToggleable = true
 
-    private val root = LayoutInflater.from(context).inflate(R.layout.gaming_qs_view, null)
-    protected val qsIcon: ImageView = root.findViewById<ImageView>(R.id.qs_icon).apply {
-        setImageResource(iconResId)
+    private val qsIcon: ImageView
+    private val qsText: TextView
+
+    init {
+        LayoutInflater.from(context).inflate(R.layout.gaming_qs_view, this, true)
+        qsIcon = findViewById(R.id.qs_icon)
+        qsText = findViewById(R.id.qs_text)
     }
-    protected val qsText: TextView = root.findViewById(R.id.qs_text)
 
     fun setToggleable(isToggleable: Boolean) {
         this.isToggleable = isToggleable
+    }
+
+    fun setText(resId: Int) {
+        if (resId == 0) {
+            qsText.visibility = View.GONE
+        } else {
+            qsText.setText(resId)
+            qsText.visibility = View.VISIBLE
+        }
+    }
+
+    fun setIcon(resId: Int) {
+        if (resId == 0) {
+            qsIcon.visibility = View.GONE
+        } else {
+            qsIcon.setImageResource(resId)
+            qsIcon.visibility = View.VISIBLE
+        }
+    }
+
+    fun setIcon(drawable: Drawable) {
+        qsIcon.setImageDrawable(drawable)
+    }
+
+    fun setIconPadding(padding: Int) {
+        qsIcon.setPadding(padding, padding, padding, padding)
+    }
+
+    fun setIconSize(size: Int) {
+        qsIcon.layoutParams.apply {
+            height = size
+            width = size
+        }
     }
 
     override fun setSelected(selected: Boolean) {
@@ -69,18 +106,14 @@ open class TileBase(
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-        addView(root)
         setOnClickListener(this)
     }
 
     override fun onDetachedFromWindow() {
+        setOnClickListener(null)
         onDestroy()
         super.onDetachedFromWindow()
     }
 
     open fun onDestroy() {}
-
-    init {
-        if (textResId != 0) qsText.setText(textResId)
-    }
 }

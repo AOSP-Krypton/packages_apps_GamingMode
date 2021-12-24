@@ -22,9 +22,10 @@ import android.provider.Settings
 
 import org.exthmui.game.R
 
-class AutoBrightnessTile(context: Context) :
-    TileBase(context, R.string.qs_auto_brightness, R.drawable.ic_qs_auto_brightness) {
+class AutoBrightnessTile(context: Context) : TileBase(context) {
     init {
+        setText(R.string.qs_auto_brightness)
+        setIcon(R.drawable.ic_qs_auto_brightness)
         isSelected = Settings.System.getInt(
             context.contentResolver,
             Settings.System.SCREEN_BRIGHTNESS_MODE,

@@ -22,7 +22,7 @@ import android.media.AudioManager
 
 import org.exthmui.game.R
 
-class DNDTile(context: Context) : TileBase(context, R.string.qs_dnd, R.drawable.ic_qs_dnd) {
+class DNDTile(context: Context) : TileBase(context) {
     private val audioManager = context.getSystemService(AudioManager::class.java)
 
     override fun handleClick(isSelected: Boolean) {
@@ -32,6 +32,8 @@ class DNDTile(context: Context) : TileBase(context, R.string.qs_dnd, R.drawable.
     }
 
     init {
+        setText(R.string.qs_dnd)
+        setIcon(R.drawable.ic_qs_dnd)
         isSelected = audioManager.ringerModeInternal == AudioManager.RINGER_MODE_SILENT
     }
 }

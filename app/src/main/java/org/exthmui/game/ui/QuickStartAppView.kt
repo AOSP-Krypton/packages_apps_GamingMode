@@ -44,7 +44,11 @@ class QuickStartAppView @JvmOverloads constructor(
         visibility = GONE
         removeAllViewsInLayout()
         if (apps?.isNotEmpty() == true) {
-            apps.forEach { addView(AppTile(context, it)) }
+            apps.forEach {
+                addView(AppTile(context).apply {
+                    setPackage(it)
+                })
+            }
             visibility = VISIBLE
         }
     }

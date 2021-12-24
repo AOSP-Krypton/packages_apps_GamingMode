@@ -26,14 +26,15 @@ import com.android.internal.util.ScreenshotHelper
 import org.exthmui.game.R
 import org.exthmui.game.controller.FloatingViewController
 
-class ScreenCaptureTile(context: Context?) :
-    TileBase(context, R.string.qs_screen_capture, R.drawable.ic_qs_screenshot) {
+class ScreenCaptureTile(context: Context) : TileBase(context) {
 
     private val screenshotHelper: ScreenshotHelper
     private val takeScreenshot: Runnable
     private var viewController: FloatingViewController? = null
 
     init {
+        setText(R.string.qs_screen_capture)
+        setIcon(R.drawable.ic_qs_screenshot)
         screenshotHelper = ScreenshotHelper(context)
         takeScreenshot = Runnable {
             screenshotHelper.takeScreenshot(

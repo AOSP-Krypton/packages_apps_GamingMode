@@ -23,11 +23,13 @@ import android.provider.Settings
 import org.exthmui.game.R
 import org.exthmui.game.controller.DanmakuController
 
-class DanmakuTile(context: Context): TileBase(context, R.string.qs_danmaku, R.drawable.ic_qs_danmaku) {
+class DanmakuTile(context: Context): TileBase(context) {
 
     private var danmakuController: DanmakuController? = null
 
     init {
+        setText(R.string.qs_danmaku)
+        setIcon(R.drawable.ic_qs_danmaku)
         isSelected = Settings.System.getInt(context.contentResolver,
             Settings.System.GAMING_MODE_SHOW_DANMAKU, 0) == 1
     }

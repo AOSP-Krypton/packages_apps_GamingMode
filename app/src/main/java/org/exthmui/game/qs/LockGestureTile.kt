@@ -26,8 +26,7 @@ import com.android.internal.statusbar.IStatusBarService
 
 import org.exthmui.game.R
 
-class LockGestureTile(context: Context?) :
-    TileBase(context, R.string.qs_lock_gesture, R.drawable.ic_qs_disable_gesture) {
+class LockGestureTile(context: Context) : TileBase(context) {
 
     private val statusBarService: IStatusBarService
 
@@ -35,6 +34,8 @@ class LockGestureTile(context: Context?) :
         statusBarService = IStatusBarService.Stub.asInterface(
             ServiceManager.getService(Context.STATUS_BAR_SERVICE)
         )
+        setText(R.string.qs_lock_gesture)
+        setIcon(R.drawable.ic_qs_disable_gesture)
     }
 
     override fun handleClick(isSelected: Boolean) {

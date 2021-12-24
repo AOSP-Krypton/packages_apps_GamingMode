@@ -17,7 +17,6 @@
 
 package org.exthmui.game.qs
 
-import android.annotation.SuppressLint
 import android.app.ActivityManager
 import android.app.ActivityOptions
 import android.app.WindowConfiguration
@@ -34,16 +33,18 @@ import android.view.WindowManager
 
 import org.exthmui.game.R
 
-@SuppressLint("ViewConstructor")
-class AppTile(
-    context: Context,
-    private val packageName: String,
-) : TileBase(context, 0, 0) {
+class AppTile(context: Context) : TileBase(context) {
     private val packageManager: PackageManager = context.packageManager
     private val activityOptions = ActivityOptions.makeBasic()
-    private var packageInstalled: Boolean
+    private var packageName: String? = null
+    private var packageInstalled = false
 
     init {
+        setText(0)
+    }
+
+    fun setPackage(packageName: String) {
+        this.packageName = packageName
         var ai: ApplicationInfo? = null
         try {
             ai = packageManager.getApplicationInfo(packageName, 0)
@@ -52,17 +53,14 @@ class AppTile(
             Log.e(TAG, "Package $packageName not found")
             packageInstalled = false
         }
-        qsText.visibility = GONE
         if (packageInstalled) {
             setToggleable(false)
-            val size = resources.getDimensionPixelSize(R.dimen.app_qs_icon_size)
-            val padding = resources.getDimensionPixelSize(R.dimen.app_qs_icon_padding)
-            qsIcon.setPadding(padding, padding, padding, padding)
-            qsIcon.layoutParams = LayoutParams(size, size)
-            qsIcon.setImageDrawable(ai!!.loadIcon(packageManager))
+            setIconPadding(resources.getDimensionPixelSize(R.dimen.app_qs_icon_padding))
+            setIconSize(resources.getDimensionPixelSize(R.dimen.app_qs_icon_size))
+            setIcon(ai!!.loadIcon(packageManager))
             activityOptions.launchWindowingMode = WindowConfiguration.WINDOWING_MODE_FREEFORM
         } else {
-            qsIcon.visibility = GONE
+            setIcon(0)
         }
     }
 
@@ -92,7 +90,7 @@ class AppTile(
         } catch (e: RemoteException) {
             Log.e(TAG, "RemoteException while launching app", e)
         }
-        val startAppIntent: Intent? = packageManager.getLaunchIntentForPackage(packageName)?.apply {
+        val startAppIntent: Intent? = packageManager.getLaunchIntentForPackage(packageName!!)?.apply {
             addFlags(
                 Intent.FLAG_ACTIVITY_LAUNCH_ADJACENT or
                         Intent.FLAG_ACTIVITY_NEW_TASK or
