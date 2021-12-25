@@ -24,10 +24,10 @@ import android.widget.LinearLayout
 import androidx.appcompat.content.res.AppCompatResources
 
 import org.exthmui.game.R
-import org.exthmui.game.controller.DanmakuController
 import org.exthmui.game.controller.FloatingViewController
+import org.exthmui.game.controller.NotificationOverlayController
 import org.exthmui.game.qs.ScreenCaptureTile
-import org.exthmui.game.qs.DanmakuTile
+import org.exthmui.game.qs.NotificationOverlayTile
 import org.exthmui.game.qs.DNDTile
 import org.exthmui.game.qs.LockGestureTile
 import org.exthmui.game.qs.AutoBrightnessTile
@@ -39,7 +39,7 @@ class QuickSettingsView @JvmOverloads constructor(
     defStyleRes: Int = 0,
 ) : LinearLayout(context, attrs, defStyleAttr, defStyleRes) {
     
-    private var danmakuController: DanmakuController? = null
+    private var notificationOverlayController: NotificationOverlayController? = null
     private var floatingViewController: FloatingViewController? = null
 
     init {
@@ -48,8 +48,8 @@ class QuickSettingsView @JvmOverloads constructor(
         setPadding(0, 0, 0, 8)
     }
 
-    fun setDanmakuController(controller: DanmakuController) {
-        danmakuController = controller
+    fun setNotificationOverlayController(controller: NotificationOverlayController) {
+        notificationOverlayController = controller
     }
 
     fun setFloatingViewController(controller: FloatingViewController) {
@@ -61,8 +61,8 @@ class QuickSettingsView @JvmOverloads constructor(
         screenCaptureTile.setViewController(floatingViewController!!)
         addView(screenCaptureTile)
 
-        val danmakuTile = DanmakuTile(context)
-        danmakuTile.setDanmakuController(danmakuController!!)
+        val danmakuTile = NotificationOverlayTile(context)
+        danmakuTile.setController(notificationOverlayController!!)
         addView(danmakuTile)
 
         addView(DNDTile(context))
