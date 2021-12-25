@@ -31,7 +31,6 @@ import android.os.ServiceManager
 import android.os.UserHandle
 import android.provider.Settings
 import android.util.Log
-import android.widget.Toast
 
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -83,7 +82,6 @@ class GamingService : Hilt_GamingService() {
             it.build()
         }
         startForeground(NOTIFICATION_ID, notification)
-        Toast.makeText(this, R.string.gaming_mode_on, Toast.LENGTH_SHORT).show()
     }
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
@@ -130,7 +128,6 @@ class GamingService : Hilt_GamingService() {
             floatingViewController.destroy()
         }
         Settings.System.putInt(contentResolver, Settings.System.GAMING_MODE_ACTIVE, 0)
-        Toast.makeText(this, R.string.gaming_mode_off, Toast.LENGTH_SHORT).show()
         super.onDestroy()
     }
 

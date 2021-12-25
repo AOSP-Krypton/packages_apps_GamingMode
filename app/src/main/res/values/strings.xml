@@ -5,9 +5,6 @@
     <string name="action_stop_gaming_mode">Stop</string>
     <string name="gaming_mode_running">Gaming mode is running</string>
 
-    <string name="gaming_mode_on">Gaming mode turned on</string>
-    <string name="gaming_mode_off">Gaming mode turned off</string>
-
     <string name="gaming_mode">Gaming Mode</string>
     <string name="date_format" translatable="false">dd.MM.yyyy</string>
     <string name="battery_format">Battery: %1$d%%</string>
