@@ -4,10 +4,6 @@
     <string name="action_stop_gaming_mode">停止</string>
     <string name="gaming_mode_running">游戏模式正在运行</string>
 
-
-    <string name="gaming_mode_on">游戏模式已启动</string>
-    <string name="gaming_mode_off">已退出游戏模式</string>
-
     <string name="gaming_mode">游戏模式</string>
     <string name="battery_format">电量: %1$d%%</string>
 

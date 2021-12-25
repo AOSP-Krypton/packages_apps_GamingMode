@@ -3,10 +3,6 @@
     <string name="action_stop_gaming_mode">Остановить</string>
     <string name="gaming_mode_running">Игровой режим включен</string>
 
-
-    <string name="gaming_mode_on">Игровой режим включен</string>
-    <string name="gaming_mode_off">Игровой режим выключен</string>
-
     <string name="gaming_mode">Игровой режим</string>
     <string name="battery_format">Батарея: %1$d%%</string>
 

@@ -3,10 +3,6 @@
     <string name="action_stop_gaming_mode">Stopp</string>
     <string name="gaming_mode_running">Spielemodus läuft</string>
 
-
-    <string name="gaming_mode_on">Spielemodus eingeschaltet</string>
-    <string name="gaming_mode_off">Spielemodus ausgeschaltet</string>
-
     <string name="gaming_mode">Spielemodus</string>
     <string name="battery_format">Akku: %1$d%%</string>
 
