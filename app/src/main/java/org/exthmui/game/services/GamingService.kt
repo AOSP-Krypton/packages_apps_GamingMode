@@ -27,7 +27,6 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.os.IBinder
 import android.os.RemoteException
-import android.os.ServiceManager
 import android.os.UserHandle
 import android.provider.Settings
 import android.util.Log
@@ -38,8 +37,8 @@ import javax.inject.Inject
 
 import org.exthmui.game.R
 import org.exthmui.game.controller.CallViewController
-import org.exthmui.game.controller.DanmakuController
 import org.exthmui.game.controller.FloatingViewController
+import org.exthmui.game.controller.NotificationOverlayController
 
 @AndroidEntryPoint(Service::class)
 class GamingService : Hilt_GamingService() {
@@ -50,12 +49,12 @@ class GamingService : Hilt_GamingService() {
     lateinit var callViewController: CallViewController
 
     @Inject
-    lateinit var danmakuController: DanmakuController
-
-    @Inject
     lateinit var floatingViewController: FloatingViewController
 
-    private val mDanmakuService = DanmakuService()
+    @Inject
+    lateinit var notificationOverlayController: NotificationOverlayController
+
+    private val notificationService = NotificationService()
 
     override fun onCreate() {
         super.onCreate()
@@ -94,10 +93,10 @@ class GamingService : Hilt_GamingService() {
             Settings.System.GAMING_MODE_USE_OVERLAY_MENU, 1
         ) == 1
         if (enabledMenuOverlay) {
-            danmakuController.init()
-            mDanmakuService.init(this, danmakuController)
+            notificationService.init(this, notificationOverlayController)
             floatingViewController.init()
             callViewController.init()
+            notificationOverlayController.init()
         }
         Settings.System.putInt(contentResolver, Settings.System.GAMING_MODE_ACTIVE, 1)
         return START_STICKY
@@ -106,7 +105,7 @@ class GamingService : Hilt_GamingService() {
     private fun registerNotificationListener() {
         val componentName = ComponentName(this, GamingService::class.java)
         try {
-            mDanmakuService.registerAsSystemService(this, componentName, UserHandle.USER_CURRENT)
+            notificationService.registerAsSystemService(this, componentName, UserHandle.USER_CURRENT)
         } catch (e: RemoteException) {
             Log.e(TAG, "RemoteException while registering danmaku service")
         }
@@ -114,7 +113,7 @@ class GamingService : Hilt_GamingService() {
 
     private fun unregisterNotificationListener() {
         try {
-            mDanmakuService.unregisterAsSystemService()
+            notificationService.unregisterAsSystemService()
         } catch (e: RemoteException) {
             Log.e(TAG, "RemoteException while unregistering danmaku service")
         }
@@ -123,9 +122,9 @@ class GamingService : Hilt_GamingService() {
     override fun onDestroy() {
         unregisterNotificationListener()
         if (enabledMenuOverlay) {
-            danmakuController.destroy()
             callViewController.destroy()
             floatingViewController.destroy()
+            notificationOverlayController.destroy()
         }
         Settings.System.putInt(contentResolver, Settings.System.GAMING_MODE_ACTIVE, 0)
         super.onDestroy()
@@ -137,9 +136,9 @@ class GamingService : Hilt_GamingService() {
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         if (enabledMenuOverlay) {
-            danmakuController.updateConfiguration(newConfig)
             floatingViewController.updateConfiguration(newConfig)
             callViewController.updateConfiguration(newConfig)
+            notificationOverlayController.updateConfiguration(newConfig)
         }
     }
 

@@ -23,16 +23,16 @@ import android.provider.Settings
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
 
-import org.exthmui.game.controller.DanmakuController
+import org.exthmui.game.controller.NotificationOverlayController
 
-class DanmakuService : NotificationListenerService() {
+class NotificationService : NotificationListenerService() {
     private val lastNotificationMap = mutableMapOf<String, String>()
     private var useFilter = false
     private var notificationBlacklist: List<String>? = null
-    private var danmakuController: DanmakuController? = null
+    private var notificationOverlayController: NotificationOverlayController? = null
 
     override fun onNotificationPosted(sbn: StatusBarNotification) {
-        if (danmakuController?.shouldShowDanmaku() != true) return
+        if (notificationOverlayController?.showNotificationOverlay != true) return
         val extras = sbn.notification.extras
         if (!isInBlackList(sbn.packageName)) {
             val lastNotification = lastNotificationMap.getOrDefault(sbn.packageName, "")
@@ -51,14 +51,14 @@ class DanmakuService : NotificationListenerService() {
                     lastNotification
                 ))
             ) {
-                danmakuController?.showDanmaku(danmakuText)
+                notificationOverlayController?.showNotificationAsOverlay(danmakuText)
             }
             lastNotificationMap[sbn.packageName] = danmakuText
         }
     }
 
-    fun init(context: Context, controller: DanmakuController?) {
-        danmakuController = controller
+    fun init(context: Context, controller: NotificationOverlayController?) {
+        notificationOverlayController = controller
         val blacklist = Settings.System.getString(
             context.contentResolver,
             Settings.System.GAMING_MODE_DANMAKU_APP_BLACKLIST
