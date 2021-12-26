@@ -3,7 +3,6 @@
     <string name="action_stop_gaming_mode">Остановить</string>
     <string name="gaming_mode_running">Игровой режим включен</string>
 
-    <string name="gaming_mode">Игровой режим</string>
     <string name="battery_format">Батарея: %1$d%%</string>
 
     <string name="performance_title">Режим энергосбережения</string>
@@ -11,8 +10,6 @@
     <string name="performance_text_for_performance">Производительность</string>
 
     <string name="qs_auto_brightness">Автояркость</string>
-    <string name="qs_danmaku">Уведомления</string>
-    <string name="qs_dnd">Не беспокоить</string>
     <string name="qs_lock_gesture">Жесты</string>
     <string name="qs_screen_capture">Скриншот</string>
 </resources>

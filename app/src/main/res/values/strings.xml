@@ -5,7 +5,6 @@
     <string name="action_stop_gaming_mode">Stop</string>
     <string name="gaming_mode_running">Gaming mode is running</string>
 
-    <string name="gaming_mode">Gaming Mode</string>
     <string name="date_format" translatable="false">dd.MM.yyyy</string>
     <string name="battery_format">Battery: %1$d%%</string>
 
@@ -14,7 +13,7 @@
     <string name="performance_text_for_performance">Performance</string>
 
     <string name="qs_auto_brightness">Auto brightness</string>
-    <string name="qs_danmaku">Danmaku</string>
+    <string name="qs_notification_overlay">Notification overlay</string>
     <string name="qs_ringer_mode">Silent mode</string>
     <string name="qs_lock_gesture">Lock gesture</string>
     <string name="qs_screen_capture">Screen capture</string>

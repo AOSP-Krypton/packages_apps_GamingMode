@@ -3,7 +3,6 @@
     <string name="action_stop_gaming_mode">Stopp</string>
     <string name="gaming_mode_running">Spielemodus läuft</string>
 
-    <string name="gaming_mode">Spielemodus</string>
     <string name="battery_format">Akku: %1$d%%</string>
 
     <string name="performance_title">Leistung</string>
@@ -11,8 +10,6 @@
     <string name="performance_text_for_performance">Leistungsoptimiert</string>
 
     <string name="qs_auto_brightness">Automatische Helligkeit</string>
-    <string name="qs_danmaku">Danmaku</string>
-    <string name="qs_dnd">Nicht stören</string>
     <string name="qs_lock_gesture">Sperrgeste</string>
     <string name="qs_screen_capture">Screenshot</string>
 </resources>

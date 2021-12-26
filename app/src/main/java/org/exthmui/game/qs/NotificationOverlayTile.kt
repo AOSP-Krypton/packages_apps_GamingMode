@@ -28,8 +28,8 @@ class NotificationOverlayTile(context: Context): TileBase(context) {
     private var notificationOverlayController: NotificationOverlayController? = null
 
     init {
-        setText(R.string.qs_danmaku)
-        setIcon(R.drawable.ic_qs_danmaku)
+        setText(R.string.qs_notification_overlay)
+        setIcon(R.drawable.ic_qs_notification_overlay)
         isSelected = Settings.System.getInt(context.contentResolver,
             Settings.System.GAMING_MODE_SHOW_NOTIFICATION_OVERLAY, 0) == 1
     }
