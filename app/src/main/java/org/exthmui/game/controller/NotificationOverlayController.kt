@@ -1,7 +1,6 @@
 package org.exthmui.game.controller
 
-import android.animation.ObjectAnimator
-import android.animation.PropertyValuesHolder
+import android.animation.ValueAnimator
 import android.content.Context
 import android.content.res.Configuration
 import android.graphics.Color
@@ -55,7 +54,8 @@ class NotificationOverlayController @Inject constructor(
     private var sizePortrait = 0
     private var sizeLandscape = 0
 
-    private var overlayAnimator: ObjectAnimator? = null
+    private var overlayAlphaAnimator: ValueAnimator? = null
+    private var overlayPositionAnimator: ValueAnimator? = null
 
     private val handler = Handler(Looper.getMainLooper())
 
@@ -67,15 +67,15 @@ class NotificationOverlayController @Inject constructor(
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
-        overlayAnimator?.end()
+        overlayAlphaAnimator?.end()
+        overlayPositionAnimator?.end()
         updateParams()
-        if (notificationOverlay.parent != null) {
-            windowManager.updateViewLayout(notificationOverlay, layoutParams)
-        }
+        updateViewLayoutSafely(layoutParams)
     }
 
     override fun onDestroy() {
-        overlayAnimator?.cancel()
+        overlayAlphaAnimator?.cancel()
+        overlayPositionAnimator?.cancel()
         removeViewSafely()
     }
 
@@ -126,47 +126,60 @@ class NotificationOverlayController @Inject constructor(
     }
 
     private fun pushNotification() {
-        val alphaPVH = PropertyValuesHolder.ofFloat("alpha", 0f, 1f)
-        val translationPVH = PropertyValuesHolder.ofFloat(
-            "translationY",
-            -getOffsetForPosition() * SLIDE_ANIMATION_DISTANCE_FACTOR,
-            0f
-        )
-        overlayAnimator =
-            ObjectAnimator.ofPropertyValuesHolder(notificationOverlay, alphaPVH, translationPVH)
-                .apply {
-                    duration = APPEAR_ANIMATION_DURATION
-                    addListener(onEnd = {
-                        handler.postDelayed({
-                            popNotification()
-                        }, DISPLAY_NOTIFICATION_DURATION)
-                    })
-                    start()
-                }
+        val end = getOffsetForPosition().toFloat()
+        val start = end * (1 - SLIDE_ANIMATION_DISTANCE_FACTOR)
+        overlayPositionAnimator = getPositionAnimator(APPEAR_ANIMATION_DURATION, start, end).also {
+            it.addListener(onEnd = {
+                handler.postDelayed({
+                    popNotification()
+                }, DISPLAY_NOTIFICATION_DURATION)
+            })
+            it.start()
+        }
+        startAlphaAnimation(APPEAR_ANIMATION_DURATION, 0f, 1f)
     }
 
     private fun popNotification() {
-        val alphaPVH = PropertyValuesHolder.ofFloat("alpha", 1f, 0f)
-        val translationPVH = PropertyValuesHolder.ofFloat(
-            "translationY",
-            0f,
-            getOffsetForPosition() * SLIDE_ANIMATION_DISTANCE_FACTOR
-        )
-        overlayAnimator =
-            ObjectAnimator.ofPropertyValuesHolder(notificationOverlay, alphaPVH, translationPVH)
-                .apply {
-                    duration = DISAPPEAR_ANIMATION_DURATION
-                    addListener(onEnd = {
-                        if (notificationStack.isEmpty()) {
-                            removeViewSafely()
-                        } else {
-                            notificationOverlay.alpha = 0f
-                            notificationOverlay.text = notificationStack.pop()
-                            pushNotification()
-                        }
-                    })
-                    start()
+        val start = getOffsetForPosition().toFloat()
+        val end = start * (1 + SLIDE_ANIMATION_DISTANCE_FACTOR)
+        overlayPositionAnimator = getPositionAnimator(DISAPPEAR_ANIMATION_DURATION, start, end).also {
+            it.addListener(onEnd = {
+                if (notificationStack.isEmpty()) {
+                    removeViewSafely()
+                } else {
+                    notificationOverlay.alpha = 0f
+                    notificationOverlay.text = notificationStack.pop()
+                    pushNotification()
                 }
+            })
+            it.start()
+        }
+        startAlphaAnimation(DISAPPEAR_ANIMATION_DURATION, 1f, 0f)
+    }
+
+    private fun getPositionAnimator(duration: Long, vararg values: Float): ValueAnimator {
+        val lpCopy = LayoutParams().also { it.copyFrom(layoutParams) }
+        return ValueAnimator.ofFloat(*values).apply {
+            this.duration = duration
+            addUpdateListener {
+                lpCopy.y = (it.animatedValue as Float).toInt()
+                updateViewLayoutSafely(lpCopy)
+            }
+        }
+    }
+
+    private fun startAlphaAnimation(duration: Long, vararg values: Float) {
+        overlayAlphaAnimator = ValueAnimator.ofFloat(*values).apply {
+            this.duration = duration
+            addUpdateListener {
+                notificationOverlay.alpha = it.animatedValue as Float
+            }
+        }.also { it.start() }
+    }
+
+    private fun updateViewLayoutSafely(layoutParams: LayoutParams) {
+        if (notificationOverlay.parent != null)
+            windowManager.updateViewLayout(notificationOverlay, layoutParams)
     }
 
     private fun removeViewSafely() {
