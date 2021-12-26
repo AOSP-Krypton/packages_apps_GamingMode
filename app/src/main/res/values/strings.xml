@@ -1,13 +1,9 @@
 <resources>
-    <string name="app_name">GamingMode Core</string>
+    <string name="game_space">Game space</string>
 
     <string name="channel_gaming_mode_status">Gaming mode status</string>
     <string name="action_stop_gaming_mode">Stop</string>
     <string name="gaming_mode_running">Gaming mode is running</string>
-
-
-    <string name="gaming_mode_on">Gaming mode turned on</string>
-    <string name="gaming_mode_off">Gaming mode turned off</string>
 
     <string name="gaming_mode">Gaming Mode</string>
     <string name="date_format" translatable="false">dd.MM.yyyy</string>
@@ -23,4 +19,50 @@
     <string name="qs_lock_gesture">Lock gesture</string>
     <string name="qs_screen_capture">Screen capture</string>
     <string name="gaming_qs_icon">Icon of the qs button</string>
+
+    <string name="gaming_title_summary">Extra features for immersive gaming experience</string>
+    <string name="gaming_mode_disable_auto_brightness_title">Disable automatic brightness</string>
+    <string name="gaming_mode_disable_auto_brightness_summary">Disable auto brightness when entering game mode</string>
+    <string name="gaming_mode_notification_danmaku_title">Notification Danmaku</string>
+    <string name="gaming_mode_notification_danmaku_summary">Display the notification content in the form of danmaku in the game</string>
+    <string name="gaming_mode_quick_start_apps_title">Quick Start Apps</string>
+    <string name="gaming_mode_quick_start_apps_summary">Choose the application that you want to launch with a floating ball</string>
+    <string name="gaming_mode_use_overlay_menu_title">Enable overlay menu</string>
+    <string name="gaming_mode_menu_opacity_title">Menu opacity level</string>
+
+    <string name="gaming_mode_performance">Performance</string>
+    <string name="gaming_mode_change_performance_title">Performance tuning</string>
+    <string name="gaming_mode_change_performance_summary">Adjust performance level when starting game</string>
+    <string name="gaming_mode_performance_title">Performance level</string>
+
+    <string name="gaming_mode_dnd">Do not distrub</string>
+    <string name="gaming_mode_disable_notification_alert_title">Disable notification alert</string>
+    <string name="gaming_mode_disable_notification_alert_summary">Do not allow floating notification and conversation bubbles other than incoming calls and alarms</string>
+    <string name="gaming_mode_disable_ringtone_title">No ringing</string>
+    <string name="gaming_mode_disable_ringtone_summary">Turn off the ringing of incoming calls and notifications in gaming mode</string>
+    <string name="gaming_mode_auto_answer_call_title">Answering calls automatically</string>
+    <string name="gaming_mode_auto_answer_call_summary">Answer calls automatically in the game and hands free when no headphones connected</string>
+
+    <string name="gaming_mode_prevent_accidental_touch">Prevent accidental touch</string>
+    <string name="gaming_mode_disable_gesture_title">Disable gestures</string>
+
+    <string name="gaming_mode_apps_title">Game list</string>
+    <string name="gaming_mode_apps_summary">Select apps to launch gaming mode when you open them</string>
+    <string name="gaming_mode_dynamic_add_title">Dynamic mode</string>
+    <string name="gaming_mode_dynamic_add_summary">Try detecting and adding gaming apps automatically</string>
+
+    <string name="gaming_mode_show_danmaku_title">Show danmaku</string>
+    <string name="gaming_mode_danmaku_dynamic_notification_filter_title">Dynamic filtering notification</string>
+    <string name="gaming_mode_danmaku_dynamic_notification_filter_summary">Automatically filter notifications such as download progress</string>
+    <string name="gaming_mode_danmaku_size_horizontal_title">Danmaku size (horizontal)</string>
+    <string name="gaming_mode_danmaku_size_vertical_title">Danmaku size (vertical)</string>
+    <string name="gaming_mode_danmaku_speed_horizontal_title">Danmaku speed (horizontal)</string>
+    <string name="gaming_mode_danmaku_speed_vertical_title">Danmaku speed (vertical)</string>
+    <string name="gaming_mode_danmaku_blacklist">Blacklist</string>
+
+    <string name="search">Search</string>
+    <string name="search_apps">Search apps</string>
+    <string name="application_icon">Application icon</string>
+    <string name="enable_game_space">Enable game space</string>
+
 </resources>

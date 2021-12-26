@@ -21,11 +21,11 @@ import android.content.Context
 import android.provider.Settings
 
 import org.exthmui.game.R
-import org.exthmui.game.controller.DanmakuController
+import org.exthmui.game.controller.NotificationOverlayController
 
-class DanmakuTile(context: Context): TileBase(context) {
+class NotificationOverlayTile(context: Context): TileBase(context) {
 
-    private var danmakuController: DanmakuController? = null
+    private var notificationOverlayController: NotificationOverlayController? = null
 
     init {
         setText(R.string.qs_danmaku)
@@ -36,10 +36,10 @@ class DanmakuTile(context: Context): TileBase(context) {
 
     override fun handleClick(isSelected: Boolean) {
         super.handleClick(isSelected)
-        danmakuController?.setShowDanmaku(isSelected)
+        notificationOverlayController?.showNotificationOverlay = isSelected
     }
 
-    fun setDanmakuController(controller: DanmakuController) {
-        danmakuController = controller
+    fun setController(controller: NotificationOverlayController) {
+        notificationOverlayController = controller
     }
 }

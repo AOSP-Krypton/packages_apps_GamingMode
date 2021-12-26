@@ -48,7 +48,7 @@ import org.exthmui.game.ui.QuickStartAppView
 class FloatingViewController @Inject constructor(
     @ApplicationContext private val context: Context,
     private val callViewController: CallViewController,
-    private val danmakuController: DanmakuController,
+    private val notificationOverlayController: NotificationOverlayController,
 ) : ViewController(context) {
 
     private var gamingFloatingLayout: View? = null
@@ -168,7 +168,7 @@ class FloatingViewController @Inject constructor(
         windowManager.addView(gamingOverlayView, gamingViewLayoutParams)
 
         qsView = gamingOverlayView!!.findViewById<QuickSettingsView>(R.id.gaming_qs).also {
-            it.setDanmakuController(danmakuController)
+            it.setNotificationOverlayController(notificationOverlayController)
             it.setFloatingViewController(this)
             it.addTiles()
         }

@@ -1,14 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">游戏模式核心</string>
-
     <string name="channel_gaming_mode_status">游戏模式状态</string>
     <string name="action_stop_gaming_mode">停止</string>
     <string name="gaming_mode_running">游戏模式正在运行</string>
-
-
-    <string name="gaming_mode_on">游戏模式已启动</string>
-    <string name="gaming_mode_off">已退出游戏模式</string>
 
     <string name="gaming_mode">游戏模式</string>
     <string name="battery_format">电量: %1$d%%</string>
@@ -21,4 +15,7 @@
     <string name="qs_dnd">勿扰模式</string>
     <string name="qs_lock_gesture">屏蔽手势</string>
     <string name="qs_screen_capture">屏幕截图</string>
+
+    <string name="search">搜索</string>
+    <string name="search_apps">搜索应用</string>
 </resources>
