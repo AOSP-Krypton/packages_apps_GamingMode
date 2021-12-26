@@ -76,8 +76,6 @@ class CallViewController @Inject constructor(
             @Suppress("DEPRECATION")
             if (callStatus == TelephonyManager.CALL_STATE_OFFHOOK)
                 telecomManager.endCall()
-            else
-                telecomManager.acceptRingingCall()
         }
         if (callControlButton != null) {
             executor = Executors.newSingleThreadExecutor()
@@ -114,20 +112,16 @@ class CallViewController @Inject constructor(
     }
 
     private inner class Callback : TelephonyCallback(), TelephonyCallback.CallStateListener {
-        private var previousState = -1
+        private var previousState = TelephonyManager.CALL_STATE_IDLE
         private var previousAudioMode = audioManager.mode
 
         override fun onCallStateChanged(state: Int) {
-            if (!autoAnswerCall || !checkPermission()) return
-
+            if (!autoAnswerCall) return
             @Suppress("DEPRECATION")
             when (state) {
                 TelephonyManager.CALL_STATE_RINGING -> {
+                    if (!checkPermission()) return
                     telecomManager.acceptRingingCall()
-                    handler.post {
-                        callControlButton?.setImageResource(R.drawable.ic_call_accept)
-                        callControlButton?.visibility = View.VISIBLE
-                    }
                 }
                 TelephonyManager.CALL_STATE_OFFHOOK -> {
                     if (previousState == TelephonyManager.CALL_STATE_RINGING) {
@@ -167,6 +161,7 @@ class CallViewController @Inject constructor(
                     }
                 }
             }
+            previousState = state
         }
     }
 
