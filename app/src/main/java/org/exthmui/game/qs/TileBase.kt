@@ -71,22 +71,6 @@ open class TileBase @JvmOverloads constructor(
         }
     }
 
-    fun setIcon(drawable: Drawable) {
-        qsIcon.setImageDrawable(drawable)
-        qsIcon.setColorFilter(if (isSelected) Color.BLACK else Color.WHITE)
-    }
-
-    fun setIconPadding(padding: Int) {
-        qsIcon.setPadding(padding, padding, padding, padding)
-    }
-
-    fun setIconSize(size: Int) {
-        qsIcon.layoutParams.apply {
-            height = size
-            width = size
-        }
-    }
-
     override fun setSelected(selected: Boolean) {
         isSelected = selected
         qsIcon.isSelected = selected

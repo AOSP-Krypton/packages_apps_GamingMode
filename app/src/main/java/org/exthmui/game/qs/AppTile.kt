@@ -29,19 +29,31 @@ import android.content.res.Configuration
 import android.graphics.Rect
 import android.os.RemoteException
 import android.os.UserHandle
+import android.util.AttributeSet
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.WindowManager
+import android.widget.ImageView
+import android.widget.LinearLayout
 
 import org.exthmui.game.R
 
-class AppTile(context: Context) : TileBase(context) {
+class AppTile @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0,
+    defStyleRes: Int = 0,
+) : LinearLayout(context, attrs, defStyleAttr, defStyleRes) {
     private val packageManager: PackageManager = context.packageManager
     private val activityOptions = ActivityOptions.makeBasic()
     private var packageName: String? = null
     private var packageInstalled = false
 
+    private val qsIcon: ImageView
+
     init {
-        setText(0)
+        LayoutInflater.from(context).inflate(R.layout.gaming_qs_view, this, true)
+        qsIcon = findViewById(R.id.qs_icon)
     }
 
     fun setPackage(packageName: String) {
@@ -55,18 +67,17 @@ class AppTile(context: Context) : TileBase(context) {
             packageInstalled = false
         }
         if (packageInstalled) {
-            setToggleable(false)
-            setIconPadding(resources.getDimensionPixelSize(R.dimen.app_qs_icon_padding))
-            setIconSize(resources.getDimensionPixelSize(R.dimen.app_qs_icon_size))
-            setIcon(ai!!.loadIcon(packageManager))
+            val padding = resources.getDimensionPixelSize(R.dimen.app_qs_icon_padding)
+            qsIcon.setPadding(padding, padding, padding, padding)
+            val size = resources.getDimensionPixelSize(R.dimen.app_qs_icon_size)
+            qsIcon.layoutParams.apply {
+                height = size
+                width = size
+            }
+            qsIcon.setImageDrawable(ai!!.loadIcon(packageManager))
+            qsIcon.setOnClickListener { if (packageInstalled) startActivity() }
             activityOptions.launchWindowingMode = WindowConfiguration.WINDOWING_MODE_FREEFORM
-        } else {
-            setIcon(0)
         }
-    }
-
-    override fun handleClick(isSelected: Boolean) {
-        if (packageInstalled) startActivity()
     }
 
     private fun startActivity() {
