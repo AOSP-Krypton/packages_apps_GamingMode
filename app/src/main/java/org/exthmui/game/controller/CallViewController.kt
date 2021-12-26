@@ -23,6 +23,8 @@ import android.content.pm.PackageManager
 import android.media.AudioDeviceInfo
 import android.media.AudioManager
 import android.media.AudioSystem
+import android.os.Handler
+import android.os.Looper
 import android.provider.Settings
 import android.telecom.TelecomManager
 import android.telephony.TelephonyCallback
@@ -32,6 +34,7 @@ import android.view.View
 import android.widget.ImageView
 
 import androidx.core.app.ActivityCompat
+
 import dagger.hilt.android.qualifiers.ApplicationContext
 
 import java.util.concurrent.ExecutorService
@@ -63,6 +66,8 @@ class CallViewController @Inject constructor(
     private val telephonyCallback = Callback()
 
     private var callStatus: Int = TelephonyManager.CALL_STATE_OFFHOOK
+
+    private val handler = Handler(Looper.getMainLooper())
 
     fun initView(button: ImageView?) {
         callControlButton = button
@@ -119,8 +124,10 @@ class CallViewController @Inject constructor(
             when (state) {
                 TelephonyManager.CALL_STATE_RINGING -> {
                     telecomManager.acceptRingingCall()
-                    callControlButton?.setImageResource(R.drawable.ic_call_accept)
-                    callControlButton?.visibility = View.VISIBLE
+                    handler.post {
+                        callControlButton?.setImageResource(R.drawable.ic_call_accept)
+                        callControlButton?.visibility = View.VISIBLE
+                    }
                 }
                 TelephonyManager.CALL_STATE_OFFHOOK -> {
                     if (previousState == TelephonyManager.CALL_STATE_RINGING) {
@@ -141,8 +148,10 @@ class CallViewController @Inject constructor(
                         }
                         audioManager.mode = AudioManager.MODE_IN_COMMUNICATION
                     }
-                    callControlButton?.setImageResource(R.drawable.ic_call_end)
-                    callControlButton?.visibility = View.VISIBLE
+                    handler.post {
+                        callControlButton?.setImageResource(R.drawable.ic_call_end)
+                        callControlButton?.visibility = View.VISIBLE
+                    }
                 }
                 TelephonyManager.CALL_STATE_IDLE -> {
                     if (previousState == TelephonyManager.CALL_STATE_OFFHOOK) {
@@ -153,7 +162,9 @@ class CallViewController @Inject constructor(
                         )
                         audioManager.isSpeakerphoneOn = false
                     }
-                    callControlButton?.visibility = View.GONE
+                    handler.post {
+                        callControlButton?.visibility = View.GONE
+                    }
                 }
             }
         }
