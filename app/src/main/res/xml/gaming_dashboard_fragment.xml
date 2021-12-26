@@ -18,9 +18,13 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <com.android.settingslib.widget.TopIntroPreference
+        android:key="gaming_mode_top_intro"
+        android:title="@string/gaming_mode_intro_text" />
+
     <com.krypton.settings.preference.SystemSettingMainSwitchPreference
         android:key="gaming_mode_enabled"
-        android:title="@string/enable_game_space" />
+        android:title="@string/enable_gaming_mode" />
 
     <Preference
         android:key="gaming_mode_app_list"
@@ -41,10 +45,10 @@
         android:defaultValue="true" />
 
     <Preference
-        android:key="gaming_mode_notification_danmaku"
-        android:title="@string/gaming_mode_notification_danmaku_title"
-        android:summary="@string/gaming_mode_notification_danmaku_summary"
-        android:fragment="org.exthmui.game.fragment.DanmakuSettingsFragment" />
+        android:key="gaming_mode_notification_overlay_preference"
+        android:title="@string/gaming_mode_notification_overlay_title"
+        android:summary="@string/gaming_mode_notification_overlay_summary"
+        android:fragment="org.exthmui.game.fragment.NotificationOverlaySettingsFragment" />
 
     <Preference
         android:key="gaming_mode_quick_start_apps"
@@ -55,14 +59,17 @@
     <com.krypton.settings.preference.SystemSettingSwitchPreference
         android:key="gaming_mode_use_overlay_menu"
         android:title="@string/gaming_mode_use_overlay_menu_title"
+        android:summary="@string/gaming_mode_use_overlay_menu_summary"
         android:defaultValue="1" />
 
     <com.krypton.settings.preference.SystemSettingSeekBarPreference
         android:key="gaming_mode_menu_opacity"
         android:title="@string/gaming_mode_menu_opacity_title"
         android:defaultValue="75"
+        android:dependency="gaming_mode_use_overlay_menu"
         android:max="100"
-        app:min="0" />
+        app:min="0"
+        app:units="%" />
 
     <PreferenceCategory
         android:key="gaming_mode_performance"

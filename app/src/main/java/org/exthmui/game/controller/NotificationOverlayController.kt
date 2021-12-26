@@ -111,17 +111,17 @@ class NotificationOverlayController @Inject constructor(
     private fun loadSettings() {
         sizePortrait = Settings.System.getInt(
             context.contentResolver,
-            Settings.System.GAMING_MODE_DANMAKU_SIZE_VERTICAL,
-            DEFAULT_DANMAKU_SIZE_PORTRAIT
+            Settings.System.GAMING_MODE_NOTIFICATION_SIZE_PORTRAIT,
+            DEFAULT_NOTIFICATION_SIZE_PORTRAIT
         )
         sizeLandscape = Settings.System.getInt(
             context.contentResolver,
-            Settings.System.GAMING_MODE_DANMAKU_SIZE_HORIZONTAL,
-            DEFAULT_DANMAKU_SIZE_LANDSCAPE
+            Settings.System.GAMING_MODE_NOTIFICATION_SIZE_LANDSCAPE,
+            DEFAULT_NOTIFICATION_SIZE_LANDSCAPE
         )
         showNotificationOverlay = Settings.System.getInt(
             context.contentResolver,
-            Settings.System.GAMING_MODE_SHOW_DANMAKU, 1
+            Settings.System.GAMING_MODE_SHOW_NOTIFICATION_OVERLAY, 1
         ) == 1
     }
 
@@ -181,7 +181,7 @@ class NotificationOverlayController @Inject constructor(
         private const val DISPLAY_NOTIFICATION_DURATION = 2000L
         private const val DISAPPEAR_ANIMATION_DURATION = 300L
 
-        private const val DEFAULT_DANMAKU_SIZE_LANDSCAPE = 90
-        private const val DEFAULT_DANMAKU_SIZE_PORTRAIT = 60
+        private const val DEFAULT_NOTIFICATION_SIZE_LANDSCAPE = 90
+        private const val DEFAULT_NOTIFICATION_SIZE_PORTRAIT = 60
     }
 }

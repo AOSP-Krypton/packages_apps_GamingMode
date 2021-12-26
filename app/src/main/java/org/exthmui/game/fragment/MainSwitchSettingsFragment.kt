@@ -24,6 +24,7 @@ import androidx.preference.forEachIndexed
 
 import com.android.settingslib.widget.MainSwitchPreference
 import com.android.settingslib.widget.OnMainSwitchChangeListener
+import com.android.settingslib.widget.TopIntroPreference
 
 abstract class MainSwitchSettingsFragment : SettingsFragment(), OnMainSwitchChangeListener {
 
@@ -45,8 +46,10 @@ abstract class MainSwitchSettingsFragment : SettingsFragment(), OnMainSwitchChan
     }
 
     protected open fun updatePreferences(isChecked: Boolean) {
-        preferenceScreen.forEachIndexed { index, preference ->
-            if (index != 0 /* MainSwitch */) preference.isVisible = isChecked
+        preferenceScreen.forEachIndexed { _, preference ->
+            if (preference !is MainSwitchPreference &&
+                preference !is TopIntroPreference
+            ) preference.isVisible = isChecked
         }
     }
 }

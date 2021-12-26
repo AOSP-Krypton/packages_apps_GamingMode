@@ -31,7 +31,7 @@ class NotificationOverlayTile(context: Context): TileBase(context) {
         setText(R.string.qs_danmaku)
         setIcon(R.drawable.ic_qs_danmaku)
         isSelected = Settings.System.getInt(context.contentResolver,
-            Settings.System.GAMING_MODE_SHOW_DANMAKU, 0) == 1
+            Settings.System.GAMING_MODE_SHOW_NOTIFICATION_OVERLAY, 0) == 1
     }
 
     override fun handleClick(isSelected: Boolean) {

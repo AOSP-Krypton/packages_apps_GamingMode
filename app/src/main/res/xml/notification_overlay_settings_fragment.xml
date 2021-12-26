@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (C) 2020 The exTHmUI Open Source Project
+     Copyright (C) 2021 AOSP-Krypton Project
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:title="@string/gaming_mode_notification_overlay_title">
+
+    <com.krypton.settings.preference.SystemSettingMainSwitchPreference
+        android:key="gaming_mode_show_notification_overlay"
+        android:title="@string/gaming_mode_show_notification_overlay_title"
+        android:defaultValue="true" />
+
+    <com.krypton.settings.preference.SystemSettingSwitchPreference
+        android:key="gaming_mode_dynamic_notification_filter"
+        android:title="@string/gaming_mode_dynamic_notification_filter_title"
+        android:summary="@string/gaming_mode_dynamic_notification_filter_summary"
+        android:defaultValue="true" />
+
+    <com.krypton.settings.preference.SystemSettingSeekBarPreference
+        android:key="gaming_mode_notification_size_landscape"
+        android:title="@string/gaming_mode_notification_overlay_size_landscape_title"
+        android:defaultValue="90"
+        android:max="120"
+        app:min="60"
+        app:units="px"
+        app:interval="5" />
+
+    <com.krypton.settings.preference.SystemSettingSeekBarPreference
+        android:key="gaming_mode_notification_size_portrait"
+        android:title="@string/gaming_mode_notification_overlay_size_portrait_title"
+        android:defaultValue="60"
+        android:max="90"
+        app:min="30"
+        app:units="px"
+        app:interval="5" />
+
+    <Preference
+        android:key="gaming_mode_notification_app_blacklist"
+        android:title="@string/gaming_mode_notification_overlay_blacklist_title"
+        android:summary="@string/gaming_mode_notification_overlay_blacklist_summary"
+        android:fragment="org.exthmui.game.fragment.NotificationOverlayBlacklistFragment" />
+</PreferenceScreen>

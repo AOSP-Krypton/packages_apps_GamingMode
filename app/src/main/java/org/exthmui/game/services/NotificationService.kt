@@ -61,14 +61,14 @@ class NotificationService : NotificationListenerService() {
         notificationOverlayController = controller
         val blacklist = Settings.System.getString(
             context.contentResolver,
-            Settings.System.GAMING_MODE_DANMAKU_APP_BLACKLIST
+            Settings.System.GAMING_MODE_NOTIFICATION_APP_BLACKLIST
         )
         if (blacklist?.isNotBlank() == true) {
             notificationBlacklist = blacklist.split(",")
         }
         useFilter = Settings.System.getInt(
             context.contentResolver,
-            Settings.System.GAMING_MODE_DANMAKU_DYNAMIC_NOTIFICATION_FILTER, 1
+            Settings.System.GAMING_MODE_DYNAMIC_NOTIFICATION_FILTER, 1
         ) == 1
     }
 

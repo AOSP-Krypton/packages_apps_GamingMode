@@ -16,16 +16,12 @@
 
 package org.exthmui.game.fragment
 
+import android.provider.Settings
+
 import org.exthmui.game.R
 
-class DanmakuSettingsFragment: MainSwitchSettingsFragment() {
-    override fun getTitle(): Int = R.string.gaming_mode_notification_danmaku_title
+class NotificationOverlayBlacklistFragment: AppListFragment() {
+    override fun getTitle() = R.string.gaming_mode_notification_overlay_blacklist_title
 
-    override fun getPreferenceScreenResId(): Int = R.xml.danmaku_settings_fragment
-
-    override fun getMainSwitchKey(): String = MAIN_SWITCH_KEY
-
-    companion object {
-        private const val MAIN_SWITCH_KEY = "gaming_mode_show_danmaku"
-    }
+    override fun getKey() = Settings.System.GAMING_MODE_NOTIFICATION_APP_BLACKLIST
 }

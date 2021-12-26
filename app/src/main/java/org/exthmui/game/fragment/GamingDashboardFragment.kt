@@ -40,6 +40,6 @@ class GamingDashboardFragment : MainSwitchSettingsFragment() {
     companion object {
         private const val PERF_CATEGORY_KEY = "gaming_mode_performance"
 
-        private const val MAIN_SWITCH_KEY = "gaming_mode_enable"
+        private const val MAIN_SWITCH_KEY = "gaming_mode_enabled"
     }
 }
