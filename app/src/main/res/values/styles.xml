@@ -10,6 +10,7 @@
         <!-- For AppBarLayout -->
         <item name="colorPrimary">@*android:color/primary_device_default_settings_light</item>
         <item name="colorPrimaryVariant">@android:color/white</item>
+        <item name="android:textColor">@android:color/white</item>
     </style>
 
     <!-- Variant of the settings theme with no action bar. -->

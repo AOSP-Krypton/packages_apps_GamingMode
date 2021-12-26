@@ -1,9 +1,5 @@
-<vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="108dp"
-    android:height="108dp"
-    android:viewportWidth="108"
-    android:viewportHeight="108">
-    <path
-        android:fillColor="@color/qs_background_colors"
-        android:pathData="M8,54 A46,46 0 1 0 8,53.99999"/>
-</vector>
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@drawable/qs_background_selected" android:state_selected="true"/>
+    <item android:drawable="@drawable/qs_background_non_selected" android:state_selected="false"/>
+</selector>

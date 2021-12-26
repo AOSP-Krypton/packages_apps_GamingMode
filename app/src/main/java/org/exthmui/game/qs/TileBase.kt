@@ -18,6 +18,7 @@
 package org.exthmui.game.qs
 
 import android.content.Context
+import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.LayoutInflater
@@ -65,12 +66,14 @@ open class TileBase @JvmOverloads constructor(
             qsIcon.visibility = View.GONE
         } else {
             qsIcon.setImageResource(resId)
+            qsIcon.setColorFilter(if (isSelected) Color.BLACK else Color.WHITE)
             qsIcon.visibility = View.VISIBLE
         }
     }
 
     fun setIcon(drawable: Drawable) {
         qsIcon.setImageDrawable(drawable)
+        qsIcon.setColorFilter(if (isSelected) Color.BLACK else Color.WHITE)
     }
 
     fun setIconPadding(padding: Int) {
@@ -87,6 +90,7 @@ open class TileBase @JvmOverloads constructor(
     override fun setSelected(selected: Boolean) {
         isSelected = selected
         qsIcon.isSelected = selected
+        qsIcon.setColorFilter(if (isSelected) Color.BLACK else Color.WHITE)
     }
 
     override fun isSelected(): Boolean {
