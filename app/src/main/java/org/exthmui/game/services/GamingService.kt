@@ -77,7 +77,7 @@ class GamingService : Hilt_GamingService() {
                 ).build()
             )
             it.setContentText(getString(R.string.gaming_mode_running))
-            it.setSmallIcon(R.drawable.ic_notification_game)
+            it.setSmallIcon(R.drawable.ic_game)
             it.build()
         }
         startForeground(NOTIFICATION_ID, notification)

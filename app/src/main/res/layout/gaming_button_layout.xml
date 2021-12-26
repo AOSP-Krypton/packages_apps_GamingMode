@@ -11,7 +11,7 @@
         android:layout_height="@dimen/game_button_size"
         android:contentDescription="@null"
         android:scaleType="fitCenter"
-        android:src="@drawable/ic_game_button" />
+        android:src="@drawable/ic_joystick" />
 
     <Space
         android:layout_width="6dp"
