@@ -15,7 +15,7 @@
 
     <string name="qs_auto_brightness">Auto brightness</string>
     <string name="qs_danmaku">Danmaku</string>
-    <string name="qs_dnd">Do not disturb</string>
+    <string name="qs_ringer_mode">Silent mode</string>
     <string name="qs_lock_gesture">Lock gesture</string>
     <string name="qs_screen_capture">Screen capture</string>
     <string name="gaming_qs_icon">Icon of the qs button</string>

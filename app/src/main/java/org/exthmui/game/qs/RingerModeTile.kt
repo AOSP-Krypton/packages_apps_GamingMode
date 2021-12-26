@@ -19,16 +19,23 @@ package org.exthmui.game.qs
 
 import android.content.Context
 import android.media.AudioManager
+import android.provider.Settings
 
 import org.exthmui.game.R
 
-class DNDTile(context: Context) : TileBase(context) {
+class RingerModeTile(context: Context) : TileBase(context) {
     private val audioManager = context.getSystemService(AudioManager::class.java)
     private val initialMode = audioManager.ringerModeInternal
 
     init {
-        setText(R.string.qs_dnd)
-        setIcon(R.drawable.ic_qs_dnd)
+        setText(R.string.qs_ringer_mode)
+        setIcon(R.drawable.ic_qs_ringer)
+        if (initialMode != AudioManager.RINGER_MODE_SILENT) {
+            val silentModeEnabled = Settings.System.getInt(context.contentResolver,
+                Settings.System.GAMING_MODE_DISABLE_RINGTONE,0 ) == 1
+            if (silentModeEnabled)
+                audioManager.ringerModeInternal = AudioManager.RINGER_MODE_SILENT
+        }
         isSelected = audioManager.ringerModeInternal == AudioManager.RINGER_MODE_SILENT
     }
 

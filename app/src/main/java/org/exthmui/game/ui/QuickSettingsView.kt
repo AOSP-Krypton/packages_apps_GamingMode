@@ -28,7 +28,7 @@ import org.exthmui.game.controller.FloatingViewController
 import org.exthmui.game.controller.NotificationOverlayController
 import org.exthmui.game.qs.ScreenCaptureTile
 import org.exthmui.game.qs.NotificationOverlayTile
-import org.exthmui.game.qs.DNDTile
+import org.exthmui.game.qs.RingerModeTile
 import org.exthmui.game.qs.LockGestureTile
 import org.exthmui.game.qs.AutoBrightnessTile
 
@@ -65,7 +65,7 @@ class QuickSettingsView @JvmOverloads constructor(
         danmakuTile.setController(notificationOverlayController!!)
         addView(danmakuTile)
 
-        addView(DNDTile(context))
+        addView(RingerModeTile(context))
         addView(LockGestureTile(context))
         addView(AutoBrightnessTile(context))
     }
