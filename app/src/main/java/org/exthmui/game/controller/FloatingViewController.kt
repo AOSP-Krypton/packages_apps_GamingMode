@@ -21,15 +21,16 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
 import android.content.res.Configuration
+import android.graphics.PixelFormat
 import android.os.SystemProperties
 import android.provider.Settings
 import android.view.*
 import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.ScrollView
+import androidx.constraintlayout.widget.ConstraintLayout
 
 import androidx.core.content.edit
 import androidx.core.math.MathUtils
+import androidx.core.widget.NestedScrollView
 import androidx.preference.PreferenceManager
 
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -53,8 +54,8 @@ class FloatingViewController @Inject constructor(
 
     private var gamingFloatingLayout: View? = null
     private var gamingFloatingButton: ImageView? = null
-    private var gamingOverlayView: LinearLayout? = null
-    private var gamingMenu: ScrollView? = null
+    private var gamingOverlayView: NestedScrollView? = null
+    private var gamingMenu: ConstraintLayout? = null
     private var qsView: QuickSettingsView? = null
     private var qsAppView: QuickStartAppView? = null
     private var gamingPerfView: GamingPerformanceView? = null
@@ -156,7 +157,7 @@ class FloatingViewController @Inject constructor(
         gamingOverlayView = (layoutInflater.inflate(
             R.layout.gaming_overlay_layout,
             null
-        ) as LinearLayout).also {
+        ) as NestedScrollView).also {
             it.visibility = View.GONE
             it.setOnClickListener { showHideGamingMenu(0) }
         }
@@ -167,12 +168,12 @@ class FloatingViewController @Inject constructor(
         }
         windowManager.addView(gamingOverlayView, gamingViewLayoutParams)
 
-        qsView = gamingOverlayView!!.findViewById<QuickSettingsView>(R.id.gaming_qs).also {
+        qsView = gamingOverlayView!!.findViewById<QuickSettingsView>(R.id.quick_settings_view).also {
             it.setNotificationOverlayController(notificationOverlayController)
             it.setFloatingViewController(this)
             it.addTiles()
         }
-        qsAppView = gamingOverlayView!!.findViewById<QuickStartAppView>(R.id.gaming_qsapp).also {
+        qsAppView = gamingOverlayView!!.findViewById<QuickStartAppView>(R.id.quick_start_app_view).also {
             it.setOnClickListener {
                 showHideGamingMenu(2)
             }
@@ -192,7 +193,7 @@ class FloatingViewController @Inject constructor(
                     }
                 }
 
-        gamingMenu = gamingOverlayView!!.findViewById<ScrollView>(R.id.gaming_menu).also {
+        gamingMenu = gamingOverlayView!!.findViewById<ConstraintLayout>(R.id.gaming_menu).also {
             it.background.alpha = menuOpacity * 255 / 100
         }
     }
@@ -363,14 +364,24 @@ class FloatingViewController @Inject constructor(
             }
 
             gamingOverlayView?.let {
-                it.gravity = gravity
                 it.visibility = View.VISIBLE
+                windowManager.updateViewLayout(it, getBaseLayoutParams().also { lp ->
+                    lp.gravity = gravity
+                })
             }
-            windowManager.updateViewLayout(gamingOverlayView, getBaseLayoutParams())
 
             gamingFloatingLayout?.visibility = View.GONE
         }
     }
+
+    private fun getBaseLayoutParams() =
+        WindowManager.LayoutParams(
+            WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
+            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
+                    or WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
+                    or WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL,
+            PixelFormat.TRANSLUCENT
+        )
 
     private enum class CoordinateType {
         X,

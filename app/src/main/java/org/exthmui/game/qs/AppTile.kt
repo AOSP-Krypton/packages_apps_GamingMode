@@ -32,6 +32,7 @@ import android.os.UserHandle
 import android.util.AttributeSet
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import android.view.WindowManager
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -54,6 +55,7 @@ class AppTile @JvmOverloads constructor(
     init {
         LayoutInflater.from(context).inflate(R.layout.gaming_qs_view, this, true)
         qsIcon = findViewById(R.id.qs_icon)
+        findViewById<View>(R.id.qs_text).visibility = GONE
     }
 
     fun setPackage(packageName: String) {

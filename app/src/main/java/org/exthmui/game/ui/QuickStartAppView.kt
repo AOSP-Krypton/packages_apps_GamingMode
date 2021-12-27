@@ -21,9 +21,6 @@ import android.content.Context
 import android.util.AttributeSet
 import android.widget.LinearLayout
 
-import androidx.appcompat.content.res.AppCompatResources
-
-import org.exthmui.game.R
 import org.exthmui.game.qs.AppTile
 
 class QuickStartAppView @JvmOverloads constructor(
@@ -32,13 +29,6 @@ class QuickStartAppView @JvmOverloads constructor(
     defStyleAttr: Int = 0,
     defStyleRes: Int = 0,
 ) : LinearLayout(context, attrs, defStyleAttr, defStyleRes) {
-
-    init {
-        dividerDrawable = AppCompatResources.getDrawable(getContext(), R.drawable.qs_divider)
-        showDividers = SHOW_DIVIDER_MIDDLE
-        setPadding(0, 0, 0, 8)
-        visibility = GONE
-    }
 
     fun setQSApps(apps: List<String>?) {
         visibility = GONE

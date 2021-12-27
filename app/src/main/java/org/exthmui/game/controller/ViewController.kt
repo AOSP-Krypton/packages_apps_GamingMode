@@ -19,7 +19,6 @@ package org.exthmui.game.controller
 
 import android.content.Context
 import android.content.res.Configuration
-import android.graphics.PixelFormat
 import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.WindowManager
@@ -44,15 +43,6 @@ open class ViewController(private val context: Context) {
         bounds = windowManager.currentWindowMetrics.bounds
         onConfigurationChanged(newConfig)
     }
-
-    protected open fun getBaseLayoutParams() =
-        WindowManager.LayoutParams(
-            WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
-            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
-                    or WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
-                    or WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL,
-            PixelFormat.TRANSLUCENT
-        )
 
     protected open fun onConfigurationChanged(newConfig: Configuration) {}
 

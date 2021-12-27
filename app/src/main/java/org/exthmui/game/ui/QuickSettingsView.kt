@@ -21,9 +21,6 @@ import android.content.Context
 import android.util.AttributeSet
 import android.widget.LinearLayout
 
-import androidx.appcompat.content.res.AppCompatResources
-
-import org.exthmui.game.R
 import org.exthmui.game.controller.FloatingViewController
 import org.exthmui.game.controller.NotificationOverlayController
 import org.exthmui.game.qs.ScreenCaptureTile
@@ -42,12 +39,6 @@ class QuickSettingsView @JvmOverloads constructor(
     private var notificationOverlayController: NotificationOverlayController? = null
     private var floatingViewController: FloatingViewController? = null
 
-    init {
-        dividerDrawable = AppCompatResources.getDrawable(getContext(), R.drawable.qs_divider)
-        showDividers = SHOW_DIVIDER_MIDDLE
-        setPadding(0, 0, 0, 8)
-    }
-
     fun setNotificationOverlayController(controller: NotificationOverlayController) {
         notificationOverlayController = controller
     }
@@ -59,14 +50,19 @@ class QuickSettingsView @JvmOverloads constructor(
     fun addTiles() {
         val screenCaptureTile = ScreenCaptureTile(context)
         screenCaptureTile.setViewController(floatingViewController!!)
-        addView(screenCaptureTile)
+        addView(screenCaptureTile, getWeightedLayoutParams())
 
         val danmakuTile = NotificationOverlayTile(context)
         danmakuTile.setController(notificationOverlayController!!)
-        addView(danmakuTile)
+        addView(danmakuTile, getWeightedLayoutParams())
 
-        addView(RingerModeTile(context))
-        addView(LockGestureTile(context))
-        addView(AutoBrightnessTile(context))
+        addView(RingerModeTile(context), getWeightedLayoutParams())
+        addView(LockGestureTile(context), getWeightedLayoutParams())
+        addView(AutoBrightnessTile(context), getWeightedLayoutParams())
     }
+
+    private fun getWeightedLayoutParams() =
+        LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT).apply {
+            weight = 1f
+        }
 }
