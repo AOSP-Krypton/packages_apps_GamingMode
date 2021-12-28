@@ -27,6 +27,7 @@ import android.provider.Settings
 import android.view.*
 import android.widget.ImageView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.constraintlayout.widget.Group
 
 import androidx.core.content.edit
 import androidx.core.math.MathUtils
@@ -173,11 +174,15 @@ class FloatingViewController @Inject constructor(
             it.setFloatingViewController(this)
             it.addTiles()
         }
-        qsAppView = gamingOverlayView!!.findViewById<QuickStartAppView>(R.id.quick_start_app_view).also {
-            it.setOnClickListener {
-                showHideGamingMenu(2)
+        if (qsApps?.isNotEmpty() == true) {
+            qsAppView = gamingOverlayView!!.findViewById<QuickStartAppView>(R.id.quick_start_app_view).also {
+                it.setOnClickListener {
+                    showHideGamingMenu(2)
+                }
+                it.setQSApps(qsApps)
             }
-            it.setQSApps(qsApps)
+        } else {
+            gamingOverlayView!!.findViewById<Group>(R.id.quick_start_app_group).visibility = View.GONE
         }
 
         gamingPerfView =

@@ -111,6 +111,12 @@
                 android:layout_marginTop="4dp" />
         </HorizontalScrollView>
 
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/quick_start_app_group"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:constraint_referenced_ids="qs_divider, qs_app_container"/>
+
         <org.exthmui.game.ui.GamingPerformanceView
             android:id="@+id/performance_controller"
             android:layout_width="wrap_content"
