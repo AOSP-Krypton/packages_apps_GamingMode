@@ -48,21 +48,14 @@ class QuickSettingsView @JvmOverloads constructor(
     }
 
     fun addTiles() {
-        val screenCaptureTile = ScreenCaptureTile(context)
-        screenCaptureTile.setViewController(floatingViewController!!)
-        addView(screenCaptureTile, getWeightedLayoutParams())
-
-        val danmakuTile = NotificationOverlayTile(context)
-        danmakuTile.setController(notificationOverlayController!!)
-        addView(danmakuTile, getWeightedLayoutParams())
-
-        addView(RingerModeTile(context), getWeightedLayoutParams())
-        addView(LockGestureTile(context), getWeightedLayoutParams())
-        addView(AutoBrightnessTile(context), getWeightedLayoutParams())
+        addView(ScreenCaptureTile(context).also {
+            it.setViewController(floatingViewController!!)
+        })
+        addView(NotificationOverlayTile(context).also {
+            it.setController(notificationOverlayController!!)
+        })
+        addView(RingerModeTile(context))
+        addView(LockGestureTile(context))
+        addView(AutoBrightnessTile(context))
     }
-
-    private fun getWeightedLayoutParams() =
-        LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT).apply {
-            weight = 1f
-        }
 }

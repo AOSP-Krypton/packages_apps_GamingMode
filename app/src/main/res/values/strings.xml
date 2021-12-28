@@ -17,7 +17,6 @@
     <string name="qs_ringer_mode">Silent mode</string>
     <string name="qs_lock_gesture">Lock gesture</string>
     <string name="qs_screen_capture">Screenshot</string>
-    <string name="gaming_qs_icon">Icon of the qs button</string>
 
     <string name="enable_gaming_mode">Enable gaming mode</string>
     <string name="gaming_mode_intro_text">Extra features for immersive gaming experience</string>

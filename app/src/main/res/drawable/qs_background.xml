@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:drawable="@drawable/qs_background_selected" android:state_selected="true"/>
-    <item android:drawable="@drawable/qs_background_non_selected" android:state_selected="false"/>
+<selector xmlns:android="http://schemas.android.com/apk/res/android" android:constantSize="true">
+    <item android:drawable="@drawable/qs_background_selected" android:state_selected="true" />
+    <item android:drawable="@drawable/qs_background_non_selected" android:state_selected="false" />
 </selector>

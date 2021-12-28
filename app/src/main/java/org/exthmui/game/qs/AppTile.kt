@@ -31,11 +31,10 @@ import android.os.RemoteException
 import android.os.UserHandle
 import android.util.AttributeSet
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
+import android.view.ViewGroup
 import android.view.WindowManager
-import android.widget.ImageView
-import android.widget.LinearLayout
+
+import androidx.appcompat.widget.AppCompatImageView
 
 import org.exthmui.game.R
 
@@ -43,20 +42,11 @@ class AppTile @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0,
-    defStyleRes: Int = 0,
-) : LinearLayout(context, attrs, defStyleAttr, defStyleRes) {
+) : AppCompatImageView(context, attrs, defStyleAttr) {
     private val packageManager: PackageManager = context.packageManager
     private val activityOptions = ActivityOptions.makeBasic()
     private var packageName: String? = null
     private var packageInstalled = false
-
-    private val qsIcon: ImageView
-
-    init {
-        LayoutInflater.from(context).inflate(R.layout.gaming_qs_view, this, true)
-        qsIcon = findViewById(R.id.qs_icon)
-        findViewById<View>(R.id.qs_text).visibility = GONE
-    }
 
     fun setPackage(packageName: String) {
         this.packageName = packageName
@@ -70,14 +60,11 @@ class AppTile @JvmOverloads constructor(
         }
         if (packageInstalled) {
             val padding = resources.getDimensionPixelSize(R.dimen.app_qs_icon_padding)
-            qsIcon.setPadding(padding, padding, padding, padding)
+            setPadding(padding, padding, padding, padding)
             val size = resources.getDimensionPixelSize(R.dimen.app_qs_icon_size)
-            qsIcon.layoutParams.apply {
-                height = size
-                width = size
-            }
-            qsIcon.setImageDrawable(ai!!.loadIcon(packageManager))
-            qsIcon.setOnClickListener { if (packageInstalled) startActivity() }
+            layoutParams = ViewGroup.LayoutParams(size, size)
+            setImageDrawable(ai!!.loadIcon(packageManager))
+            setOnClickListener { if (packageInstalled) startActivity() }
             activityOptions.launchWindowingMode = WindowConfiguration.WINDOWING_MODE_FREEFORM
         }
     }

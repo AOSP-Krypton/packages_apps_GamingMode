@@ -72,6 +72,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:padding="4dp"
+            android:scrollbars="none"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/status_bar_barrier">
@@ -96,8 +97,9 @@
             android:id="@+id/qs_app_container"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="4dp"
             android:layout_marginTop="4dp"
+            android:paddingBottom="4dp"
+            android:scrollbars="none"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/qs_divider">
@@ -105,7 +107,8 @@
             <org.exthmui.game.ui.QuickStartAppView
                 android:id="@+id/quick_start_app_view"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp" />
         </HorizontalScrollView>
 
         <org.exthmui.game.ui.GamingPerformanceView

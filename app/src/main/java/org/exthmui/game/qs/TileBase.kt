@@ -20,12 +20,14 @@ package org.exthmui.game.qs
 import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.Drawable
+import android.graphics.drawable.LayerDrawable
 import android.util.AttributeSet
-import android.view.LayoutInflater
-import android.widget.LinearLayout
-import android.widget.TextView
+import android.util.TypedValue
+import android.view.Gravity
 import android.view.View
-import android.widget.ImageView
+
+import androidx.appcompat.content.res.AppCompatResources
+import androidx.appcompat.widget.AppCompatTextView
 
 import org.exthmui.game.R
 
@@ -33,52 +35,56 @@ open class TileBase @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0,
-    defStyleRes: Int = 0,
-) : LinearLayout(context, attrs, defStyleAttr, defStyleRes), View.OnClickListener {
+) : AppCompatTextView(context, attrs, defStyleAttr), View.OnClickListener {
 
-    private var isSelected = false
     private var isToggleable = true
 
-    private val qsIcon: ImageView
-    private val qsText: TextView
+    private val background = LayerDrawable(
+        arrayOf(AppCompatResources.getDrawable(context, R.drawable.qs_background))
+    )
+    private var icon: Drawable? = null
 
     init {
-        LayoutInflater.from(context).inflate(R.layout.gaming_qs_view, this, true)
-        qsIcon = findViewById(R.id.qs_icon)
-        qsText = findViewById(R.id.qs_text)
+        gravity = Gravity.CENTER
+        maxEms = 6
+        maxLines = 2
+        with(context.resources) {
+            setTextSize(
+                TypedValue.COMPLEX_UNIT_PX,
+                getDimensionPixelSize(R.dimen.gaming_qs_text_size).toFloat()
+            )
+            compoundDrawablePadding = getDimensionPixelSize(R.dimen.qs_icon_margin)
+        }
+    }
+
+    final override fun setTextSize(value: Int, float: Float) {
+        super.setTextSize(value, float)
     }
 
     fun setToggleable(isToggleable: Boolean) {
         this.isToggleable = isToggleable
     }
 
-    fun setText(resId: Int) {
-        if (resId == 0) {
-            qsText.visibility = View.GONE
-        } else {
-            qsText.setText(resId)
-            qsText.visibility = View.VISIBLE
-        }
-    }
-
     fun setIcon(resId: Int) {
-        if (resId == 0) {
-            qsIcon.visibility = View.GONE
-        } else {
-            qsIcon.setImageResource(resId)
-            qsIcon.setColorFilter(if (isSelected) Color.BLACK else Color.WHITE)
-            qsIcon.visibility = View.VISIBLE
+        if (resId != 0) {
+            icon = AppCompatResources.getDrawable(context, resId)?.apply {
+                setTint(if (isSelected) Color.BLACK else Color.WHITE)
+            }
+            if (background.numberOfLayers >= 2 && background.getDrawable(1) != null) {
+                // Replace existing drawable at index instead of adding a layer on top it
+                background.setDrawable(1, icon)
+            } else {
+                background.addLayer(icon)
+            }
+            val inset = context.resources.getDimensionPixelSize(R.dimen.gaming_qs_icon_padding)
+            background.setLayerInset(1, inset, inset, inset, inset)
+            setCompoundDrawablesWithIntrinsicBounds(null, background, null, null)
         }
     }
 
     override fun setSelected(selected: Boolean) {
-        isSelected = selected
-        qsIcon.isSelected = selected
-        qsIcon.setColorFilter(if (isSelected) Color.BLACK else Color.WHITE)
-    }
-
-    override fun isSelected(): Boolean {
-        return isSelected
+        super.setSelected(selected)
+        icon?.setTint(if (isSelected) Color.BLACK else Color.WHITE)
     }
 
     override fun onClick(v: View) {
