@@ -25,13 +25,13 @@ import android.graphics.PixelFormat
 import android.os.SystemProperties
 import android.provider.Settings
 import android.view.*
+import android.widget.FrameLayout
 import android.widget.ImageView
+
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.Group
-
 import androidx.core.content.edit
 import androidx.core.math.MathUtils
-import androidx.core.widget.NestedScrollView
 import androidx.preference.PreferenceManager
 
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -55,7 +55,7 @@ class FloatingViewController @Inject constructor(
 
     private var gamingFloatingLayout: View? = null
     private var gamingFloatingButton: ImageView? = null
-    private var gamingOverlayView: NestedScrollView? = null
+    private var gamingOverlayView: FrameLayout? = null
     private var gamingMenu: ConstraintLayout? = null
     private var qsView: QuickSettingsView? = null
     private var qsAppView: QuickStartAppView? = null
@@ -158,7 +158,7 @@ class FloatingViewController @Inject constructor(
         gamingOverlayView = (layoutInflater.inflate(
             R.layout.gaming_overlay_layout,
             null
-        ) as NestedScrollView).also {
+        ) as FrameLayout).also {
             it.visibility = View.GONE
             it.setOnClickListener { showHideGamingMenu(0) }
         }
@@ -355,26 +355,10 @@ class FloatingViewController @Inject constructor(
             gamingFloatingLayout?.visibility = View.VISIBLE
             hideFloatingButton(true)
         } else if (mode != 2) {
-            // show
-            var gravity = 0
-            gravity = if (gamingFBLayoutParams.x > 0) {
-                gravity or Gravity.END
-            } else {
-                gravity or Gravity.START
-            }
-            gravity = if (gamingFBLayoutParams.y > 0) {
-                gravity or Gravity.BOTTOM
-            } else {
-                gravity or Gravity.TOP
-            }
-
             gamingOverlayView?.let {
                 it.visibility = View.VISIBLE
-                windowManager.updateViewLayout(it, getBaseLayoutParams().also { lp ->
-                    lp.gravity = gravity
-                })
+                windowManager.updateViewLayout(it, getBaseLayoutParams())
             }
-
             gamingFloatingLayout?.visibility = View.GONE
         }
     }
