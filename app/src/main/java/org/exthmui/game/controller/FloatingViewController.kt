@@ -27,6 +27,7 @@ import android.provider.Settings
 import android.view.*
 import android.widget.FrameLayout
 import android.widget.ImageView
+import android.widget.SeekBar
 
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.Group
@@ -42,7 +43,6 @@ import javax.inject.Singleton
 import kotlin.math.sqrt
 
 import org.exthmui.game.R
-import org.exthmui.game.ui.GamingPerformanceView
 import org.exthmui.game.ui.QuickSettingsView
 import org.exthmui.game.ui.QuickStartAppView
 
@@ -59,7 +59,7 @@ class FloatingViewController @Inject constructor(
     private var gamingMenu: ConstraintLayout? = null
     private var qsView: QuickSettingsView? = null
     private var qsAppView: QuickStartAppView? = null
-    private var gamingPerfView: GamingPerformanceView? = null
+    private var perfLevelSeekBar: SeekBar? = null
 
     private lateinit var gamingFBLayoutParams: WindowManager.LayoutParams
 
@@ -101,8 +101,8 @@ class FloatingViewController @Inject constructor(
         gamingMenu = null
         qsView = null
         qsAppView = null
-        gamingPerfView?.setOnUpdateListener(null)
-        gamingPerfView = null
+        perfLevelSeekBar?.setOnSeekBarChangeListener(null)
+        perfLevelSeekBar = null
     }
 
     fun hideGamingMenu() {
@@ -169,32 +169,44 @@ class FloatingViewController @Inject constructor(
         }
         windowManager.addView(gamingOverlayView, gamingViewLayoutParams)
 
-        qsView = gamingOverlayView!!.findViewById<QuickSettingsView>(R.id.quick_settings_view).also {
-            it.setNotificationOverlayController(notificationOverlayController)
-            it.setFloatingViewController(this)
-            it.addTiles()
-        }
-        if (qsApps?.isNotEmpty() == true) {
-            qsAppView = gamingOverlayView!!.findViewById<QuickStartAppView>(R.id.quick_start_app_view).also {
+        qsView =
+            gamingOverlayView!!.findViewById<QuickSettingsView>(R.id.quick_settings_view).also {
+                it.setNotificationOverlayController(notificationOverlayController)
                 it.setFloatingViewController(this)
-                it.setQSApps(qsApps)
+                it.addTiles()
             }
+        if (qsApps?.isNotEmpty() == true) {
+            qsAppView =
+                gamingOverlayView!!.findViewById<QuickStartAppView>(R.id.quick_start_app_view)
+                    .also {
+                        it.setFloatingViewController(this)
+                        it.setQSApps(qsApps)
+                    }
         } else {
-            gamingOverlayView!!.findViewById<Group>(R.id.quick_start_app_group).visibility = View.GONE
+            gamingOverlayView!!.findViewById<Group>(R.id.quick_start_app_group).visibility =
+                View.GONE
         }
 
-        gamingPerfView =
-            gamingOverlayView!!.findViewById<GamingPerformanceView>(R.id.performance_controller)
+        if (perfProfilesSupported && changePerfLevel) {
+            perfLevelSeekBar = gamingOverlayView!!.findViewById<SeekBar>(R.id.perf_level_seekbar)
                 .also {
-                    if (perfProfilesSupported && changePerfLevel) {
-                        it.setLevel(performanceLevel)
-                    } else {
-                        it.visibility = View.GONE
-                    }
-                    it.setOnUpdateListener { level ->
-                        SystemProperties.set(PROP_GAMING_PERFORMANCE, level.toString())
-                    }
+                    it.progress = performanceLevel
+                    it.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+                        override fun onProgressChanged(
+                            seekBar: SeekBar?,
+                            progress: Int,
+                            fromUser: Boolean
+                        ) {
+                            SystemProperties.set(PROP_GAMING_PERFORMANCE, progress.toString())
+                        }
+
+                        override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+                        override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+                    })
                 }
+        } else {
+            gamingOverlayView!!.findViewById<Group>(R.id.performance_group).visibility = View.GONE
+        }
 
         gamingMenu = gamingOverlayView!!.findViewById<ConstraintLayout>(R.id.gaming_menu).also {
             it.background.alpha = menuOpacity * 255 / 100

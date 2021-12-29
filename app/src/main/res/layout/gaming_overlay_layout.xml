@@ -46,18 +46,18 @@
             android:layout_marginEnd="@dimen/time_battery_margin"
             android:format12Hour="@string/date_format"
             android:format24Hour="@string/date_format"
-            app:layout_constraintStart_toEndOf="@id/time_view"
-            app:layout_constraintBaseline_toBaselineOf="@id/time_view" />
+            app:layout_constraintBaseline_toBaselineOf="@id/time_view"
+            app:layout_constraintStart_toEndOf="@id/time_view" />
 
         <org.exthmui.game.ui.BatteryView
             android:id="@+id/battery_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/time_battery_margin"
-            app:layout_constraintStart_toEndOf="@id/date_view"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBaseline_toBaselineOf="@id/time_view"
-            app:layout_constraintHorizontal_bias="1" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1"
+            app:layout_constraintStart_toEndOf="@id/date_view" />
 
         <androidx.constraintlayout.widget.Barrier
             android:id="@+id/status_bar_barrier"
@@ -74,8 +74,8 @@
             android:layout_marginTop="4dp"
             android:padding="4dp"
             android:scrollbars="none"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/status_bar_barrier">
 
             <org.exthmui.game.ui.QuickSettingsView
@@ -116,15 +116,60 @@
             android:id="@+id/quick_start_app_group"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:constraint_referenced_ids="qs_divider, qs_app_container"/>
+            app:constraint_referenced_ids="qs_divider, qs_app_container" />
 
-        <org.exthmui.game.ui.GamingPerformanceView
-            android:id="@+id/performance_controller"
+        <TextView
+            android:id="@+id/perf_level_title_textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="4dp"
+            android:gravity="start"
+            android:text="@string/performance_level"
+            android:textSize="@dimen/perf_indicator_text_size"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/qs_app_container" />
 
+        <SeekBar
+            android:id="@+id/perf_level_seekbar"
+            style="@android:style/Widget.Material.SeekBar.Discrete"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:paddingStart="0dp"
+            android:paddingEnd="0dp"
+            android:max="6"
+            android:progress="3"
+            android:tickMark="@null"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/perf_level_title_textview" />
+
+        <TextView
+            android:id="@+id/power_save_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="start"
+            android:text="@string/power_save"
+            android:textSize="@dimen/perf_indicator_text_size"
+            app:layout_constraintStart_toStartOf="@id/perf_level_seekbar"
+            app:layout_constraintTop_toBottomOf="@id/perf_level_seekbar" />
+
+        <TextView
+            android:id="@+id/performance_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="end"
+            android:text="@string/performance"
+            android:textSize="@dimen/perf_indicator_text_size"
+            app:layout_constraintEnd_toEndOf="@id/perf_level_seekbar"
+            app:layout_constraintTop_toBottomOf="@id/perf_level_seekbar" />
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/performance_group"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:constraint_referenced_ids="perf_level_title_textview,
+                perf_level_seekbar,
+                power_save_textview,
+                performance_textview" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>
