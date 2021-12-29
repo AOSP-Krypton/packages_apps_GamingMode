@@ -58,6 +58,16 @@ class GamingService : Hilt_GamingService() {
 
     override fun onCreate() {
         super.onCreate()
+        enabledMenuOverlay = Settings.System.getInt(
+            contentResolver,
+            Settings.System.GAMING_MODE_USE_OVERLAY_MENU, 1
+        ) == 1
+        if (enabledMenuOverlay) {
+            notificationService.init(this, notificationOverlayController)
+            floatingViewController.init()
+            callViewController.init()
+            notificationOverlayController.init()
+        }
         createNotificationChannel(getString(R.string.channel_gaming_mode_status))
         registerNotificationListener()
         val stopGamingIntent = PendingIntent.getService(
@@ -88,16 +98,6 @@ class GamingService : Hilt_GamingService() {
             stopSelf()
             return START_NOT_STICKY
         }
-        enabledMenuOverlay = Settings.System.getInt(
-            contentResolver,
-            Settings.System.GAMING_MODE_USE_OVERLAY_MENU, 1
-        ) == 1
-        if (enabledMenuOverlay) {
-            notificationService.init(this, notificationOverlayController)
-            floatingViewController.init()
-            callViewController.init()
-            notificationOverlayController.init()
-        }
         Settings.System.putInt(contentResolver, Settings.System.GAMING_MODE_ACTIVE, 1)
         return START_STICKY
     }
@@ -127,7 +127,6 @@ class GamingService : Hilt_GamingService() {
             notificationOverlayController.destroy()
         }
         Settings.System.putInt(contentResolver, Settings.System.GAMING_MODE_ACTIVE, 0)
-        super.onDestroy()
     }
 
     override fun onBind(intent: Intent): IBinder? {
