@@ -37,6 +37,7 @@ import android.view.WindowManager
 import androidx.appcompat.widget.AppCompatImageView
 
 import org.exthmui.game.R
+import org.exthmui.game.controller.FloatingViewController
 
 class AppTile @JvmOverloads constructor(
     context: Context,
@@ -47,6 +48,8 @@ class AppTile @JvmOverloads constructor(
     private val activityOptions = ActivityOptions.makeBasic()
     private var packageName: String? = null
     private var packageInstalled = false
+
+    private var viewController: FloatingViewController? = null
 
     fun setPackage(packageName: String) {
         this.packageName = packageName
@@ -64,9 +67,16 @@ class AppTile @JvmOverloads constructor(
             val size = resources.getDimensionPixelSize(R.dimen.app_qs_icon_size)
             layoutParams = ViewGroup.LayoutParams(size, size)
             setImageDrawable(ai!!.loadIcon(packageManager))
-            setOnClickListener { if (packageInstalled) startActivity() }
+            setOnClickListener {
+                viewController?.hideGamingMenu()
+                startActivity()
+            }
             activityOptions.launchWindowingMode = WindowConfiguration.WINDOWING_MODE_FREEFORM
         }
+    }
+
+    fun setController(viewController: FloatingViewController) {
+        this.viewController = viewController
     }
 
     private fun startActivity() {

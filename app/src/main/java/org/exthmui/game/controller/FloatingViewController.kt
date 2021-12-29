@@ -176,9 +176,7 @@ class FloatingViewController @Inject constructor(
         }
         if (qsApps?.isNotEmpty() == true) {
             qsAppView = gamingOverlayView!!.findViewById<QuickStartAppView>(R.id.quick_start_app_view).also {
-                it.setOnClickListener {
-                    showHideGamingMenu(2)
-                }
+                it.setFloatingViewController(this)
                 it.setQSApps(qsApps)
             }
         } else {

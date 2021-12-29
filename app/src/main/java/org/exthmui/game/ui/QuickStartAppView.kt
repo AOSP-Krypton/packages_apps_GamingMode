@@ -21,6 +21,7 @@ import android.content.Context
 import android.util.AttributeSet
 import android.widget.LinearLayout
 
+import org.exthmui.game.controller.FloatingViewController
 import org.exthmui.game.qs.AppTile
 
 class QuickStartAppView @JvmOverloads constructor(
@@ -30,6 +31,12 @@ class QuickStartAppView @JvmOverloads constructor(
     defStyleRes: Int = 0,
 ) : LinearLayout(context, attrs, defStyleAttr, defStyleRes) {
 
+    private lateinit var floatingViewController: FloatingViewController
+
+    fun setFloatingViewController(controller: FloatingViewController) {
+        floatingViewController = controller
+    }
+
     fun setQSApps(apps: List<String>?) {
         visibility = GONE
         removeAllViewsInLayout()
@@ -37,6 +44,7 @@ class QuickStartAppView @JvmOverloads constructor(
             apps.forEach {
                 addView(AppTile(context).apply {
                     setPackage(it)
+                    setController(floatingViewController)
                 })
             }
             visibility = VISIBLE
