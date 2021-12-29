@@ -194,7 +194,7 @@ class NotificationOverlayController @Inject constructor(
         private const val DISPLAY_NOTIFICATION_DURATION = 2000L
         private const val DISAPPEAR_ANIMATION_DURATION = 300L
 
-        private const val DEFAULT_NOTIFICATION_SIZE_LANDSCAPE = 90
+        private const val DEFAULT_NOTIFICATION_SIZE_LANDSCAPE = 60
         private const val DEFAULT_NOTIFICATION_SIZE_PORTRAIT = 60
     }
 }
