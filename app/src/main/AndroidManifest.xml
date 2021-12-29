@@ -22,12 +22,12 @@
         android:label="@string/game_space"
         android:supportsRtl="true"
         android:theme="@style/Theme.Settings"
-        tools:ignore="AllowBackup">
+        tools:ignore="AllowBackup,Instantiatable">
 
         <activity
             android:name=".ui.MainActivity"
-            android:theme="@style/Theme.Settings.Home"
-            android:exported="true">
+            android:exported="true"
+            android:theme="@style/Theme.Settings.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -46,7 +46,8 @@
 
         <service
             android:name=".services.GamingService"
-            android:exported="false" />
+            android:exported="false"
+            tools:ignore="Instantiatable" />
 
         <service
             android:name=".services.NotificationService"

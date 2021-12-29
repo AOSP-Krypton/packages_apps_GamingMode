@@ -24,7 +24,6 @@ import android.os.Bundle
 import android.provider.Settings
 import android.view.Menu
 import android.view.MenuInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
@@ -32,14 +31,11 @@ import android.widget.ImageView
 import android.widget.SearchView
 import android.widget.TextView
 
-import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-
-import com.google.android.material.appbar.AppBarLayout
 
 import org.exthmui.game.R
 
@@ -49,9 +45,8 @@ import org.exthmui.game.R
  * and package name of the application, along with a [CheckBox]
  * indicating whether the item is selected or not.
  */
-abstract class AppListFragment: Fragment(R.layout.app_list_layout), MenuItem.OnActionExpandListener {
+abstract class AppListFragment: Fragment(R.layout.app_list_layout) {
 
-    private lateinit var appBarLayout: AppBarLayout
     private lateinit var packageManager: PackageManager
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: AppListAdapter
@@ -66,10 +61,7 @@ abstract class AppListFragment: Fragment(R.layout.app_list_layout), MenuItem.OnA
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
-        requireActivity().let {
-            it.findViewById<TextView>(R.id.title).setText(getTitle())
-            appBarLayout = it.findViewById(R.id.app_bar)
-        }
+        requireActivity().setTitle(getTitle())
         packageManager = requireContext().packageManager
         packageList = packageManager.getInstalledPackages(0)
     }
@@ -102,10 +94,7 @@ abstract class AppListFragment: Fragment(R.layout.app_list_layout), MenuItem.OnA
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.app_list_menu, menu)
-        val searchItem = menu.findItem(R.id.search).also {
-            it.setOnActionExpandListener(this)
-        }
-        val searchView = searchItem.actionView as SearchView
+        val searchView = menu.findItem(R.id.search).actionView as SearchView
         searchView.queryHint = getString(R.string.search_apps)
         searchView.setOnQueryTextListener(object: SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String) = false
@@ -116,22 +105,6 @@ abstract class AppListFragment: Fragment(R.layout.app_list_layout), MenuItem.OnA
                 return true
             }
         })
-    }
-
-    override fun onMenuItemActionExpand(item: MenuItem): Boolean {
-        // To prevent a large space on tool bar.
-        appBarLayout.setExpanded(false /*expanded*/, false /*animate*/)
-        // To prevent user expanding the collapsing tool bar view.
-        ViewCompat.setNestedScrollingEnabled(recyclerView, false)
-        return true
-    }
-
-    override fun onMenuItemActionCollapse(item: MenuItem): Boolean {
-        // We keep the collapsed status after user cancel the search function.
-        appBarLayout.setExpanded(false /*expanded*/, false /*animate*/)
-        // Allow user to expand the tool bar view.
-        ViewCompat.setNestedScrollingEnabled(recyclerView, true)
-        return true
     }
 
     /**

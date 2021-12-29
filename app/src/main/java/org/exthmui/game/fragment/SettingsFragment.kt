@@ -18,16 +18,13 @@ package org.exthmui.game.fragment
 
 import android.os.Bundle
 import android.view.View
-import android.widget.TextView
 
 import androidx.preference.PreferenceFragmentCompat
-
-import org.exthmui.game.R
 
 abstract class SettingsFragment : PreferenceFragmentCompat() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        requireActivity().findViewById<TextView>(R.id.title).setText(getTitle())
+        requireActivity().setTitle(getTitle())
     }
 
     abstract fun getTitle(): Int

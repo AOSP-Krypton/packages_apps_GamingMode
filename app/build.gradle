@@ -5,6 +5,8 @@ plugins {
     id 'kotlin-kapt'
 }
 
+ext.compiled_framework_dir = '../../../../out/soong/.intermediates'
+
 android {
     compileSdkVersion 31
     buildToolsVersion "30.0.2"
@@ -32,18 +34,21 @@ android {
     }
     sourceSets {
         main {
-            java.srcDirs += ['../../../../out/soong/.intermediates/packages/apps/GamingMode/app/GamingMode/android_common/kapt/gen/sources/']
+            java.srcDirs += ["${compiled_framework_dir}/packages/apps/GamingMode/app/GamingMode/android_common/kapt/gen/sources/"]
         }
     }
 }
 
 dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.1.2'
+    implementation 'androidx.fragment:fragment-ktx:1.4.0'
     implementation 'androidx.preference:preference-ktx:1.1.1'
     implementation 'androidx.recyclerview:recyclerview:1.2.1'
     implementation 'com.google.android.material:material:1.4.0'
     implementation "androidx.core:core-ktx:1.7.0"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation "com.google.dagger:hilt-android:$hilt_version"
+    implementation files("${compiled_framework_dir}/frameworks/base/packages/SettingsLib/SettingsLib/android_common/combined/SettingsLib.jar")
+    implementation files("${compiled_framework_dir}/packages/resources/PreferenceExtensions/PreferenceExtensions/android_common/combined/PreferenceExtensions.jar")
     kapt "com.google.dagger:hilt-android-compiler:$hilt_version"
 }
