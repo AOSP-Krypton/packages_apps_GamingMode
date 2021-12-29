@@ -17,24 +17,24 @@
 
 package org.exthmui.game.ui
 
+import android.annotation.SuppressLint
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.BatteryManager
 import android.util.AttributeSet
-
-import androidx.appcompat.widget.AppCompatTextView
+import android.widget.TextView
 
 import org.exthmui.game.R
 
+@SuppressLint("AppCompatCustomView")
 class BatteryView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0,
-) : AppCompatTextView(
-    context, attrs, defStyleAttr
-) {
+    defStyleRes: Int = 0,
+) : TextView(context, attrs, defStyleAttr, defStyleRes) {
 
     private val batteryChangeReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {

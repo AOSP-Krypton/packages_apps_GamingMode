@@ -17,6 +17,7 @@
 
 package org.exthmui.game.qs
 
+import android.annotation.SuppressLint
 import android.app.ActivityManager
 import android.app.ActivityOptions
 import android.app.ActivityTaskManager
@@ -33,17 +34,18 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.ViewGroup
 import android.view.WindowManager
-
-import androidx.appcompat.widget.AppCompatImageView
+import android.widget.ImageView
 
 import org.exthmui.game.R
 import org.exthmui.game.controller.FloatingViewController
 
+@SuppressLint("AppCompatCustomView")
 class AppTile @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0,
-) : AppCompatImageView(context, attrs, defStyleAttr) {
+    defStyleRes: Int = 0,
+) : ImageView(context, attrs, defStyleAttr, defStyleRes) {
     private val packageManager: PackageManager = context.packageManager
     private val activityOptions = ActivityOptions.makeBasic()
     private var packageName: String? = null

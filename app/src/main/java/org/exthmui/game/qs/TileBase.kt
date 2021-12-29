@@ -17,6 +17,7 @@
 
 package org.exthmui.game.qs
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.Drawable
@@ -25,17 +26,19 @@ import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.View
+import android.widget.TextView
 
 import androidx.appcompat.content.res.AppCompatResources
-import androidx.appcompat.widget.AppCompatTextView
 
 import org.exthmui.game.R
 
+@SuppressLint("AppCompatCustomView")
 open class TileBase @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0,
-) : AppCompatTextView(context, attrs, defStyleAttr), View.OnClickListener {
+    defStyleRes: Int = 0,
+) : TextView(context, attrs, defStyleAttr, defStyleRes), View.OnClickListener {
 
     private var isToggleable = true
 
