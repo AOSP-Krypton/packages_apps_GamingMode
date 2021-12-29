@@ -245,7 +245,6 @@ class FloatingViewController @Inject constructor(
                             touchY = y
                         }
                         MotionEvent.ACTION_MOVE -> {
-                            hideFloatingButton(false)
                             setButtonOffset(
                                 CoordinateType.X,
                                 gamingFBLayoutParams,
@@ -262,7 +261,6 @@ class FloatingViewController @Inject constructor(
                             )
                         }
                         MotionEvent.ACTION_UP -> {
-                            hideFloatingButton(true)
                             if (calcDistance(
                                     origX,
                                     origY,
@@ -302,7 +300,6 @@ class FloatingViewController @Inject constructor(
                     return true
                 }
             })
-        hideFloatingButton(hide = true, init = true)
 
         callViewController.initView(gamingFloatingLayout?.findViewById(R.id.call_control_button))
         restoreFloatingButtonOffset()
@@ -334,23 +331,6 @@ class FloatingViewController @Inject constructor(
         return sqrt(((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2)).toDouble())
     }
 
-    private fun hideFloatingButton(hide: Boolean, init: Boolean) {
-        gamingFloatingButton?.let {
-            val delayedHide: Long =
-                if (init) FLOATING_BUTTON_HIDE_DELAY * 2 else FLOATING_BUTTON_HIDE_DELAY
-            if (hide && it.alpha == 1f) {
-                it.animate().alpha(FLOATING_BUTTON_HIDE_ALPHA)
-                    .setStartDelay(delayedHide).duration = 250
-            } else {
-                it.alpha = 1f
-            }
-        }
-    }
-
-    private fun hideFloatingButton(hide: Boolean) {
-        hideFloatingButton(hide, false)
-    }
-
     /*
      * mode: 0=auto, 1=show, 2=hide
      */
@@ -363,7 +343,6 @@ class FloatingViewController @Inject constructor(
             windowManager.updateViewLayout(gamingOverlayView, menuLayoutParams)
             gamingOverlayView?.visibility = View.GONE
             gamingFloatingLayout?.visibility = View.VISIBLE
-            hideFloatingButton(true)
         } else if (mode != 2) {
             gamingOverlayView?.let {
                 it.visibility = View.VISIBLE
@@ -388,12 +367,6 @@ class FloatingViewController @Inject constructor(
     }
 
     companion object {
-        /** Default delay for the floating button  to be hidden (in ms) */
-        private const val FLOATING_BUTTON_HIDE_DELAY = 1000L
-
-        /** Default alpha value for hiding the floating button hidden */
-        private const val FLOATING_BUTTON_HIDE_ALPHA = 0.1f
-
         private const val DEFAULT_PERFORMANCE_LEVEL = 5
 
         private const val DEFAULT_MENU_OPACITY = 75
