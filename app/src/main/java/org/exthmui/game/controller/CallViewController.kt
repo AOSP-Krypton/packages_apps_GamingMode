@@ -117,16 +117,14 @@ class CallViewController @Inject constructor(
 
         override fun onCallStateChanged(state: Int) {
             if (!autoAnswerCall) return
-            @Suppress("DEPRECATION")
             when (state) {
                 TelephonyManager.CALL_STATE_RINGING -> {
                     if (!checkPermission()) return
+                    @Suppress("DEPRECATION")
                     telecomManager.acceptRingingCall()
                 }
                 TelephonyManager.CALL_STATE_OFFHOOK -> {
                     if (previousState == TelephonyManager.CALL_STATE_RINGING) {
-                        previousAudioMode = audioManager.mode
-                        audioManager.mode = AudioManager.MODE_IN_COMMUNICATION
                         if (isHeadsetPluggedIn()) {
                             audioManager.isSpeakerphoneOn = false
                             AudioSystem.setForceUse(
