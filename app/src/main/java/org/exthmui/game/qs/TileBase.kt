@@ -78,7 +78,9 @@ open class TileBase @JvmOverloads constructor(
             }
             val inset = context.resources.getDimensionPixelSize(R.dimen.gaming_qs_icon_padding)
             background.setLayerInset(1, inset, inset, inset, inset)
-            setCompoundDrawablesWithIntrinsicBounds(null, background, null, null)
+            val size = context.resources.getDimensionPixelSize(R.dimen.gaming_qs_icon_size)
+            background.setBounds(0, 0, size, size)
+            setCompoundDrawables(null, background, null, null)
         }
     }
 
