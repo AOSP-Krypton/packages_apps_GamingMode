@@ -105,8 +105,22 @@ class FloatingViewController @Inject constructor(
         perfLevelSeekBar = null
     }
 
+    private fun showGamingMenu() {
+        if (gamingOverlayView?.visibility == View.VISIBLE) return
+        gamingOverlayView?.let {
+            it.visibility = View.VISIBLE
+            windowManager.updateViewLayout(it, getBaseLayoutParams())
+        }
+        gamingFloatingLayout?.visibility = View.GONE
+    }
+
     fun hideGamingMenu() {
-        showHideGamingMenu(2)
+        val menuLayoutParams = getBaseLayoutParams()
+        menuLayoutParams.width = WindowManager.LayoutParams.WRAP_CONTENT
+        menuLayoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT
+        windowManager.updateViewLayout(gamingOverlayView, menuLayoutParams)
+        gamingOverlayView?.visibility = View.GONE
+        gamingFloatingLayout?.visibility = View.VISIBLE
     }
 
     private fun loadSettings() {
@@ -160,7 +174,7 @@ class FloatingViewController @Inject constructor(
             null
         ) as FrameLayout).also {
             it.visibility = View.GONE
-            it.setOnClickListener { showHideGamingMenu(0) }
+            it.setOnClickListener { hideGamingMenu() }
         }
 
         val gamingViewLayoutParams = getBaseLayoutParams().apply {
@@ -225,7 +239,7 @@ class FloatingViewController @Inject constructor(
         windowManager.addView(gamingFloatingLayout, gamingFBLayoutParams)
 
         gamingFloatingButton = gamingFloatingLayout!!.findViewById(R.id.floating_button)
-        gamingFloatingButton!!.setOnClickListener { showHideGamingMenu(0) }
+        gamingFloatingButton!!.setOnClickListener { showGamingMenu() }
         gamingFloatingButton!!.setOnTouchListener(
             object : View.OnTouchListener {
                 var origX = 0
@@ -329,27 +343,6 @@ class FloatingViewController @Inject constructor(
 
     private fun calcDistance(x1: Int, y1: Int, x2: Int, y2: Int): Double {
         return sqrt(((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2)).toDouble())
-    }
-
-    /*
-     * mode: 0=auto, 1=show, 2=hide
-     */
-    private fun showHideGamingMenu(mode: Int) {
-        if (gamingOverlayView?.visibility == View.VISIBLE && mode != 1) {
-            // hide
-            val menuLayoutParams = getBaseLayoutParams()
-            menuLayoutParams.width = WindowManager.LayoutParams.WRAP_CONTENT
-            menuLayoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT
-            windowManager.updateViewLayout(gamingOverlayView, menuLayoutParams)
-            gamingOverlayView?.visibility = View.GONE
-            gamingFloatingLayout?.visibility = View.VISIBLE
-        } else if (mode != 2) {
-            gamingOverlayView?.let {
-                it.visibility = View.VISIBLE
-                windowManager.updateViewLayout(it, getBaseLayoutParams())
-            }
-            gamingFloatingLayout?.visibility = View.GONE
-        }
     }
 
     private fun getBaseLayoutParams() =
