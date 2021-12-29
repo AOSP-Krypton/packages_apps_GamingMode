@@ -40,8 +40,6 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
-import kotlin.math.sqrt
-
 import org.exthmui.game.R
 import org.exthmui.game.ui.QuickSettingsView
 import org.exthmui.game.ui.QuickStartAppView
@@ -147,22 +145,17 @@ class FloatingViewController @Inject constructor(
 
     private fun restoreFloatingButtonOffset() {
         // 悬浮球位置调整
-        val defaultX = (floatingButtonSize.toInt() - bounds.width()) / 2
-        setButtonOffset(
-            CoordinateType.X, gamingFBLayoutParams,
-            sharedPrefs.getInt(
-                if (isPortrait) FLOATING_BUTTON_COORDINATE_VERTICAL_X
-                else FLOATING_BUTTON_COORDINATE_HORIZONTAL_X,
-                defaultX
-            )
+        val defaultX = ((floatingButtonSize - bounds.width()) / 2f).toInt()
+        val defaultY = ((floatingButtonSize - bounds.height()) / 2f).toInt()
+        gamingFBLayoutParams.x = sharedPrefs.getInt(
+            if (isPortrait) FLOATING_BUTTON_COORDINATE_VERTICAL_X
+            else FLOATING_BUTTON_COORDINATE_HORIZONTAL_X,
+            defaultX
         )
-        setButtonOffset(
-            CoordinateType.Y, gamingFBLayoutParams,
-            sharedPrefs.getInt(
-                if (isPortrait) FLOATING_BUTTON_COORDINATE_VERTICAL_Y
-                else FLOATING_BUTTON_COORDINATE_HORIZONTAL_Y,
-                10
-            )
+        gamingFBLayoutParams.y = sharedPrefs.getInt(
+            if (isPortrait) FLOATING_BUTTON_COORDINATE_VERTICAL_Y
+            else FLOATING_BUTTON_COORDINATE_HORIZONTAL_Y,
+            defaultY
         )
         windowManager.updateViewLayout(gamingFloatingLayout, gamingFBLayoutParams)
     }
@@ -227,7 +220,7 @@ class FloatingViewController @Inject constructor(
         }
     }
 
-    @SuppressLint("InflateParams", "ClickableViewAccessibility")
+    @SuppressLint("InflateParams")
     private fun initFloatingLayout() {
         gamingFloatingLayout =
             layoutInflater.inflate(R.layout.gaming_button_layout, null)
@@ -237,112 +230,73 @@ class FloatingViewController @Inject constructor(
             height = WindowManager.LayoutParams.WRAP_CONTENT
         }
         windowManager.addView(gamingFloatingLayout, gamingFBLayoutParams)
-
-        gamingFloatingButton = gamingFloatingLayout!!.findViewById(R.id.floating_button)
-        gamingFloatingButton!!.setOnClickListener { showGamingMenu() }
-        gamingFloatingButton!!.setOnTouchListener(
-            object : View.OnTouchListener {
-                var origX = 0
-                var origY = 0
-                var touchX = 0
-                var touchY = 0
-
-                override fun onTouch(v: View, event: MotionEvent): Boolean {
-                    val x = event.rawX.toInt()
-                    val y = event.rawY.toInt()
-
-                    when (event.action) {
-                        MotionEvent.ACTION_DOWN -> {
-                            origX = gamingFBLayoutParams.x
-                            origY = gamingFBLayoutParams.y
-                            touchX = x
-                            touchY = y
-                        }
-                        MotionEvent.ACTION_MOVE -> {
-                            setButtonOffset(
-                                CoordinateType.X,
-                                gamingFBLayoutParams,
-                                origX + x - touchX
-                            )
-                            setButtonOffset(
-                                CoordinateType.Y,
-                                gamingFBLayoutParams,
-                                origY + y - touchY
-                            )
-                            windowManager.updateViewLayout(
-                                gamingFloatingLayout,
-                                gamingFBLayoutParams
-                            )
-                        }
-                        MotionEvent.ACTION_UP -> {
-                            if (calcDistance(
-                                    origX,
-                                    origY,
-                                    gamingFBLayoutParams.x,
-                                    gamingFBLayoutParams.y
-                                ) < 5
-                            ) {
-                                v.performClick()
-                            } else {
-                                if (isPortrait) {
-                                    sharedPrefs.edit(commit = true) {
-                                        putInt(
-                                            FLOATING_BUTTON_COORDINATE_VERTICAL_X,
-                                            gamingFBLayoutParams.x
-                                        )
-                                        putInt(
-                                            FLOATING_BUTTON_COORDINATE_VERTICAL_Y,
-                                            gamingFBLayoutParams.y
-                                        )
-                                    }
-                                } else {
-                                    sharedPrefs.edit(commit = true) {
-                                        putInt(
-                                            FLOATING_BUTTON_COORDINATE_HORIZONTAL_X,
-                                            gamingFBLayoutParams.x
-                                        )
-                                        putInt(
-                                            FLOATING_BUTTON_COORDINATE_HORIZONTAL_Y,
-                                            gamingFBLayoutParams.y
-                                        )
-                                    }
-                                }
-                            }
-                        }
-                        else -> return false
-                    }
-                    return true
-                }
-            })
+        initFloatingButton()
 
         callViewController.initView(gamingFloatingLayout?.findViewById(R.id.call_control_button))
         restoreFloatingButtonOffset()
     }
 
-    private fun setButtonOffset(
-        type: CoordinateType,
-        param: WindowManager.LayoutParams,
-        value: Int
-    ) {
-        val rButton = floatingButtonSize.toInt() / 2
-        val rScreenX = (bounds.width() - rButton) / 2
-        val rScreenY = (bounds.height() - rButton) / 2
+    private fun initFloatingButton() {
+        gamingFloatingButton =
+            gamingFloatingLayout!!.findViewById<ImageView>(R.id.floating_button).also {
+                it.setOnClickListener { showGamingMenu() }
+                it.setOnTouchListener(object : View.OnTouchListener {
+                    var diffX = 0
+                    var diffY = 0
+                    var moved = false
 
-        if (type == CoordinateType.X) {
-            param.x = MathUtils.clamp(
-                value,
-                if (isPortrait) -rScreenX else -rScreenX, rScreenX
+                    override fun onTouch(v: View, event: MotionEvent): Boolean {
+                        val x = event.rawX.toInt()
+                        val y = event.rawY.toInt()
+
+                        when (event.action) {
+                            MotionEvent.ACTION_DOWN -> {
+                                diffX = gamingFBLayoutParams.x - x
+                                diffY = gamingFBLayoutParams.y - y
+                            }
+                            MotionEvent.ACTION_MOVE -> {
+                                moved = true
+                                gamingFBLayoutParams.x =
+                                    getClampedValue(x + diffX, bounds.width())
+                                gamingFBLayoutParams.y =
+                                    getClampedValue(y + diffY, bounds.height())
+                                windowManager.updateViewLayout(
+                                    gamingFloatingLayout,
+                                    gamingFBLayoutParams
+                                )
+                            }
+                            MotionEvent.ACTION_UP -> {
+                                if (!moved) {
+                                    v.performClick()
+                                } else {
+                                    moved = false
+                                    saveCoordinates()
+                                }
+                            }
+                            else -> return false
+                        }
+                        return true
+                    }
+                })
+            }
+    }
+
+    private fun saveCoordinates() {
+        sharedPrefs.edit(commit = true) {
+            putInt(
+                if (isPortrait) FLOATING_BUTTON_COORDINATE_VERTICAL_X else FLOATING_BUTTON_COORDINATE_HORIZONTAL_X,
+                gamingFBLayoutParams.x
             )
-        } else {
-            param.y = MathUtils.clamp(
-                value,
-                if (isPortrait) -rScreenY else -rScreenY, rScreenY
+            putInt(
+                if (isPortrait) FLOATING_BUTTON_COORDINATE_VERTICAL_Y else FLOATING_BUTTON_COORDINATE_HORIZONTAL_Y,
+                gamingFBLayoutParams.y
             )
         }
     }
 
-    private fun calcDistance(x1: Int, y1: Int, x2: Int, y2: Int): Double {
-        return sqrt(((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2)).toDouble())
+    private fun getClampedValue(value: Int, max: Int): Int {
+        val allowedMax = ((max - floatingButtonSize) / 2f).toInt()
+        return MathUtils.clamp(value, -allowedMax, allowedMax)
     }
 
     private fun getBaseLayoutParams() =
@@ -353,11 +307,6 @@ class FloatingViewController @Inject constructor(
                     or WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL,
             PixelFormat.TRANSLUCENT
         )
-
-    private enum class CoordinateType {
-        X,
-        Y
-    }
 
     companion object {
         private const val DEFAULT_PERFORMANCE_LEVEL = 5
