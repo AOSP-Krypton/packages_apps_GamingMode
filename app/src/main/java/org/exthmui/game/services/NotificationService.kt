@@ -33,19 +33,23 @@ class NotificationService : NotificationListenerService() {
 
     override fun onNotificationPosted(sbn: StatusBarNotification) {
         if (notificationOverlayController?.showNotificationOverlay != true) return
+        if (!sbn.isClearable || sbn.isOngoing) return
         val extras = sbn.notification.extras
         if (!isInBlackList(sbn.packageName)) {
             val lastNotification = lastNotificationMap.getOrDefault(sbn.packageName, "")
+
             var title = extras.getString(Notification.EXTRA_TITLE)
             if (title?.isNotBlank() != true) title = extras.getString(Notification.EXTRA_TITLE_BIG)
-            val text = extras.getString(Notification.EXTRA_TEXT)
+
             var danmakuText = ""
             if (title?.isNotBlank() == true) {
-                danmakuText += "[$title]"
+                danmakuText += "[$title] "
             }
+            val text = extras.getString(Notification.EXTRA_TEXT)
             if (text?.isNotBlank() == true) {
                 danmakuText += text
             }
+
             if (danmakuText.isNotBlank() && (!useFilter || compareDanmaku(
                     danmakuText,
                     lastNotification
