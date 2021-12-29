@@ -23,21 +23,17 @@ import android.widget.LinearLayout
 
 import org.exthmui.game.controller.FloatingViewController
 import org.exthmui.game.controller.NotificationOverlayController
-import org.exthmui.game.qs.ScreenCaptureTile
-import org.exthmui.game.qs.NotificationOverlayTile
-import org.exthmui.game.qs.RingerModeTile
-import org.exthmui.game.qs.LockGestureTile
-import org.exthmui.game.qs.AutoBrightnessTile
+import org.exthmui.game.qs.*
 
 class QuickSettingsView @JvmOverloads constructor(
-    context: Context?,
+    context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0,
     defStyleRes: Int = 0,
 ) : LinearLayout(context, attrs, defStyleAttr, defStyleRes) {
-    
-    private var notificationOverlayController: NotificationOverlayController? = null
-    private var floatingViewController: FloatingViewController? = null
+
+    private lateinit var notificationOverlayController: NotificationOverlayController
+    private lateinit var floatingViewController: FloatingViewController
 
     fun setNotificationOverlayController(controller: NotificationOverlayController) {
         notificationOverlayController = controller
@@ -49,10 +45,10 @@ class QuickSettingsView @JvmOverloads constructor(
 
     fun addTiles() {
         addView(ScreenCaptureTile(context).also {
-            it.setViewController(floatingViewController!!)
+            it.setViewController(floatingViewController)
         })
         addView(NotificationOverlayTile(context).also {
-            it.setController(notificationOverlayController!!)
+            it.setController(notificationOverlayController)
         })
         addView(RingerModeTile(context))
         addView(LockGestureTile(context))

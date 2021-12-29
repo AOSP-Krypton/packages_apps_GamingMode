@@ -46,19 +46,23 @@ open class TileBase @JvmOverloads constructor(
 
     init {
         gravity = Gravity.CENTER
-        maxEms = 6
+        setEms(5)
         maxLines = 2
         with(context.resources) {
             setTextSize(
                 TypedValue.COMPLEX_UNIT_PX,
                 getDimensionPixelSize(R.dimen.gaming_qs_text_size).toFloat()
             )
-            compoundDrawablePadding = getDimensionPixelSize(R.dimen.qs_icon_margin)
+            compoundDrawablePadding = getDimensionPixelSize(R.dimen.qs_compound_icon_padding)
         }
     }
 
     final override fun setTextSize(value: Int, float: Float) {
         super.setTextSize(value, float)
+    }
+
+    final override fun setEms(ems: Int) {
+        super.setEms(ems)
     }
 
     fun setToggleable(isToggleable: Boolean) {
