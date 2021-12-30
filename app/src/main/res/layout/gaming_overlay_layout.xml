@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
      Copyright (C) 2020 The exTHmUI Open Source Project
      Copyright (C) 2021 AOSP-Krypton Project
 
@@ -15,160 +14,156 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    android:background="@drawable/menu_background"
+    android:padding="14dp"
     android:theme="@style/Theme.Settings">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/gaming_menu"
+    <TextClock
+        android:id="@+id/time_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/menu_background"
-        android:padding="16dp">
+        android:format12Hour="h:mm"
+        android:format24Hour="H:mm"
+        android:textSize="32sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <TextClock
-            android:id="@+id/time_view"
+    <TextClock
+        android:id="@+id/date_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginEnd="@dimen/time_battery_margin"
+        android:format12Hour="@string/date_format"
+        android:format24Hour="@string/date_format"
+        app:layout_constraintBaseline_toBaselineOf="@id/time_view"
+        app:layout_constraintStart_toEndOf="@id/time_view" />
+
+    <org.exthmui.game.ui.BatteryView
+        android:id="@+id/battery_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/time_battery_margin"
+        app:layout_constraintBaseline_toBaselineOf="@id/time_view"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1"
+        app:layout_constraintStart_toEndOf="@id/date_view" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/status_bar_barrier"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="bottom"
+        app:constraint_referenced_ids="time_view, date_view, battery_view" />
+
+    <HorizontalScrollView
+        android:id="@+id/qs_view_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:overScrollMode="never"
+        android:paddingBottom="4dp"
+        android:scrollbars="none"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/status_bar_barrier">
+
+        <org.exthmui.game.ui.QuickSettingsView
+            android:id="@+id/quick_settings_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:format12Hour="h:mm"
-            android:format24Hour="H:mm"
-            android:textSize="32sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:gravity="center_horizontal" />
+    </HorizontalScrollView>
 
-        <TextClock
-            android:id="@+id/date_view"
+    <View
+        android:id="@+id/qs_divider"
+        android:layout_width="0dp"
+        android:layout_height="0.5dp"
+        android:layout_marginTop="8dp"
+        android:background="#7DFFFFFF"
+        app:layout_constraintEnd_toEndOf="@id/qs_view_container"
+        app:layout_constraintStart_toStartOf="@id/qs_view_container"
+        app:layout_constraintTop_toBottomOf="@id/qs_view_container" />
+
+    <HorizontalScrollView
+        android:id="@+id/qs_app_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:overScrollMode="never"
+        android:paddingBottom="4dp"
+        android:scrollbars="none"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/qs_divider">
+
+        <org.exthmui.game.ui.QuickStartAppView
+            android:id="@+id/quick_start_app_view"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="4dp"
-            android:layout_marginEnd="@dimen/time_battery_margin"
-            android:format12Hour="@string/date_format"
-            android:format24Hour="@string/date_format"
-            app:layout_constraintBaseline_toBaselineOf="@id/time_view"
-            app:layout_constraintStart_toEndOf="@id/time_view" />
+            android:layout_height="wrap_content" />
+    </HorizontalScrollView>
 
-        <org.exthmui.game.ui.BatteryView
-            android:id="@+id/battery_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/time_battery_margin"
-            app:layout_constraintBaseline_toBaselineOf="@id/time_view"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1"
-            app:layout_constraintStart_toEndOf="@id/date_view" />
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/quick_start_app_group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:constraint_referenced_ids="qs_divider, qs_app_container" />
 
-        <androidx.constraintlayout.widget.Barrier
-            android:id="@+id/status_bar_barrier"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:barrierDirection="bottom"
-            app:constraint_referenced_ids="time_view, date_view, battery_view" />
+    <TextView
+        android:id="@+id/perf_level_title_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:gravity="start"
+        android:text="@string/performance_level"
+        android:textSize="@dimen/perf_indicator_text_size"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/qs_app_container" />
 
-        <HorizontalScrollView
-            android:id="@+id/qs_view_container"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="4dp"
-            android:paddingBottom="4dp"
-            android:scrollbars="none"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/status_bar_barrier">
+    <SeekBar
+        android:id="@+id/perf_level_seekbar"
+        style="@android:style/Widget.Material.SeekBar.Discrete"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:max="6"
+        android:paddingStart="0dp"
+        android:paddingEnd="0dp"
+        android:progress="3"
+        android:tickMark="@null"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/perf_level_title_textview" />
 
-            <org.exthmui.game.ui.QuickSettingsView
-                android:id="@+id/quick_settings_view"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-        </HorizontalScrollView>
+    <TextView
+        android:id="@+id/power_save_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="start"
+        android:text="@string/power_save"
+        android:textSize="@dimen/perf_indicator_text_size"
+        app:layout_constraintStart_toStartOf="@id/perf_level_seekbar"
+        app:layout_constraintTop_toBottomOf="@id/perf_level_seekbar" />
 
-        <View
-            android:id="@+id/qs_divider"
-            android:layout_width="0dp"
-            android:layout_height="0.5dp"
-            android:layout_marginTop="8dp"
-            android:background="#7DFFFFFF"
-            app:layout_constraintEnd_toEndOf="@id/qs_view_container"
-            app:layout_constraintStart_toStartOf="@id/qs_view_container"
-            app:layout_constraintTop_toBottomOf="@id/qs_view_container" />
+    <TextView
+        android:id="@+id/performance_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="end"
+        android:text="@string/performance"
+        android:textSize="@dimen/perf_indicator_text_size"
+        app:layout_constraintEnd_toEndOf="@id/perf_level_seekbar"
+        app:layout_constraintTop_toBottomOf="@id/perf_level_seekbar" />
 
-        <HorizontalScrollView
-            android:id="@+id/qs_app_container"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:paddingBottom="4dp"
-            android:scrollbars="none"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/qs_divider">
-
-            <org.exthmui.game.ui.QuickStartAppView
-                android:id="@+id/quick_start_app_view"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-        </HorizontalScrollView>
-
-        <androidx.constraintlayout.widget.Group
-            android:id="@+id/quick_start_app_group"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:constraint_referenced_ids="qs_divider, qs_app_container" />
-
-        <TextView
-            android:id="@+id/perf_level_title_textview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:gravity="start"
-            android:text="@string/performance_level"
-            android:textSize="@dimen/perf_indicator_text_size"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/qs_app_container" />
-
-        <SeekBar
-            android:id="@+id/perf_level_seekbar"
-            style="@android:style/Widget.Material.SeekBar.Discrete"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:paddingStart="0dp"
-            android:paddingEnd="0dp"
-            android:max="6"
-            android:progress="3"
-            android:tickMark="@null"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/perf_level_title_textview" />
-
-        <TextView
-            android:id="@+id/power_save_textview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="start"
-            android:text="@string/power_save"
-            android:textSize="@dimen/perf_indicator_text_size"
-            app:layout_constraintStart_toStartOf="@id/perf_level_seekbar"
-            app:layout_constraintTop_toBottomOf="@id/perf_level_seekbar" />
-
-        <TextView
-            android:id="@+id/performance_textview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="end"
-            android:text="@string/performance"
-            android:textSize="@dimen/perf_indicator_text_size"
-            app:layout_constraintEnd_toEndOf="@id/perf_level_seekbar"
-            app:layout_constraintTop_toBottomOf="@id/perf_level_seekbar" />
-
-        <androidx.constraintlayout.widget.Group
-            android:id="@+id/performance_group"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:constraint_referenced_ids="perf_level_title_textview,
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/performance_group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:constraint_referenced_ids="perf_level_title_textview,
                 perf_level_seekbar,
                 power_save_textview,
                 performance_textview" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</FrameLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

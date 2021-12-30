@@ -18,14 +18,16 @@
 package org.exthmui.game.controller
 
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.content.Context
 import android.content.SharedPreferences
 import android.content.res.Configuration
+import android.graphics.Color
 import android.graphics.PixelFormat
+import android.graphics.drawable.ColorDrawable
 import android.os.SystemProperties
 import android.provider.Settings
 import android.view.*
-import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.SeekBar
 
@@ -40,8 +42,6 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
-import kotlin.math.absoluteValue
-
 import org.exthmui.game.R
 import org.exthmui.game.ui.QuickSettingsView
 import org.exthmui.game.ui.QuickStartAppView
@@ -54,11 +54,6 @@ class FloatingViewController @Inject constructor(
 ) : ViewController(context) {
 
     private var gamingFloatingLayout: View? = null
-    private var gamingFloatingButton: ImageView? = null
-    private var gamingOverlayView: FrameLayout? = null
-    private var gamingMenu: ConstraintLayout? = null
-    private var qsView: QuickSettingsView? = null
-    private var qsAppView: QuickStartAppView? = null
     private var perfLevelSeekBar: SeekBar? = null
 
     private lateinit var gamingFBLayoutParams: WindowManager.LayoutParams
@@ -72,6 +67,8 @@ class FloatingViewController @Inject constructor(
     private var performanceLevel = DEFAULT_PERFORMANCE_LEVEL
 
     private lateinit var sharedPrefs: SharedPreferences
+
+    private var dialog: AlertDialog? = null
 
     override fun initController() {
         with(context.resources) {
@@ -92,22 +89,22 @@ class FloatingViewController @Inject constructor(
     }
 
     override fun onDestroy() {
-        windowManager.removeViewImmediate(gamingFloatingLayout)
-        gamingFloatingLayout = null
-        gamingFloatingButton = null
-
-        windowManager.removeViewImmediate(gamingOverlayView)
-        gamingOverlayView = null
-        gamingMenu = null
-        qsView = null
-        qsAppView = null
+        dialog?.dismiss()
         perfLevelSeekBar?.setOnSeekBarChangeListener(null)
         perfLevelSeekBar = null
+        windowManager.removeView(gamingFloatingLayout)
+        gamingFloatingLayout = null
     }
 
     private fun showGamingMenu() {
-        if (gamingOverlayView?.visibility == View.VISIBLE) return
-        // show
+        dialog?.let {
+            it.window?.attributes?.gravity = getOverlayViewGravity()
+            it.show()
+        }
+        gamingFloatingLayout?.visibility = View.GONE
+    }
+
+    private fun getOverlayViewGravity(): Int {
         var overlayViewGravity = 0
         overlayViewGravity = if (gamingFBLayoutParams.x > 0) {
             overlayViewGravity or Gravity.END
@@ -119,17 +116,11 @@ class FloatingViewController @Inject constructor(
         } else {
             overlayViewGravity or Gravity.TOP
         }
-        gamingOverlayView?.let {
-            it.visibility = View.VISIBLE
-            windowManager.updateViewLayout(it, getBaseLayoutParams().apply {
-                gravity = overlayViewGravity
-            })
-        }
-        gamingFloatingLayout?.visibility = View.GONE
+        return overlayViewGravity
     }
 
     fun hideGamingMenu() {
-        gamingOverlayView?.visibility = View.GONE
+        dialog?.hide()
         gamingFloatingLayout?.visibility = View.VISIBLE
     }
 
@@ -174,92 +165,60 @@ class FloatingViewController @Inject constructor(
 
     @SuppressLint("InflateParams")
     private fun initGamingMenu() {
-        gamingOverlayView = (layoutInflater.inflate(
+        val overlayView = layoutInflater.inflate(
             R.layout.gaming_overlay_layout,
             null
-        ) as FrameLayout).also {
-            it.visibility = View.GONE
-            it.setOnTouchListener(object : View.OnTouchListener {
-                var fingerDown = false
-                override fun onTouch(v: View?, event: MotionEvent?): Boolean {
-                    when (event?.action) {
-                        MotionEvent.ACTION_DOWN -> {
-                            fingerDown = true
-                            return true
-                        }
-                        MotionEvent.ACTION_UP -> {
-                            if (!fingerDown) return false
-                            fingerDown = false
-                            if (isTouchOutsideOverlayView(event.rawX.toInt(), event.rawY.toInt())) {
-                                hideGamingMenu()
-                            } else {
-                                v?.performClick()
-                            }
-                            return true
-                        }
-                        else -> return false
-                    }
-                }
-            })
+        ) as ConstraintLayout
+
+        overlayView.findViewById<QuickSettingsView>(R.id.quick_settings_view).also {
+            it.setNotificationOverlayController(notificationOverlayController)
+            it.setFloatingViewController(this)
+            it.addTiles()
         }
 
-        windowManager.addView(gamingOverlayView, getBaseLayoutParams())
-
-        qsView =
-            gamingOverlayView!!.findViewById<QuickSettingsView>(R.id.quick_settings_view).also {
-                it.setNotificationOverlayController(notificationOverlayController)
-                it.setFloatingViewController(this)
-                it.addTiles()
-            }
         if (qsApps?.isNotEmpty() == true) {
-            qsAppView =
-                gamingOverlayView!!.findViewById<QuickStartAppView>(R.id.quick_start_app_view)
-                    .also {
-                        it.setFloatingViewController(this)
-                        it.setQSApps(qsApps)
-                    }
+            overlayView.findViewById<QuickStartAppView>(R.id.quick_start_app_view)
+                .also {
+                    it.setFloatingViewController(this)
+                    it.setQSApps(qsApps)
+                }
         } else {
-            gamingOverlayView!!.findViewById<Group>(R.id.quick_start_app_group).visibility =
-                View.GONE
+            overlayView.findViewById<Group>(R.id.quick_start_app_group).visibility = View.GONE
         }
 
         if (perfProfilesSupported && changePerfLevel) {
-            perfLevelSeekBar = gamingOverlayView!!.findViewById<SeekBar>(R.id.perf_level_seekbar)
-                .also {
-                    it.progress = performanceLevel
-                    it.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-                        override fun onProgressChanged(
-                            seekBar: SeekBar?,
-                            progress: Int,
-                            fromUser: Boolean
-                        ) {
-                            SystemProperties.set(PROP_GAMING_PERFORMANCE, progress.toString())
-                        }
+            perfLevelSeekBar = overlayView.findViewById<SeekBar>(R.id.perf_level_seekbar).also {
+                it.progress = performanceLevel
+                it.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+                    override fun onProgressChanged(
+                        seekBar: SeekBar?,
+                        progress: Int,
+                        fromUser: Boolean
+                    ) {
+                        SystemProperties.set(PROP_GAMING_PERFORMANCE, progress.toString())
+                    }
 
-                        override fun onStartTrackingTouch(seekBar: SeekBar?) {}
-                        override fun onStopTrackingTouch(seekBar: SeekBar?) {}
-                    })
-                }
+                    override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+                    override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+                })
+            }
         } else {
-            gamingOverlayView!!.findViewById<Group>(R.id.performance_group).visibility = View.GONE
+            overlayView.findViewById<Group>(R.id.performance_group).visibility = View.GONE
         }
 
-        gamingMenu = gamingOverlayView!!.findViewById<ConstraintLayout>(R.id.gaming_menu).also {
-            it.background.alpha = menuOpacity * 255 / 100
-        }
-    }
+        overlayView.background.alpha = menuOpacity * 255 / 100
 
-    private fun isTouchOutsideOverlayView(x: Int, y: Int): Boolean {
-        gamingOverlayView?.let {
-            val position = intArrayOf(0, 0)
-            it.getLocationOnScreen(position)
-            if ((x - position[0]).absoluteValue > it.measuredWidth ||
-                (y - position[1]).absoluteValue > it.measuredHeight
-            ) {
-                return true
+        dialog = AlertDialog.Builder(context, R.style.Theme_AlertDialog).let {
+            it.setView(overlayView)
+            it.setCancelable(true)
+            it.setOnCancelListener { gamingFloatingLayout?.visibility = View.VISIBLE }
+            it.create()
+        }.also {
+            it.window?.apply {
+                setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY)
+                setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             }
         }
-        return false
     }
 
     @SuppressLint("InflateParams")
@@ -276,48 +235,47 @@ class FloatingViewController @Inject constructor(
     }
 
     private fun initFloatingButton() {
-        gamingFloatingButton =
-            gamingFloatingLayout!!.findViewById<ImageView>(R.id.floating_button).also {
-                it.setOnClickListener { showGamingMenu() }
-                it.setOnTouchListener(object : View.OnTouchListener {
-                    var diffX = 0
-                    var diffY = 0
-                    var moved = false
+        gamingFloatingLayout!!.findViewById<ImageView>(R.id.floating_button).also {
+            it.setOnClickListener { showGamingMenu() }
+            it.setOnTouchListener(object : View.OnTouchListener {
+                var diffX = 0
+                var diffY = 0
+                var moved = false
 
-                    override fun onTouch(v: View, event: MotionEvent): Boolean {
-                        val x = event.rawX.toInt()
-                        val y = event.rawY.toInt()
+                override fun onTouch(v: View, event: MotionEvent): Boolean {
+                    val x = event.rawX.toInt()
+                    val y = event.rawY.toInt()
 
-                        when (event.action) {
-                            MotionEvent.ACTION_DOWN -> {
-                                diffX = gamingFBLayoutParams.x - x
-                                diffY = gamingFBLayoutParams.y - y
-                            }
-                            MotionEvent.ACTION_MOVE -> {
-                                moved = true
-                                gamingFBLayoutParams.x =
-                                    getClampedValue(x + diffX, bounds.width())
-                                gamingFBLayoutParams.y =
-                                    getClampedValue(y + diffY, bounds.height())
-                                windowManager.updateViewLayout(
-                                    gamingFloatingLayout,
-                                    gamingFBLayoutParams
-                                )
-                            }
-                            MotionEvent.ACTION_UP -> {
-                                if (!moved) {
-                                    v.performClick()
-                                } else {
-                                    moved = false
-                                    saveCoordinates()
-                                }
-                            }
-                            else -> return false
+                    when (event.action) {
+                        MotionEvent.ACTION_DOWN -> {
+                            diffX = gamingFBLayoutParams.x - x
+                            diffY = gamingFBLayoutParams.y - y
                         }
-                        return true
+                        MotionEvent.ACTION_MOVE -> {
+                            moved = true
+                            gamingFBLayoutParams.x =
+                                getClampedValue(x + diffX, bounds.width())
+                            gamingFBLayoutParams.y =
+                                getClampedValue(y + diffY, bounds.height())
+                            windowManager.updateViewLayout(
+                                gamingFloatingLayout,
+                                gamingFBLayoutParams
+                            )
+                        }
+                        MotionEvent.ACTION_UP -> {
+                            if (!moved) {
+                                v.performClick()
+                            } else {
+                                moved = false
+                                saveCoordinates()
+                            }
+                        }
+                        else -> return false
                     }
-                })
-            }
+                    return true
+                }
+            })
+        }
     }
 
     private fun saveCoordinates() {
@@ -339,19 +297,14 @@ class FloatingViewController @Inject constructor(
     }
 
     private fun getFloatingButtonLP() =
-        getBaseLayoutParams().apply {
-            flags = flags or
-                    WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
-                    WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
-        }
-
-    private fun getBaseLayoutParams() =
         WindowManager.LayoutParams(
             WindowManager.LayoutParams.WRAP_CONTENT,
             WindowManager.LayoutParams.WRAP_CONTENT,
             WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
-            WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
-                    or WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED,
+            WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS or
+                    WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED or
+                    WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL,
             PixelFormat.TRANSLUCENT
         )
 

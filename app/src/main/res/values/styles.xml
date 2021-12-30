@@ -11,11 +11,18 @@
         <item name="colorPrimary">@*android:color/primary_device_default_settings_light</item>
         <item name="colorPrimaryVariant">@android:color/white</item>
         <item name="android:textColor">@android:color/white</item>
+
+        <item name="alertDialogTheme">@style/Theme.AlertDialog</item>
     </style>
 
     <!-- Variant of the settings theme with no action bar. -->
     <style name="Theme.Settings.NoActionBar">
         <item name="android:windowActionBar">false</item>
         <item name="android:windowNoTitle">true</item>
+    </style>
+
+    <style name="Theme.AlertDialog" parent="@style/Theme.AppCompat.DayNight.Dialog.Alert">
+        <item name="android:windowSoftInputMode">stateHidden</item>
+        <item name="android:windowMinWidthMajor">45%</item>
     </style>
 </resources>
