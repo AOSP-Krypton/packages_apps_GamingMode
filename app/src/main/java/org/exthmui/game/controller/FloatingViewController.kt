@@ -40,6 +40,8 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
+import kotlin.math.absoluteValue
+
 import org.exthmui.game.R
 import org.exthmui.game.ui.QuickSettingsView
 import org.exthmui.game.ui.QuickStartAppView
@@ -105,18 +107,28 @@ class FloatingViewController @Inject constructor(
 
     private fun showGamingMenu() {
         if (gamingOverlayView?.visibility == View.VISIBLE) return
+        // show
+        var overlayViewGravity = 0
+        overlayViewGravity = if (gamingFBLayoutParams.x > 0) {
+            overlayViewGravity or Gravity.END
+        } else {
+            overlayViewGravity or Gravity.START
+        }
+        overlayViewGravity = if (gamingFBLayoutParams.y > 0) {
+            overlayViewGravity or Gravity.BOTTOM
+        } else {
+            overlayViewGravity or Gravity.TOP
+        }
         gamingOverlayView?.let {
             it.visibility = View.VISIBLE
-            windowManager.updateViewLayout(it, getBaseLayoutParams())
+            windowManager.updateViewLayout(it, getBaseLayoutParams().apply {
+                gravity = overlayViewGravity
+            })
         }
         gamingFloatingLayout?.visibility = View.GONE
     }
 
     fun hideGamingMenu() {
-        val menuLayoutParams = getBaseLayoutParams()
-        menuLayoutParams.width = WindowManager.LayoutParams.WRAP_CONTENT
-        menuLayoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT
-        windowManager.updateViewLayout(gamingOverlayView, menuLayoutParams)
         gamingOverlayView?.visibility = View.GONE
         gamingFloatingLayout?.visibility = View.VISIBLE
     }
@@ -167,14 +179,31 @@ class FloatingViewController @Inject constructor(
             null
         ) as FrameLayout).also {
             it.visibility = View.GONE
-            it.setOnClickListener { hideGamingMenu() }
+            it.setOnTouchListener(object : View.OnTouchListener {
+                var fingerDown = false
+                override fun onTouch(v: View?, event: MotionEvent?): Boolean {
+                    when (event?.action) {
+                        MotionEvent.ACTION_DOWN -> {
+                            fingerDown = true
+                            return true
+                        }
+                        MotionEvent.ACTION_UP -> {
+                            if (!fingerDown) return false
+                            fingerDown = false
+                            if (isTouchOutsideOverlayView(event.rawX.toInt(), event.rawY.toInt())) {
+                                hideGamingMenu()
+                            } else {
+                                v?.performClick()
+                            }
+                            return true
+                        }
+                        else -> return false
+                    }
+                }
+            })
         }
 
-        val gamingViewLayoutParams = getBaseLayoutParams().apply {
-            width = WindowManager.LayoutParams.WRAP_CONTENT
-            height = WindowManager.LayoutParams.WRAP_CONTENT
-        }
-        windowManager.addView(gamingOverlayView, gamingViewLayoutParams)
+        windowManager.addView(gamingOverlayView, getBaseLayoutParams())
 
         qsView =
             gamingOverlayView!!.findViewById<QuickSettingsView>(R.id.quick_settings_view).also {
@@ -220,15 +249,25 @@ class FloatingViewController @Inject constructor(
         }
     }
 
+    private fun isTouchOutsideOverlayView(x: Int, y: Int): Boolean {
+        gamingOverlayView?.let {
+            val position = intArrayOf(0, 0)
+            it.getLocationOnScreen(position)
+            if ((x - position[0]).absoluteValue > it.measuredWidth ||
+                (y - position[1]).absoluteValue > it.measuredHeight
+            ) {
+                return true
+            }
+        }
+        return false
+    }
+
     @SuppressLint("InflateParams")
     private fun initFloatingLayout() {
         gamingFloatingLayout =
             layoutInflater.inflate(R.layout.gaming_button_layout, null)
 
-        gamingFBLayoutParams = getBaseLayoutParams().apply {
-            width = WindowManager.LayoutParams.WRAP_CONTENT
-            height = WindowManager.LayoutParams.WRAP_CONTENT
-        }
+        gamingFBLayoutParams = getFloatingButtonLP()
         windowManager.addView(gamingFloatingLayout, gamingFBLayoutParams)
         initFloatingButton()
 
@@ -299,12 +338,20 @@ class FloatingViewController @Inject constructor(
         return MathUtils.clamp(value, -allowedMax, allowedMax)
     }
 
+    private fun getFloatingButtonLP() =
+        getBaseLayoutParams().apply {
+            flags = flags or
+                    WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
+        }
+
     private fun getBaseLayoutParams() =
         WindowManager.LayoutParams(
+            WindowManager.LayoutParams.WRAP_CONTENT,
+            WindowManager.LayoutParams.WRAP_CONTENT,
             WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
-            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
-                    or WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
-                    or WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL,
+            WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
+                    or WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED,
             PixelFormat.TRANSLUCENT
         )
 

@@ -68,11 +68,11 @@
 
         <HorizontalScrollView
             android:id="@+id/qs_view_container"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="4dp"
-            android:padding="4dp"
+            android:paddingBottom="4dp"
             android:scrollbars="none"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -108,8 +108,7 @@
             <org.exthmui.game.ui.QuickStartAppView
                 android:id="@+id/quick_start_app_view"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp" />
+                android:layout_height="wrap_content" />
         </HorizontalScrollView>
 
         <androidx.constraintlayout.widget.Group
