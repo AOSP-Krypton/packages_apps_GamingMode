@@ -39,6 +39,7 @@ import org.exthmui.game.R
 import org.exthmui.game.controller.CallViewController
 import org.exthmui.game.controller.FloatingViewController
 import org.exthmui.game.controller.NotificationOverlayController
+import org.exthmui.game.ui.MainActivity
 
 @AndroidEntryPoint(Service::class)
 class GamingService : Hilt_GamingService() {
@@ -68,29 +69,10 @@ class GamingService : Hilt_GamingService() {
             callViewController.init()
             notificationOverlayController.init()
         }
-        createNotificationChannel(getString(R.string.channel_gaming_mode_status))
         registerNotificationListener()
-        val stopGamingIntent = PendingIntent.getService(
-            this,
-            STOP_SERVICE_REQUEST_CODE,
-            Intent(this, GamingService::class.java).apply {
-                action = STOP_SERVICE_ACTION
-            },
-            PendingIntent.FLAG_IMMUTABLE
-        )
-        val notification = Notification.Builder(this, CHANNEL_GAMING_MODE_STATUS).let {
-            it.addAction(
-                Notification.Action.Builder(
-                    null,
-                    getString(R.string.action_stop_gaming_mode),
-                    stopGamingIntent
-                ).build()
-            )
-            it.setContentText(getString(R.string.gaming_mode_active))
-            it.setSmallIcon(R.drawable.ic_game)
-            it.build()
-        }
-        startForeground(NOTIFICATION_ID, notification)
+
+        createNotificationChannel(getString(R.string.channel_gaming_mode_status))
+        startForeground(NOTIFICATION_ID, createNotification())
     }
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
@@ -102,10 +84,44 @@ class GamingService : Hilt_GamingService() {
         return START_STICKY
     }
 
+    private fun createNotification(): Notification {
+        val stopGamingIntent = PendingIntent.getService(
+            this,
+            STOP_SERVICE_REQUEST_CODE,
+            Intent(this, GamingService::class.java).apply {
+                action = STOP_SERVICE_ACTION
+            },
+            PendingIntent.FLAG_IMMUTABLE
+        )
+        val openActivityIntent = PendingIntent.getActivity(
+            this,
+            OPEN_ACTIVITY_REQUEST_CODE,
+            Intent(this, MainActivity::class.java),
+            PendingIntent.FLAG_IMMUTABLE
+        )
+        return Notification.Builder(this, CHANNEL_GAMING_MODE_STATUS).let {
+            it.addAction(
+                Notification.Action.Builder(
+                    null,
+                    getString(R.string.action_stop_gaming_mode),
+                    stopGamingIntent
+                ).build()
+            )
+            it.setContentIntent(openActivityIntent)
+            it.setContentText(getString(R.string.gaming_mode_active))
+            it.setSmallIcon(R.drawable.ic_game)
+            it.build()
+        }
+    }
+
     private fun registerNotificationListener() {
         val componentName = ComponentName(this, GamingService::class.java)
         try {
-            notificationService.registerAsSystemService(this, componentName, UserHandle.USER_CURRENT)
+            notificationService.registerAsSystemService(
+                this,
+                componentName,
+                UserHandle.USER_CURRENT
+            )
         } catch (e: RemoteException) {
             Log.e(TAG, "RemoteException while registering danmaku service")
         }
@@ -154,9 +170,13 @@ class GamingService : Hilt_GamingService() {
 
     companion object {
         private const val TAG = "GamingService"
-        private const val STOP_SERVICE_REQUEST_CODE = 1001
-        private const val STOP_SERVICE_ACTION = "org.exthmui.game.GamingService.ACTION_STOP_SELF"
+
         private const val CHANNEL_GAMING_MODE_STATUS = "gaming_mode_status"
         private const val NOTIFICATION_ID = 1
+
+        private const val STOP_SERVICE_REQUEST_CODE = 1001
+        private const val OPEN_ACTIVITY_REQUEST_CODE = 1002
+
+        private const val STOP_SERVICE_ACTION = "org.exthmui.game.GamingService.ACTION_STOP_SELF"
     }
 }
