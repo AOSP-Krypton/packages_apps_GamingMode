@@ -21,16 +21,20 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.os.UserHandle
+import org.exthmui.game.services.DeviceStateListenerService
 
 import org.exthmui.game.services.GamingService
 
 class GamingBroadcastReceiver: BroadcastReceiver() {
     
     override fun onReceive(context: Context, intent: Intent) {
+        val deviceStateServiceIntent = Intent(context, DeviceStateListenerService::class.java)
         val serviceIntent = Intent(context, GamingService::class.java)
         if (intent.action == SYS_BROADCAST_GAMING_MODE_ON) {
+            context.startServiceAsUser(deviceStateServiceIntent, UserHandle.CURRENT)
             context.startServiceAsUser(serviceIntent, UserHandle.CURRENT)
         } else if (intent.action == SYS_BROADCAST_GAMING_MODE_OFF) {
+            context.stopServiceAsUser(deviceStateServiceIntent, UserHandle.CURRENT)
             context.stopServiceAsUser(serviceIntent, UserHandle.CURRENT)
         }
     }

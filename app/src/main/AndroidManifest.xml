@@ -49,6 +49,9 @@
             android:exported="false"
             tools:ignore="Instantiatable" />
 
+        <service android:name=".services.DeviceStateListenerService"
+            android:exported="false" />
+
         <service
             android:name=".services.NotificationService"
             android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE"
