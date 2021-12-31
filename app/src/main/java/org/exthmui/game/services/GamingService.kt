@@ -86,7 +86,7 @@ class GamingService : Hilt_GamingService() {
                     stopGamingIntent
                 ).build()
             )
-            it.setContentText(getString(R.string.gaming_mode_running))
+            it.setContentText(getString(R.string.gaming_mode_active))
             it.setSmallIcon(R.drawable.ic_game)
             it.build()
         }

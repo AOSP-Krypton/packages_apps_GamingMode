@@ -3,7 +3,7 @@
 
     <string name="channel_gaming_mode_status">Gaming mode status</string>
     <string name="action_stop_gaming_mode">Stop</string>
-    <string name="gaming_mode_running">Gaming mode is running</string>
+    <string name="gaming_mode_active">Gaming mode is active</string>
 
     <string name="date_format" translatable="false">dd.MM.yyyy</string>
     <string name="battery_format">Battery: <xliff:g id="percentage" example="100">%1$d%%</xliff:g></string>
