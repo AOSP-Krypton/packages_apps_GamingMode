@@ -35,20 +35,17 @@ class AutoBrightnessTile(context: Context) : TileBase(context) {
         setIcon(R.drawable.ic_qs_auto_brightness)
         val isAuto = initialMode == Settings.System.SCREEN_BRIGHTNESS_MODE_AUTOMATIC
         if (isAuto) {
-            val disable = Settings.System.getInt(
+            isSelected = Settings.System.getInt(
                 context.contentResolver,
                 Settings.System.GAMING_MODE_DISABLE_AUTO_BRIGHTNESS,
                 1
-            ) == 1
-            isSelected = if (disable) {
+            ) == 0
+            if (!isSelected) {
                 Settings.System.putInt(
                     context.contentResolver,
                     Settings.System.SCREEN_BRIGHTNESS_MODE,
                     Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL
                 )
-                false
-            } else {
-                true
             }
         }
     }
