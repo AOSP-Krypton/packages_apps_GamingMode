@@ -5,8 +5,6 @@
     <dimen name="gaming_qs_icon_padding">12dp</dimen>
     <dimen name="qs_compound_icon_padding">8dp</dimen>
     <dimen name="gaming_qs_text_size">12sp</dimen>
-    <dimen name="app_qs_icon_size">36dp</dimen>
-    <dimen name="app_qs_icon_padding">4dp</dimen>
     <dimen name="time_battery_margin">16dp</dimen>
     <dimen name="gaming_menu_padding">12dp</dimen>
     <dimen name="perf_indicator_text_size">12sp</dimen>

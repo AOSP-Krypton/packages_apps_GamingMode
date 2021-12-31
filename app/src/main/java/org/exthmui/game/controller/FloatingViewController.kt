@@ -44,7 +44,6 @@ import javax.inject.Singleton
 
 import org.exthmui.game.R
 import org.exthmui.game.ui.QuickSettingsView
-import org.exthmui.game.ui.QuickStartAppView
 
 @Singleton
 class FloatingViewController @Inject constructor(
@@ -58,7 +57,6 @@ class FloatingViewController @Inject constructor(
 
     private lateinit var gamingFBLayoutParams: WindowManager.LayoutParams
 
-    private var qsApps: List<String>? = null
     private var menuOpacity = DEFAULT_MENU_OPACITY
     private var floatingButtonSize = 0f
 
@@ -125,11 +123,6 @@ class FloatingViewController @Inject constructor(
     }
 
     private fun loadSettings() {
-        val qsAppsFlattened: String? = Settings.System.getString(
-            context.contentResolver,
-            Settings.System.GAMING_MODE_QS_APP_LIST
-        )
-        qsApps = qsAppsFlattened?.takeIf { it.isNotEmpty() }?.split(";")?.filter { it.isNotBlank() }
         changePerfLevel = Settings.System.getInt(
             context.contentResolver,
             Settings.System.GAMING_MODE_CHANGE_PERFORMANCE_LEVEL,
@@ -174,16 +167,6 @@ class FloatingViewController @Inject constructor(
             it.setNotificationOverlayController(notificationOverlayController)
             it.setFloatingViewController(this)
             it.addTiles()
-        }
-
-        if (qsApps?.isNotEmpty() == true) {
-            overlayView.findViewById<QuickStartAppView>(R.id.quick_start_app_view)
-                .also {
-                    it.setFloatingViewController(this)
-                    it.setQSApps(qsApps)
-                }
-        } else {
-            overlayView.findViewById<Group>(R.id.quick_start_app_group).visibility = View.GONE
         }
 
         if (perfProfilesSupported && changePerfLevel) {

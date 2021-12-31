@@ -50,12 +50,6 @@
         android:summary="@string/gaming_mode_notification_overlay_summary"
         android:fragment="org.exthmui.game.fragment.NotificationOverlaySettingsFragment" />
 
-    <Preference
-        android:key="gaming_mode_quick_start_apps"
-        android:title="@string/gaming_mode_quick_start_apps_title"
-        android:summary="@string/gaming_mode_quick_start_apps_summary"
-        android:fragment="org.exthmui.game.fragment.QuickStartAppSettingsFragment" />
-
     <com.krypton.settings.preference.SystemSettingSwitchPreference
         android:key="gaming_mode_use_overlay_menu"
         android:title="@string/gaming_mode_use_overlay_menu_title"
