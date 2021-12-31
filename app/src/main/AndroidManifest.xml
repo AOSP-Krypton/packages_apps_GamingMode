@@ -6,8 +6,6 @@
 
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
-    <uses-permission android:name="android.permission.MEDIA_CONTENT_CONTROL"
-        tools:ignore="ProtectedPermissions" />
     <uses-permission android:name="android.permission.INTERACT_ACROSS_USERS_FULL"
         tools:ignore="ProtectedPermissions" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
@@ -22,7 +20,7 @@
         android:label="@string/game_space"
         android:supportsRtl="true"
         android:theme="@style/Theme.Settings"
-        tools:ignore="AllowBackup,Instantiatable">
+        tools:ignore="AllowBackup">
 
         <activity
             android:name=".ui.MainActivity"
@@ -36,7 +34,6 @@
 
         <receiver
             android:name=".receiver.GamingBroadcastReceiver"
-            android:enabled="true"
             android:exported="false">
             <intent-filter>
                 <action android:name="exthmui.intent.action.GAMING_MODE_ON" />
@@ -46,8 +43,7 @@
 
         <service
             android:name=".services.GamingService"
-            android:exported="false"
-            tools:ignore="Instantiatable" />
+            android:exported="false" />
 
         <service android:name=".services.DeviceStateListenerService"
             android:exported="false" />
