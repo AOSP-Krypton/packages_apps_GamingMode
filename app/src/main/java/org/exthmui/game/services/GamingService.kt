@@ -77,6 +77,7 @@ class GamingService : Hilt_GamingService() {
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
         if (intent.action == STOP_SERVICE_ACTION) {
+            stopServiceAsUser(Intent(this, DeviceStateListenerService::class.java), UserHandle.CURRENT)
             stopSelf()
             return START_NOT_STICKY
         }
