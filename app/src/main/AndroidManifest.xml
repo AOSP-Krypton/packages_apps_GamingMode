@@ -19,13 +19,12 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/game_space"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Settings"
+        android:theme="@style/Theme.SubSettingsBase"
         tools:ignore="AllowBackup">
 
         <activity
             android:name=".ui.MainActivity"
-            android:exported="true"
-            android:theme="@style/Theme.Settings.NoActionBar">
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
