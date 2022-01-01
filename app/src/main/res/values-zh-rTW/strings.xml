@@ -1,0 +1,63 @@
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="game_space">遊戲空間</string>
+
+    <string name="channel_gaming_mode_status">遊戲模式狀態</string>
+    <string name="action_stop_gaming_mode">停止</string>
+    <string name="gaming_mode_active">遊戲模式已啟用</string>
+
+    <string name="date_format" translatable="false">dd.MM.yyyy</string>
+    <string name="battery_format">電量： <xliff:g id="percentage" example="100">%1$d%%</xliff:g></string>
+
+    <string name="performance">效能</string>
+    <string name="power_save">省電</string>
+
+    <string name="qs_auto_brightness">自動亮度</string>
+    <string name="qs_notification_overlay">浮動通知</string>
+    <string name="qs_ringer_mode">靜音模式</string>
+    <string name="qs_lock_gesture">手勢鎖定</string>
+    <string name="qs_screen_capture">截圖</string>
+
+    <string name="enable_gaming_mode">啟用遊戲模式</string>
+    <string name="gaming_mode_intro_text">額外的功能，讓您有身臨其境的遊戲體驗</string>
+    <string name="gaming_mode_disable_auto_brightness_title">自動亮度</string>
+    <string name="gaming_mode_disable_auto_brightness_summary">遊戲模式啟用時關閉自動亮度</string>
+    <string name="gaming_mode_notification_overlay_title">浮動通知</string>
+    <string name="gaming_mode_notification_overlay_summary">將浮動通知作為一個透明的覆蓋層顯示在上面</string>
+    <string name="gaming_mode_use_overlay_menu_title">浮動按鈕</string>
+    <string name="gaming_mode_use_overlay_menu_summary">顯示一個浮動按鈕，點選後開啟快速設定視窗</string>
+    <string name="gaming_mode_menu_opacity_title">不透明度</string>
+
+    <string name="gaming_mode_performance">效能</string>
+    <string name="gaming_mode_change_performance_title">效能調整</string>
+    <string name="gaming_mode_change_performance_summary">開始遊戲時調整效能等級</string>
+    <string name="gaming_mode_performance_title">效能等級</string>
+
+    <string name="gaming_mode_dnd">遊戲免打擾</string>
+    <string name="gaming_mode_disable_notification_alert_title">禁用訊息通知</string>
+    <string name="gaming_mode_disable_notification_alert_summary">除來電和警報外，不顯示浮動通知和對話泡</string>
+    <string name="gaming_mode_disable_ringtone_title">無響鈴</string>
+    <string name="gaming_mode_disable_ringtone_summary">在遊戲模式時，關閉來電鈴聲和通知</string>
+    <string name="gaming_mode_auto_answer_call_title">自動接聽</string>
+    <string name="gaming_mode_auto_answer_call_summary">在遊戲模式時自動接聽電話，無耳機連線時將擴音</string>
+
+    <string name="gaming_mode_prevent_accidental_touch">防誤觸</string>
+    <string name="gaming_mode_disable_gesture_title">禁用滑動手勢</string>
+
+    <string name="gaming_mode_apps_title">遊戲列表</string>
+    <string name="gaming_mode_apps_summary">在這些應用開啟時將啟用遊戲模式</string>
+    <string name="gaming_mode_dynamic_add_title">動態模式</string>
+    <string name="gaming_mode_dynamic_add_summary">開啟時檢測遊戲並自動將其新增到列表中</string>
+
+    <string name="gaming_mode_show_notification_overlay_title">啟用浮動通知</string>
+    <string name="gaming_mode_dynamic_notification_filter_title">動態過濾通知</string>
+    <string name="gaming_mode_dynamic_notification_filter_summary">自動過濾通知，如下載進度</string>
+    <string name="gaming_mode_notification_overlay_size_landscape_title">橫屏時疊加層尺寸</string>
+    <string name="gaming_mode_notification_overlay_size_portrait_title">豎屏時疊加層尺寸</string>
+    <string name="gaming_mode_notification_overlay_blacklist_title">黑名單應用</string>
+    <string name="gaming_mode_notification_overlay_blacklist_summary">在遊戲時防止選定的應用程式顯示通知疊加層</string>
+
+    <string name="search">搜尋</string>
+    <string name="search_apps">搜尋應用</string>
+    <string name="application_icon">應用圖示</string>
+    <string name="performance_level">效能等級</string>
+</resources>

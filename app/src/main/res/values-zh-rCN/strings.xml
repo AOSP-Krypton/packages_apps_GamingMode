@@ -1,0 +1,63 @@
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="game_space">游戏空间</string>
+
+    <string name="channel_gaming_mode_status">游戏模式状态</string>
+    <string name="action_stop_gaming_mode">停止</string>
+    <string name="gaming_mode_active">游戏模式已启用</string>
+
+    <string name="date_format" translatable="false">dd.MM.yyyy</string>
+    <string name="battery_format">电量： <xliff:g id="percentage" example="100">%1$d%%</xliff:g></string>
+
+    <string name="performance">性能</string>
+    <string name="power_save">省电</string>
+
+    <string name="qs_auto_brightness">自动亮度</string>
+    <string name="qs_notification_overlay">浮动通知</string>
+    <string name="qs_ringer_mode">静音模式</string>
+    <string name="qs_lock_gesture">手势锁定</string>
+    <string name="qs_screen_capture">截图</string>
+
+    <string name="enable_gaming_mode">启用游戏模式</string>
+    <string name="gaming_mode_intro_text">额外的功能，让您有身临其境的游戏体验</string>
+    <string name="gaming_mode_disable_auto_brightness_title">自动亮度</string>
+    <string name="gaming_mode_disable_auto_brightness_summary">游戏模式启用时关闭自动亮度</string>
+    <string name="gaming_mode_notification_overlay_title">浮动通知</string>
+    <string name="gaming_mode_notification_overlay_summary">将浮动通知作为一个透明的覆盖层显示在上面</string>
+    <string name="gaming_mode_use_overlay_menu_title">浮动按钮</string>
+    <string name="gaming_mode_use_overlay_menu_summary">显示一个浮动按钮，点击后打开快速设置窗口</string>
+    <string name="gaming_mode_menu_opacity_title">不透明度</string>
+
+    <string name="gaming_mode_performance">性能</string>
+    <string name="gaming_mode_change_performance_title">性能调整</string>
+    <string name="gaming_mode_change_performance_summary">开始游戏时调整性能等级</string>
+    <string name="gaming_mode_performance_title">性能等级</string>
+
+    <string name="gaming_mode_dnd">游戏免打扰</string>
+    <string name="gaming_mode_disable_notification_alert_title">禁用消息通知</string>
+    <string name="gaming_mode_disable_notification_alert_summary">除来电和警报外，不显示浮动通知和对话泡</string>
+    <string name="gaming_mode_disable_ringtone_title">无响铃</string>
+    <string name="gaming_mode_disable_ringtone_summary">在游戏模式时，关闭来电铃声和通知</string>
+    <string name="gaming_mode_auto_answer_call_title">自动接听</string>
+    <string name="gaming_mode_auto_answer_call_summary">在游戏模式时自动接听电话，无耳机连接时将免提</string>
+
+    <string name="gaming_mode_prevent_accidental_touch">防误触</string>
+    <string name="gaming_mode_disable_gesture_title">禁用滑动手势</string>
+
+    <string name="gaming_mode_apps_title">游戏列表</string>
+    <string name="gaming_mode_apps_summary">在这些应用打开时将启用游戏模式</string>
+    <string name="gaming_mode_dynamic_add_title">动态模式</string>
+    <string name="gaming_mode_dynamic_add_summary">打开时检测游戏并自动将其添加到列表中</string>
+
+    <string name="gaming_mode_show_notification_overlay_title">启用浮动通知</string>
+    <string name="gaming_mode_dynamic_notification_filter_title">动态过滤通知</string>
+    <string name="gaming_mode_dynamic_notification_filter_summary">自动过滤通知，如下载进度</string>
+    <string name="gaming_mode_notification_overlay_size_landscape_title">横屏时叠加层尺寸</string>
+    <string name="gaming_mode_notification_overlay_size_portrait_title">竖屏时叠加层尺寸</string>
+    <string name="gaming_mode_notification_overlay_blacklist_title">黑名单应用</string>
+    <string name="gaming_mode_notification_overlay_blacklist_summary">在游戏时防止选定的应用程序显示通知叠加层</string>
+
+    <string name="search">搜索</string>
+    <string name="search_apps">搜索应用</string>
+    <string name="application_icon">应用图标</string>
+    <string name="performance_level">性能等级</string>
+</resources>
