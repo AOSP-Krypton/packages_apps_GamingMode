@@ -16,15 +16,15 @@ import android.widget.TextView
 import androidx.core.animation.addListener
 
 import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.android.scopes.ServiceScoped
 
 import java.util.LinkedList
 
 import javax.inject.Inject
-import javax.inject.Singleton
 
 import org.exthmui.game.R
 
-@Singleton
+@ServiceScoped
 class NotificationOverlayController @Inject constructor(
     @ApplicationContext private val context: Context
 ) : ViewController(context) {

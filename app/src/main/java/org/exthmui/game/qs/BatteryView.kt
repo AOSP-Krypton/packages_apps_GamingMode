@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.exthmui.game.ui
+package org.exthmui.game.qs
 
 import android.annotation.SuppressLint
 import android.content.BroadcastReceiver

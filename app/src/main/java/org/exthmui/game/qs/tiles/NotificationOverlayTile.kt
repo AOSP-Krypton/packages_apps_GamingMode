@@ -15,31 +15,32 @@
  * limitations under the License.
  */
 
-package org.exthmui.game.qs
+package org.exthmui.game.qs.tiles
 
-import android.content.Context
-import android.provider.Settings
+import android.view.View
+
+import dagger.hilt.android.scopes.ServiceScoped
+
+import javax.inject.Inject
 
 import org.exthmui.game.R
 import org.exthmui.game.controller.NotificationOverlayController
 
-class NotificationOverlayTile(context: Context): TileBase(context) {
-
-    private var notificationOverlayController: NotificationOverlayController? = null
+@ServiceScoped
+class NotificationOverlayTile @Inject constructor(
+    private val notificationOverlayController: NotificationOverlayController,
+) : QSTile() {
 
     init {
-        setText(R.string.qs_notification_overlay)
-        setIcon(R.drawable.ic_qs_notification_overlay)
-        isSelected = Settings.System.getInt(context.contentResolver,
-            Settings.System.GAMING_MODE_SHOW_NOTIFICATION_OVERLAY, 0) == 1
+        isSelected = notificationOverlayController.showNotificationOverlay
     }
 
-    override fun handleClick(isSelected: Boolean) {
-        super.handleClick(isSelected)
-        notificationOverlayController?.showNotificationOverlay = isSelected
-    }
+    override fun getTitleRes(): Int = R.string.qs_notification_overlay
 
-    fun setController(controller: NotificationOverlayController) {
-        notificationOverlayController = controller
+    override fun getIconRes(): Int = R.drawable.ic_qs_notification_overlay
+
+    override fun handleClick(v: View) {
+        super.handleClick(v)
+        notificationOverlayController.showNotificationOverlay = isSelected
     }
 }

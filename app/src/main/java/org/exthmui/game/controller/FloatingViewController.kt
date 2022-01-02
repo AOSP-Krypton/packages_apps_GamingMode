@@ -38,19 +38,32 @@ import androidx.core.math.MathUtils
 import androidx.preference.PreferenceManager
 
 import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.android.scopes.ServiceScoped
 
 import javax.inject.Inject
-import javax.inject.Singleton
 
 import org.exthmui.game.R
-import org.exthmui.game.ui.QuickSettingsView
+import org.exthmui.game.qs.QuickSettingsView
+import org.exthmui.game.qs.tiles.*
 
-@Singleton
+@ServiceScoped
 class FloatingViewController @Inject constructor(
     @ApplicationContext private val context: Context,
     private val callViewController: CallViewController,
-    private val notificationOverlayController: NotificationOverlayController,
+    autoBrightnessTile: AutoBrightnessTile,
+    lockGestureTile: LockGestureTile,
+    notificationOverlayTile: NotificationOverlayTile,
+    ringerModeTile: RingerModeTile,
+    screenCaptureTile: ScreenCaptureTile
 ) : ViewController(context) {
+
+    private val tiles = listOf(
+        autoBrightnessTile,
+        lockGestureTile,
+        notificationOverlayTile,
+        ringerModeTile,
+        screenCaptureTile,
+    )
 
     private var gamingFloatingLayout: View? = null
     private var perfLevelSeekBar: SeekBar? = null
@@ -77,21 +90,39 @@ class FloatingViewController @Inject constructor(
         sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context)
 
         loadSettings()
+        tiles.forEach { it.host = this }
         initGamingMenu()
         initFloatingLayout()
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         floatingButtonSize = context.resources.getDimension(R.dimen.game_button_size)
+        removeFloatingButton()
+        val wasShowing = dialog?.isShowing == true
+        dialog?.dismiss()
+        initGamingMenu()
+        initFloatingLayout()
         restoreFloatingButtonOffset()
+        if (wasShowing) {
+            showGamingMenu()
+        } else {
+            hideGamingMenu()
+        }
     }
 
     override fun onDestroy() {
+        tiles.forEach { it.destroy() }
         dialog?.dismiss()
         perfLevelSeekBar?.setOnSeekBarChangeListener(null)
         perfLevelSeekBar = null
-        windowManager.removeView(gamingFloatingLayout)
+        removeFloatingButton()
         gamingFloatingLayout = null
+    }
+
+    private fun removeFloatingButton() {
+        if (gamingFloatingLayout?.parent != null) {
+            windowManager.removeViewImmediate(gamingFloatingLayout)
+        }
     }
 
     private fun showGamingMenu() {
@@ -163,12 +194,6 @@ class FloatingViewController @Inject constructor(
             null
         ) as ConstraintLayout
 
-        overlayView.findViewById<QuickSettingsView>(R.id.quick_settings_view).also {
-            it.setNotificationOverlayController(notificationOverlayController)
-            it.setFloatingViewController(this)
-            it.addTiles()
-        }
-
         if (perfProfilesSupported && changePerfLevel) {
             perfLevelSeekBar = overlayView.findViewById<SeekBar>(R.id.perf_level_seekbar).also {
                 it.progress = performanceLevel
@@ -190,6 +215,10 @@ class FloatingViewController @Inject constructor(
         }
 
         overlayView.background.alpha = menuOpacity * 255 / 100
+
+        overlayView.findViewById<QuickSettingsView>(R.id.quick_settings_view).also {
+            it.addTiles(tiles)
+        }
 
         dialog = AlertDialog.Builder(context, R.style.Theme_AlertDialog).let {
             it.setView(overlayView)

@@ -15,31 +15,35 @@
  * limitations under the License.
  */
 
-package org.exthmui.game.qs
+package org.exthmui.game.qs.tiles
 
 import android.content.Context
 import android.os.RemoteException
 import android.os.ServiceManager
 import android.util.Log
+import android.view.View
 
 import com.android.internal.statusbar.IStatusBarService
 
+import dagger.hilt.android.scopes.ServiceScoped
+
+import javax.inject.Inject
+
 import org.exthmui.game.R
 
-class LockGestureTile(context: Context) : TileBase(context) {
+@ServiceScoped
+class LockGestureTile @Inject constructor() : QSTile() {
 
-    private val statusBarService: IStatusBarService
+    private val statusBarService = IStatusBarService.Stub.asInterface(
+        ServiceManager.getService(Context.STATUS_BAR_SERVICE)
+    )
 
-    init {
-        statusBarService = IStatusBarService.Stub.asInterface(
-            ServiceManager.getService(Context.STATUS_BAR_SERVICE)
-        )
-        setText(R.string.qs_lock_gesture)
-        setIcon(R.drawable.ic_qs_disable_gesture)
-    }
+    override fun getTitleRes(): Int = R.string.qs_lock_gesture
 
-    override fun handleClick(isSelected: Boolean) {
-        super.handleClick(isSelected)
+    override fun getIconRes(): Int = R.drawable.ic_qs_disable_gesture
+
+    override fun handleClick(v: View) {
+        super.handleClick(v)
         try {
             statusBarService.setBlockedGesturalNavigation(isSelected)
         } catch (e: RemoteException) {
@@ -47,7 +51,7 @@ class LockGestureTile(context: Context) : TileBase(context) {
         }
     }
 
-    override fun onDestroy() {
+    override fun destroy() {
         statusBarService.setBlockedGesturalNavigation(false)
     }
 

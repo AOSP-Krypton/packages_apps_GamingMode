@@ -15,37 +15,57 @@
  * limitations under the License.
  */
 
-package org.exthmui.game.qs
+package org.exthmui.game.qs.tiles
 
 import android.content.Context
 import android.media.AudioManager
 import android.provider.Settings
+import android.view.View
+
+import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.android.scopes.ServiceScoped
+
+import javax.inject.Inject
 
 import org.exthmui.game.R
 
-class RingerModeTile(context: Context) : TileBase(context) {
+@ServiceScoped
+class RingerModeTile @Inject constructor(
+    @ApplicationContext context: Context
+) : QSTile() {
     private val audioManager = context.getSystemService(AudioManager::class.java)
     private val initialMode = audioManager.ringerModeInternal
 
+    private var stateChanged = false
+
     init {
-        setText(R.string.qs_ringer_mode)
-        setIcon(R.drawable.ic_qs_ringer)
         if (initialMode != AudioManager.RINGER_MODE_SILENT) {
-            val silentModeEnabled = Settings.System.getInt(context.contentResolver,
-                Settings.System.GAMING_MODE_DISABLE_RINGTONE,0 ) == 1
-            if (silentModeEnabled)
+            val silentModeEnabled = Settings.System.getInt(
+                context.contentResolver,
+                Settings.System.GAMING_MODE_DISABLE_RINGTONE, 0
+            ) == 1
+            if (silentModeEnabled) {
                 audioManager.ringerModeInternal = AudioManager.RINGER_MODE_SILENT
+                stateChanged = true
+            }
         }
         isSelected = audioManager.ringerModeInternal == AudioManager.RINGER_MODE_SILENT
     }
 
-    override fun handleClick(isSelected: Boolean) {
-        super.handleClick(isSelected)
+    override fun getTitleRes(): Int = R.string.qs_ringer_mode
+
+    override fun getIconRes(): Int = R.drawable.ic_qs_ringer
+
+    override fun handleClick(v: View) {
+        super.handleClick(v)
         audioManager.ringerModeInternal =
             if (isSelected) AudioManager.RINGER_MODE_SILENT else AudioManager.RINGER_MODE_NORMAL
+        stateChanged = audioManager.ringerModeInternal != initialMode
     }
 
-    override fun onDestroy() {
+    override fun destroy() {
+        if (!stateChanged) return
+        stateChanged = false
         audioManager.ringerModeInternal = initialMode
     }
 }

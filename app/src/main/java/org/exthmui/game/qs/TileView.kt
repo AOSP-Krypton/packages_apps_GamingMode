@@ -19,6 +19,7 @@ package org.exthmui.game.qs
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.res.Configuration
 import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.LayerDrawable
@@ -31,32 +32,45 @@ import android.widget.TextView
 import androidx.appcompat.content.res.AppCompatResources
 
 import org.exthmui.game.R
+import org.exthmui.game.qs.tiles.QSTile
 
 @SuppressLint("AppCompatCustomView")
-open class TileBase @JvmOverloads constructor(
+open class TileView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0,
     defStyleRes: Int = 0,
 ) : TextView(context, attrs, defStyleAttr, defStyleRes), View.OnClickListener {
 
-    private var isToggleable = true
-
     private val background = LayerDrawable(
         arrayOf(AppCompatResources.getDrawable(context, R.drawable.qs_background))
     )
     private var icon: Drawable? = null
 
+    private var selectedIconTint = Color.WHITE
+    private var deselectedIconTint = Color.BLACK
+
+    private var tile: QSTile? = null
+
     init {
         gravity = Gravity.CENTER
         setEms(5)
         maxLines = 2
-        with(context.resources) {
+        with(resources) {
             setTextSize(
                 TypedValue.COMPLEX_UNIT_PX,
                 getDimensionPixelSize(R.dimen.gaming_qs_text_size).toFloat()
             )
             compoundDrawablePadding = getDimensionPixelSize(R.dimen.qs_compound_icon_padding)
+            val isNightMode =
+                (configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
+            if (isNightMode) {
+                selectedIconTint = Color.BLACK
+                deselectedIconTint = Color.WHITE
+            } else {
+                selectedIconTint = Color.WHITE
+                deselectedIconTint = Color.BLACK
+            }
         }
     }
 
@@ -68,15 +82,26 @@ open class TileBase @JvmOverloads constructor(
         super.setEms(ems)
     }
 
-    fun setToggleable(isToggleable: Boolean) {
-        this.isToggleable = isToggleable
+    fun setTile(tile: QSTile?) {
+        this.tile = tile
+        tile?.let {
+            if (it.getTitleRes() != 0) {
+                setText(it.getTitleRes())
+            }
+            setIcon(it.getIconRes())
+            isSelected = it.isSelected
+            it.setCallback(object : QSTile.Callback {
+                override fun onStateChanged(selected: Boolean) {
+                    isSelected = selected
+                }
+            })
+        }
     }
 
-    fun setIcon(resId: Int) {
+    private fun setIcon(resId: Int) {
         if (resId != 0) {
-            icon = AppCompatResources.getDrawable(context, resId)?.apply {
-                setTint(if (isSelected) Color.BLACK else Color.WHITE)
-            }
+            icon = AppCompatResources.getDrawable(context, resId)
+            updateIconTint()
             if (background.numberOfLayers >= 2 && background.getDrawable(1) != null) {
                 // Replace existing drawable at index instead of adding a layer on top it
                 background.setDrawable(1, icon)
@@ -91,20 +116,17 @@ open class TileBase @JvmOverloads constructor(
         }
     }
 
+    private fun updateIconTint() {
+        icon?.setTint(if (isSelected) selectedIconTint else deselectedIconTint)
+    }
+
     override fun setSelected(selected: Boolean) {
         super.setSelected(selected)
-        icon?.setTint(if (isSelected) Color.BLACK else Color.WHITE)
+        updateIconTint()
     }
 
     override fun onClick(v: View) {
-        if (isToggleable) {
-            isSelected = !isSelected
-        }
-        handleClick(isSelected)
-    }
-
-    protected open fun handleClick(isSelected: Boolean) {
-        if (isToggleable) setSelected(isSelected)
+        tile?.handleClick(v)
     }
 
     override fun onAttachedToWindow() {
@@ -114,9 +136,6 @@ open class TileBase @JvmOverloads constructor(
 
     override fun onDetachedFromWindow() {
         setOnClickListener(null)
-        onDestroy()
         super.onDetachedFromWindow()
     }
-
-    open fun onDestroy() {}
 }

@@ -144,6 +144,7 @@ class GamingService : Hilt_GamingService() {
             notificationOverlayController.destroy()
         }
         Settings.System.putInt(contentResolver, Settings.System.GAMING_MODE_ACTIVE, 0)
+        super.onDestroy()
     }
 
     override fun onBind(intent: Intent): IBinder? {

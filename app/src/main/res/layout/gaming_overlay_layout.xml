@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<?xml version="1.0" encoding="utf-8"?>
+<!--
      Copyright (C) 2020 The exTHmUI Open Source Project
      Copyright (C) 2021 AOSP-Krypton Project
 
@@ -20,7 +21,7 @@
     android:layout_height="wrap_content"
     android:background="@drawable/menu_background"
     android:padding="14dp"
-    android:theme="@style/Theme.Settings">
+    android:theme="@style/Theme.AlertDialog">
 
     <TextClock
         android:id="@+id/time_view"
@@ -43,7 +44,7 @@
         app:layout_constraintBaseline_toBaselineOf="@id/time_view"
         app:layout_constraintStart_toEndOf="@id/time_view" />
 
-    <org.exthmui.game.ui.BatteryView
+    <org.exthmui.game.qs.BatteryView
         android:id="@+id/battery_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -72,7 +73,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/status_bar_barrier">
 
-        <org.exthmui.game.ui.QuickSettingsView
+        <org.exthmui.game.qs.QuickSettingsView
             android:id="@+id/quick_settings_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

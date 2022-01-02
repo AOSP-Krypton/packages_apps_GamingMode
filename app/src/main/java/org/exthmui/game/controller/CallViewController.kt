@@ -36,16 +36,16 @@ import android.widget.ImageView
 import androidx.core.app.ActivityCompat
 
 import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.android.scopes.ServiceScoped
 
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
 import javax.inject.Inject
-import javax.inject.Singleton
 
 import org.exthmui.game.R
 
-@Singleton
+@ServiceScoped
 class CallViewController @Inject constructor(
     @ApplicationContext private val context: Context
 ) : ViewController(context) {

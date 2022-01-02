@@ -15,14 +15,23 @@
  * limitations under the License.
  */
 
-package org.exthmui.game.qs
+package org.exthmui.game.qs.tiles
 
 import android.content.Context
 import android.provider.Settings
+import android.view.View
+
+import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.android.scopes.ServiceScoped
+
+import javax.inject.Inject
 
 import org.exthmui.game.R
 
-class AutoBrightnessTile(context: Context) : TileBase(context) {
+@ServiceScoped
+class AutoBrightnessTile @Inject constructor(
+    @ApplicationContext private val context: Context
+) : QSTile() {
 
     private val initialMode = Settings.System.getInt(
         context.contentResolver,
@@ -30,9 +39,9 @@ class AutoBrightnessTile(context: Context) : TileBase(context) {
         Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL
     )
 
+    private var stateChanged = false
+
     init {
-        setText(R.string.qs_auto_brightness)
-        setIcon(R.drawable.ic_qs_auto_brightness)
         val isAuto = initialMode == Settings.System.SCREEN_BRIGHTNESS_MODE_AUTOMATIC
         if (isAuto) {
             isSelected = Settings.System.getInt(
@@ -41,6 +50,7 @@ class AutoBrightnessTile(context: Context) : TileBase(context) {
                 1
             ) == 0
             if (!isSelected) {
+                stateChanged = true
                 Settings.System.putInt(
                     context.contentResolver,
                     Settings.System.SCREEN_BRIGHTNESS_MODE,
@@ -50,17 +60,24 @@ class AutoBrightnessTile(context: Context) : TileBase(context) {
         }
     }
 
-    override fun handleClick(isSelected: Boolean) {
-        super.handleClick(isSelected)
+    override fun getTitleRes(): Int = R.string.qs_auto_brightness
+
+    override fun getIconRes(): Int = R.drawable.ic_qs_auto_brightness
+
+    override fun handleClick(v: View) {
+        super.handleClick(v)
+        val newMode = if (isSelected) Settings.System.SCREEN_BRIGHTNESS_MODE_AUTOMATIC
+            else Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL
+        stateChanged = newMode != initialMode
         Settings.System.putInt(
             context.contentResolver,
-            Settings.System.SCREEN_BRIGHTNESS_MODE,
-            if (isSelected) Settings.System.SCREEN_BRIGHTNESS_MODE_AUTOMATIC
-            else Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL
+            Settings.System.SCREEN_BRIGHTNESS_MODE, newMode
         )
     }
 
-    override fun onDestroy() {
+    override fun destroy() {
+        if (!stateChanged) return
+        stateChanged = false
         Settings.System.putInt(
             context.contentResolver,
             Settings.System.SCREEN_BRIGHTNESS_MODE,
