@@ -235,19 +235,17 @@ class FloatingViewController @Inject constructor(
 
     @SuppressLint("InflateParams")
     private fun initFloatingLayout() {
-        gamingFloatingLayout =
-            layoutInflater.inflate(R.layout.gaming_button_layout, null)
-
         gamingFBLayoutParams = getFloatingButtonLP()
-        windowManager.addView(gamingFloatingLayout, gamingFBLayoutParams)
-        initFloatingButton()
-
-        callViewController.initView(gamingFloatingLayout?.findViewById(R.id.call_control_button))
+        gamingFloatingLayout = layoutInflater.inflate(R.layout.gaming_button_layout, null).also {
+            windowManager.addView(it, gamingFBLayoutParams)
+            initFloatingButton(it.findViewById(R.id.floating_button))
+            callViewController.initView(it.findViewById(R.id.call_control_button))
+        }
         restoreFloatingButtonOffset()
     }
 
-    private fun initFloatingButton() {
-        gamingFloatingLayout!!.findViewById<ImageView>(R.id.floating_button).also {
+    private fun initFloatingButton(button: ImageView) {
+        button.let {
             it.setOnClickListener { showGamingMenu() }
             it.setOnTouchListener(object : View.OnTouchListener {
                 var diffX = 0
