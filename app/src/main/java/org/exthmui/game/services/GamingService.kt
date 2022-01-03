@@ -30,6 +30,7 @@ import android.os.RemoteException
 import android.os.UserHandle
 import android.provider.Settings
 import android.util.Log
+import dagger.Lazy
 
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -47,10 +48,10 @@ class GamingService : Hilt_GamingService() {
     private var enabledMenuOverlay = false
 
     @Inject
-    lateinit var callViewController: CallViewController
+    lateinit var callViewController: Lazy<CallViewController>
 
     @Inject
-    lateinit var floatingViewController: FloatingViewController
+    lateinit var floatingViewController: Lazy<FloatingViewController>
 
     @Inject
     lateinit var notificationOverlayController: NotificationOverlayController
@@ -64,11 +65,11 @@ class GamingService : Hilt_GamingService() {
             Settings.System.GAMING_MODE_USE_OVERLAY_MENU, 1
         ) == 1
         if (enabledMenuOverlay) {
-            notificationService.init(this, notificationOverlayController)
-            floatingViewController.init()
-            callViewController.init()
-            notificationOverlayController.init()
+            floatingViewController.get().init()
+            callViewController.get().init()
         }
+        notificationOverlayController.init()
+        notificationService.init(this, notificationOverlayController)
         registerNotificationListener()
 
         createNotificationChannel(getString(R.string.channel_gaming_mode_status))
@@ -77,7 +78,10 @@ class GamingService : Hilt_GamingService() {
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
         if (intent.action == STOP_SERVICE_ACTION) {
-            stopServiceAsUser(Intent(this, DeviceStateListenerService::class.java), UserHandle.CURRENT)
+            stopServiceAsUser(
+                Intent(this, DeviceStateListenerService::class.java),
+                UserHandle.CURRENT
+            )
             stopSelf()
             return START_NOT_STICKY
         }
@@ -138,10 +142,10 @@ class GamingService : Hilt_GamingService() {
 
     override fun onDestroy() {
         unregisterNotificationListener()
+        notificationOverlayController.destroy()
         if (enabledMenuOverlay) {
-            callViewController.destroy()
-            floatingViewController.destroy()
-            notificationOverlayController.destroy()
+            callViewController.get().destroy()
+            floatingViewController.get().destroy()
         }
         Settings.System.putInt(contentResolver, Settings.System.GAMING_MODE_ACTIVE, 0)
         super.onDestroy()
@@ -153,10 +157,10 @@ class GamingService : Hilt_GamingService() {
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         if (enabledMenuOverlay) {
-            floatingViewController.updateConfiguration(newConfig)
-            callViewController.updateConfiguration(newConfig)
-            notificationOverlayController.updateConfiguration(newConfig)
+            floatingViewController.get().updateConfiguration(newConfig)
+            callViewController.get().updateConfiguration(newConfig)
         }
+        notificationOverlayController.updateConfiguration(newConfig)
     }
 
     private fun createNotificationChannel(channelName: String) {
@@ -164,9 +168,7 @@ class GamingService : Hilt_GamingService() {
             CHANNEL_GAMING_MODE_STATUS,
             channelName, NotificationManager.IMPORTANCE_LOW
         )
-        val notificationManager: NotificationManager = getSystemService(
-            NotificationManager::class.java
-        )
+        val notificationManager = getSystemService(NotificationManager::class.java)
         notificationManager.createNotificationChannel(channel)
     }
 
