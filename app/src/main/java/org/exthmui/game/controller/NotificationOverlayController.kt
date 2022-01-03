@@ -41,7 +41,7 @@ class NotificationOverlayController @Inject constructor(
         flags = flags or LayoutParams.FLAG_NOT_FOCUSABLE or
                 LayoutParams.FLAG_NOT_TOUCHABLE or
                 LayoutParams.FLAG_HARDWARE_ACCELERATED
-        type = LayoutParams.TYPE_SECURE_SYSTEM_OVERLAY
+        type = LayoutParams.TYPE_APPLICATION_OVERLAY
         format = PixelFormat.TRANSLUCENT
         gravity = Gravity.TOP
     }
