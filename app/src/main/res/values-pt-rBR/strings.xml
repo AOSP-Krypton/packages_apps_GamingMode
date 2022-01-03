@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+     Copyright (C) 2020 The exTHmUI Open Source Project
+     Copyright (C) 2021 AOSP-Krypton Project
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="game_space">Espaço de jogo</string>
+
+    <string name="channel_gaming_mode_status">Estado do modo de jogo</string>
+    <string name="action_stop_gaming_mode">Parar</string>
+    <string name="gaming_mode_active">O modo de jogo está ativado</string>
+
+    <string name="date_format" translatable="false">dd.MM.yyyy</string>
+    <string name="battery_format">Bateria: <xliff:g id="percentage" example="100">%1$d%%</xliff:g></string>
+
+    <string name="performance">Desempenho</string>
+    <string name="power_save">Economia de energia</string>
+
+    <string name="qs_auto_brightness">Brilho automático</string>
+    <string name="qs_notification_overlay">Sobreposição de notificações</string>
+    <string name="qs_ringer_mode">Modo silencioso</string>
+    <string name="qs_lock_gesture">Bloquear gestos</string>
+    <string name="qs_screen_capture">Captura de tela</string>
+
+    <string name="enable_gaming_mode">Ativar o modo de jogo</string>
+    <string name="gaming_mode_intro_text">Características extra para uma experiência de jogo imersiva</string>
+    <string name="gaming_mode_disable_auto_brightness_title">Desativar o brilho automático</string>
+    <string name="gaming_mode_disable_auto_brightness_summary">Desativar o brilho automático ao entrar no modo de jogo</string>
+    <string name="gaming_mode_notification_overlay_title">Sobreposição de notificações</string>
+    <string name="gaming_mode_notification_overlay_summary">Mostrar o conteúdo da notificação como uma sobreposição transparente no topo</string>
+    <string name="gaming_mode_use_overlay_menu_title">Habilitar menu de sobreposição</string>
+    <string name="gaming_mode_use_overlay_menu_summary">Mostrar um botão flutuante que abre uma janela com ajustes rápidos ao tocar</string>
+    <string name="gaming_mode_menu_opacity_title">Nível de opacidade do menu de sobreposição</string>
+
+    <string name="gaming_mode_performance">Performance</string>
+    <string name="gaming_mode_change_performance_title">Ajuste de desempenho</string>
+    <string name="gaming_mode_change_performance_summary">Ajustar o nível de desempenho no início do jogo</string>
+    <string name="gaming_mode_performance_title">Nível de desempenho</string>
+
+    <string name="gaming_mode_dnd">Não perturbe</string>
+    <string name="gaming_mode_disable_notification_alert_title">Desativar o alerta de notificação</string>
+    <string name="gaming_mode_disable_notification_alert_summary">Não permitir bolhas flutuantes de notificação e conversação a não ser chamadas e alarmes recebidos</string>
+    <string name="gaming_mode_disable_ringtone_title">Sem toque</string>
+    <string name="gaming_mode_disable_ringtone_summary">Desligar o toque das chamadas recebidas e notificações no modo de jogo</string>
+    <string name="gaming_mode_auto_answer_call_title">Atendimento automático de chamadas</string>
+    <string name="gaming_mode_auto_answer_call_summary">Atender chamadas automaticamente no jogo com as mãos livres quando não há fones de ouvido ligados</string>
+
+    <string name="gaming_mode_prevent_accidental_touch">Evitar toques acidentais</string>
+    <string name="gaming_mode_disable_gesture_title">Desativar gestos de deslizar</string>
+
+    <string name="gaming_mode_apps_title">Lista de jogos</string>
+    <string name="gaming_mode_apps_summary">Selecionar aplicativos para iniciar o modo de jogo quando as abrir</string>
+    <string name="gaming_mode_dynamic_add_title">Modo dinâmico</string>
+    <string name="gaming_mode_dynamic_add_summary">Detecta os jogos na abertura e adiciona-os automaticamente à lista</string>
+
+    <string name="gaming_mode_show_notification_overlay_title">Permitir a sobreposição de notificações</string>
+    <string name="gaming_mode_dynamic_notification_filter_title">Notificação de filtragem dinâmica</string>
+    <string name="gaming_mode_dynamic_notification_filter_summary">Filtrar automaticamente notificações como por exemplo o progresso de downloads</string>
+    <string name="gaming_mode_notification_overlay_size_landscape_title">Tamanho de sobreposição no modo paisagem</string>
+    <string name="gaming_mode_notification_overlay_size_portrait_title">Tamanho de sobreposição em modo retrato</string>
+    <string name="gaming_mode_notification_overlay_blacklist_title">Aplicativos na lista negra</string>
+    <string name="gaming_mode_notification_overlay_blacklist_summary">Impedir que aplicativos selecionados mostrem sobreposição de notificações durante o jogo</string>
+
+    <string name="search">Pesquisar</string>
+    <string name="search_apps">Pesquisar aplicativos</string>
+    <string name="application_icon">Ícone de aplicativo</string>
+    <string name="performance_level">Nível de desempenho</string>
+    <string name="gaming_mode_miscellaneous">Diversos</string>
+    <string name="gaming_mode_disable_adb_title">Desativar a depuração USB</string>
+</resources>
