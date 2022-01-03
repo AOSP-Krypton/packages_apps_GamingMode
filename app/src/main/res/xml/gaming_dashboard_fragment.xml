@@ -115,4 +115,14 @@
             android:defaultValue="false" />
 
     </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/gaming_mode_miscellaneous">
+
+        <com.krypton.settings.preference.SystemSettingSwitchPreference
+            android:key="gaming_mode_disable_adb"
+            android:title="@string/gaming_mode_disable_adb_title"
+            android:defaultValue="false" />
+
+    </PreferenceCategory>
 </PreferenceScreen>

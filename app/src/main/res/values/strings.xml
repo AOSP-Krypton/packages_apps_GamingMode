@@ -77,4 +77,6 @@
     <string name="search_apps">Search apps</string>
     <string name="application_icon">Application icon</string>
     <string name="performance_level">Performance level</string>
+    <string name="gaming_mode_miscellaneous">Miscellaneous</string>
+    <string name="gaming_mode_disable_adb_title">Disable USB debugging</string>
 </resources>
