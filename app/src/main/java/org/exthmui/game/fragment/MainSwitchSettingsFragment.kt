@@ -31,7 +31,7 @@ abstract class MainSwitchSettingsFragment : SettingsFragment(), OnMainSwitchChan
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(getPreferenceScreenResId(), rootKey)
         findPreference<MainSwitchPreference>(getMainSwitchKey())?.also {
-            updatePreferences(it.isChecked())
+            updatePreferences(it.isChecked)
             it.addOnSwitchChangeListener(this)
         }
     }
