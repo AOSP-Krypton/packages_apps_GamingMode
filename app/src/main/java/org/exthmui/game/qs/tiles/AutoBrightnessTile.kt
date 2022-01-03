@@ -46,14 +46,16 @@ class AutoBrightnessTile @Inject constructor(
     init {
         val isAuto = initialMode == Settings.System.SCREEN_BRIGHTNESS_MODE_AUTOMATIC
         if (isAuto) {
-            isSelected = sharedPreferences.getBoolean(DISABLE_AUTO_BRIGHTNESS_KEY, true)
-            if (!isSelected) {
+            val disableAutoBrightness = sharedPreferences.getBoolean(DISABLE_AUTO_BRIGHTNESS_KEY, true)
+            if (disableAutoBrightness) {
                 stateChanged = true
                 Settings.System.putInt(
                     context.contentResolver,
                     Settings.System.SCREEN_BRIGHTNESS_MODE,
                     Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL
                 )
+            } else {
+                isSelected = true
             }
         }
     }
