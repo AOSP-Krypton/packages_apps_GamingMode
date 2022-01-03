@@ -18,6 +18,7 @@
 package org.exthmui.game.qs.tiles
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.media.AudioManager
 import android.provider.Settings
 import android.view.View
@@ -31,7 +32,8 @@ import org.exthmui.game.R
 
 @ServiceScoped
 class RingerModeTile @Inject constructor(
-    @ApplicationContext context: Context
+    @ApplicationContext context: Context,
+    sharedPreferences: SharedPreferences,
 ) : QSTile() {
     private val audioManager = context.getSystemService(AudioManager::class.java)
     private val initialMode = audioManager.ringerModeInternal
@@ -40,10 +42,7 @@ class RingerModeTile @Inject constructor(
 
     init {
         if (initialMode != AudioManager.RINGER_MODE_SILENT) {
-            val silentModeEnabled = Settings.System.getInt(
-                context.contentResolver,
-                Settings.System.GAMING_MODE_DISABLE_RINGTONE, 0
-            ) == 1
+            val silentModeEnabled = sharedPreferences.getBoolean(DISABLE_RINGTONE_KEY, false)
             if (silentModeEnabled) {
                 audioManager.ringerModeInternal = AudioManager.RINGER_MODE_SILENT
                 stateChanged = true
@@ -67,5 +66,9 @@ class RingerModeTile @Inject constructor(
         if (!stateChanged) return
         stateChanged = false
         audioManager.ringerModeInternal = initialMode
+    }
+
+    companion object {
+        private const val DISABLE_RINGTONE_KEY = "gaming_mode_disable_ringtone"
     }
 }

@@ -2,12 +2,12 @@ package org.exthmui.game.controller
 
 import android.animation.ValueAnimator
 import android.content.Context
+import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.graphics.Color
 import android.graphics.PixelFormat
 import android.os.Handler
 import android.os.Looper
-import android.provider.Settings
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.WindowManager.LayoutParams
@@ -26,7 +26,8 @@ import org.exthmui.game.R
 
 @ServiceScoped
 class NotificationOverlayController @Inject constructor(
-    @ApplicationContext private val context: Context
+    @ApplicationContext private val context: Context,
+    private val sharedPreferences: SharedPreferences,
 ) : ViewController(context) {
 
     private val notificationOverlay = TextView(context).apply {
@@ -109,20 +110,9 @@ class NotificationOverlayController @Inject constructor(
     }
 
     private fun loadSettings() {
-        sizePortrait = Settings.System.getInt(
-            context.contentResolver,
-            Settings.System.GAMING_MODE_NOTIFICATION_SIZE_PORTRAIT,
-            DEFAULT_NOTIFICATION_SIZE_PORTRAIT
-        )
-        sizeLandscape = Settings.System.getInt(
-            context.contentResolver,
-            Settings.System.GAMING_MODE_NOTIFICATION_SIZE_LANDSCAPE,
-            DEFAULT_NOTIFICATION_SIZE_LANDSCAPE
-        )
-        showNotificationOverlay = Settings.System.getInt(
-            context.contentResolver,
-            Settings.System.GAMING_MODE_SHOW_NOTIFICATION_OVERLAY, 1
-        ) == 1
+        sizePortrait = sharedPreferences.getInt(NOTIFICATION_SIZE_PORTRAIT_KEY, DEFAULT_NOTIFICATION_SIZE_PORTRAIT)
+        sizeLandscape = sharedPreferences.getInt(NOTIFICATION_SIZE_LANDSCAPE_KEY, DEFAULT_NOTIFICATION_SIZE_LANDSCAPE)
+        showNotificationOverlay = sharedPreferences.getBoolean(SHOW_NOTIFICATION_OVERLAY_KEY, true)
     }
 
     private fun pushNotification() {
@@ -194,7 +184,12 @@ class NotificationOverlayController @Inject constructor(
         private const val DISPLAY_NOTIFICATION_DURATION = 2000L
         private const val DISAPPEAR_ANIMATION_DURATION = 300L
 
+        private const val SHOW_NOTIFICATION_OVERLAY_KEY = "gaming_mode_show_notification_overlay"
+
+        private const val NOTIFICATION_SIZE_LANDSCAPE_KEY = "gaming_mode_notification_size_landscape"
         private const val DEFAULT_NOTIFICATION_SIZE_LANDSCAPE = 60
+
+        private const val NOTIFICATION_SIZE_PORTRAIT_KEY = "gaming_mode_notification_size_portrait"
         private const val DEFAULT_NOTIFICATION_SIZE_PORTRAIT = 60
     }
 }

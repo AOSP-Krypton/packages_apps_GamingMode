@@ -17,11 +17,11 @@
 package org.exthmui.game.fragment
 
 import android.annotation.SuppressLint
+import android.content.SharedPreferences
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.provider.Settings
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.View
@@ -32,6 +32,8 @@ import android.widget.SearchView
 import android.widget.TextView
 
 import androidx.fragment.app.Fragment
+import androidx.preference.PreferenceDataStore
+import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
@@ -47,6 +49,7 @@ import org.exthmui.game.R
  */
 abstract class AppListFragment: Fragment(R.layout.app_list_layout) {
 
+    private lateinit var sharedPreferences: SharedPreferences
     private lateinit var packageManager: PackageManager
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: AppListAdapter
@@ -60,6 +63,7 @@ abstract class AppListFragment: Fragment(R.layout.app_list_layout) {
     @SuppressLint("QueryPermissionsNeeded")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext())
         setHasOptionsMenu(true)
         requireActivity().setTitle(getTitle())
         packageManager = requireContext().packageManager
@@ -84,9 +88,8 @@ abstract class AppListFragment: Fragment(R.layout.app_list_layout) {
      * @return an initial list of packages that should appear as selected.
      */
     private fun getInitialCheckedList(): List<String> {
-        val flattenedString = Settings.System.getString(
-            requireContext().contentResolver, getKey()
-        )
+        val flattenedString = if (getPreferenceDataStore() != null) getPreferenceDataStore()!!.getString(getKey(), null)
+            else sharedPreferences.getString(getKey(), null)
         return flattenedString?.takeIf {
             it.isNotBlank()
         }?.split(";")?.toList() ?: emptyList()
@@ -113,11 +116,15 @@ abstract class AppListFragment: Fragment(R.layout.app_list_layout) {
      * @param list a [List<String>] of selected items.
      */
     private fun onListUpdate(list: List<String>) {
-        Settings.System.putString(requireContext().contentResolver,
-            getKey(), list.fold("") { r, t ->
-                "$r$t;"
-            })
+        val flattenedString = list.fold("") { r, t ->
+            "$r$t;"
+        }
+        getPreferenceDataStore()?.putString(getKey(), flattenedString) ?: run {
+            sharedPreferences.edit().putString(getKey(), flattenedString).commit()
+        }
     }
+
+    protected open fun getPreferenceDataStore(): PreferenceDataStore? = null
 
     protected abstract fun getKey(): String
 

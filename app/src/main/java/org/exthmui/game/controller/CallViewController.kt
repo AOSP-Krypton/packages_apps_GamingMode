@@ -19,13 +19,13 @@ package org.exthmui.game.controller
 
 import android.Manifest
 import android.content.Context
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.media.AudioDeviceInfo
 import android.media.AudioManager
 import android.media.AudioSystem
 import android.os.Handler
 import android.os.Looper
-import android.provider.Settings
 import android.telecom.TelecomManager
 import android.telephony.TelephonyCallback
 import android.telephony.TelephonyManager
@@ -47,17 +47,15 @@ import org.exthmui.game.R
 
 @ServiceScoped
 class CallViewController @Inject constructor(
-    @ApplicationContext private val context: Context
+    @ApplicationContext private val context: Context,
+    sharedPreferences: SharedPreferences
 ) : ViewController(context) {
 
     private val audioManager = context.getSystemService(AudioManager::class.java)
     private val telephonyManager = context.getSystemService(TelephonyManager::class.java)
     private val telecomManager = context.getSystemService(TelecomManager::class.java)
 
-    private val autoAnswerCall = Settings.System.getInt(
-        context.contentResolver,
-        Settings.System.GAMING_MODE_AUTO_ANSWER_CALL, 0
-    ) == 1
+    private val autoAnswerCall = sharedPreferences.getBoolean(AUTO_ANSWER_CALL_KEY, false)
 
     private var executor: ExecutorService? = null
 
@@ -165,5 +163,7 @@ class CallViewController @Inject constructor(
 
     companion object {
         private const val TAG = "CallViewController"
+
+        private const val AUTO_ANSWER_CALL_KEY = "gaming_mode_auto_answer_call"
     }
 }

@@ -19,18 +19,18 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:title="@string/gaming_mode_notification_overlay_title">
 
-    <com.krypton.settings.preference.SystemSettingMainSwitchPreference
+    <com.android.settingslib.widget.MainSwitchPreference
         android:key="gaming_mode_show_notification_overlay"
         android:title="@string/gaming_mode_show_notification_overlay_title"
         android:defaultValue="true" />
 
-    <com.krypton.settings.preference.SystemSettingSwitchPreference
+    <SwitchPreference
         android:key="gaming_mode_dynamic_notification_filter"
         android:title="@string/gaming_mode_dynamic_notification_filter_title"
         android:summary="@string/gaming_mode_dynamic_notification_filter_summary"
         android:defaultValue="true" />
 
-    <com.krypton.settings.preference.SystemSettingSeekBarPreference
+    <com.krypton.settings.preference.CustomSeekBarPreference
         android:key="gaming_mode_notification_size_landscape"
         android:title="@string/gaming_mode_notification_overlay_size_landscape_title"
         android:defaultValue="90"
@@ -39,7 +39,7 @@
         app:units="px"
         app:interval="5" />
 
-    <com.krypton.settings.preference.SystemSettingSeekBarPreference
+    <com.krypton.settings.preference.CustomSeekBarPreference
         android:key="gaming_mode_notification_size_portrait"
         android:title="@string/gaming_mode_notification_overlay_size_portrait_title"
         android:defaultValue="60"
@@ -49,8 +49,9 @@
         app:interval="5" />
 
     <Preference
-        android:key="gaming_mode_notification_app_blacklist"
+        android:key="blacklist_preference"
         android:title="@string/gaming_mode_notification_overlay_blacklist_title"
         android:summary="@string/gaming_mode_notification_overlay_blacklist_summary"
-        android:fragment="org.exthmui.game.fragment.NotificationOverlayBlacklistFragment" />
+        android:fragment="org.exthmui.game.fragment.NotificationOverlayBlacklistFragment"
+        android:persistent="false" />
 </PreferenceScreen>

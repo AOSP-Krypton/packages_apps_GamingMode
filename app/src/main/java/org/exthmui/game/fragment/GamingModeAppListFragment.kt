@@ -17,11 +17,17 @@
 package org.exthmui.game.fragment
 
 import android.provider.Settings
+import androidx.preference.PreferenceDataStore
+import com.krypton.settings.preference.SystemSettingsStore
 
 import org.exthmui.game.R
 
 class GamingModeAppListFragment: AppListFragment() {
     override fun getTitle() = R.string.gaming_mode_apps_title
+
+    override fun getPreferenceDataStore(): PreferenceDataStore {
+        return SystemSettingsStore(requireContext().contentResolver)
+    }
 
     override fun getKey() = Settings.System.GAMING_MODE_APP_LIST
 }

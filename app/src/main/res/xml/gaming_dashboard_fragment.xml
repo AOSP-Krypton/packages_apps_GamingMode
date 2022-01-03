@@ -20,17 +20,21 @@
 
     <com.android.settingslib.widget.TopIntroPreference
         android:key="gaming_mode_top_intro"
-        android:title="@string/gaming_mode_intro_text" />
+        android:title="@string/gaming_mode_intro_text"
+        android:selectable="false"
+        android:persistent="false" />
 
     <com.krypton.settings.preference.SystemSettingMainSwitchPreference
         android:key="gaming_mode_enabled"
-        android:title="@string/enable_gaming_mode" />
+        android:title="@string/enable_gaming_mode"
+        android:defaultValue="false" />
 
     <Preference
-        android:key="gaming_mode_app_list"
+        android:key="app_list_fragment"
         android:title="@string/gaming_mode_apps_title"
         android:summary="@string/gaming_mode_apps_summary"
-        android:fragment="org.exthmui.game.fragment.GamingModeAppListFragment" />
+        android:fragment="org.exthmui.game.fragment.GamingModeAppListFragment"
+        android:persistent="false" />
 
     <com.krypton.settings.preference.SystemSettingSwitchPreference
         android:key="gaming_mode_dynamic_add"
@@ -38,7 +42,7 @@
         android:summary="@string/gaming_mode_dynamic_add_summary"
         android:defaultValue="true" />
 
-    <com.krypton.settings.preference.SystemSettingSwitchPreference
+    <SwitchPreference
         android:key="gaming_mode_disable_auto_brightness"
         android:title="@string/gaming_mode_disable_auto_brightness_title"
         android:summary="@string/gaming_mode_disable_auto_brightness_summary"
@@ -48,15 +52,16 @@
         android:key="gaming_mode_notification_overlay_preference"
         android:title="@string/gaming_mode_notification_overlay_title"
         android:summary="@string/gaming_mode_notification_overlay_summary"
-        android:fragment="org.exthmui.game.fragment.NotificationOverlaySettingsFragment" />
+        android:fragment="org.exthmui.game.fragment.NotificationOverlaySettingsFragment"
+        android:persistent="false" />
 
-    <com.krypton.settings.preference.SystemSettingSwitchPreference
+    <SwitchPreference
         android:key="gaming_mode_use_overlay_menu"
         android:title="@string/gaming_mode_use_overlay_menu_title"
         android:summary="@string/gaming_mode_use_overlay_menu_summary"
         android:defaultValue="1" />
 
-    <com.krypton.settings.preference.SystemSettingSeekBarPreference
+    <com.krypton.settings.preference.CustomSeekBarPreference
         android:key="gaming_mode_menu_opacity"
         android:title="@string/gaming_mode_menu_opacity_title"
         android:defaultValue="75"
@@ -69,13 +74,13 @@
         android:key="gaming_mode_performance"
         android:title="@string/gaming_mode_performance">
 
-        <com.krypton.settings.preference.SystemSettingSwitchPreference
+        <SwitchPreference
             android:key="gaming_mode_change_performance_level"
             android:title="@string/gaming_mode_change_performance_title"
             android:summary="@string/gaming_mode_change_performance_summary"
             android:defaultValue="true" />
 
-        <com.krypton.settings.preference.SystemSettingSeekBarPreference
+        <com.krypton.settings.preference.CustomSeekBarPreference
             android:key="gaming_mode_performance_level"
             android:title="@string/gaming_mode_performance_title"
             android:dependency="gaming_mode_change_performance_level"
@@ -93,13 +98,13 @@
             android:summary="@string/gaming_mode_disable_notification_alert_summary"
             android:defaultValue="true" />
 
-        <com.krypton.settings.preference.SystemSettingSwitchPreference
+        <SwitchPreference
             android:key="gaming_mode_disable_ringtone"
             android:title="@string/gaming_mode_disable_ringtone_title"
             android:summary="@string/gaming_mode_disable_ringtone_summary"
             android:defaultValue="false" />
 
-        <com.krypton.settings.preference.SystemSettingSwitchPreference
+        <SwitchPreference
             android:key="gaming_mode_auto_answer_call"
             android:title="@string/gaming_mode_auto_answer_call_title"
             android:summary="@string/gaming_mode_auto_answer_call_summary"
@@ -109,7 +114,7 @@
     <PreferenceCategory
         android:title="@string/gaming_mode_prevent_accidental_touch">
 
-        <com.krypton.settings.preference.SystemSettingSwitchPreference
+        <SwitchPreference
             android:key="gaming_mode_disable_gesture"
             android:title="@string/gaming_mode_disable_gesture_title"
             android:defaultValue="false" />

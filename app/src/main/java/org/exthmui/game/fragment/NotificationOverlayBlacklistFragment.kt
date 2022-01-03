@@ -16,12 +16,14 @@
 
 package org.exthmui.game.fragment
 
-import android.provider.Settings
-
 import org.exthmui.game.R
 
 class NotificationOverlayBlacklistFragment: AppListFragment() {
     override fun getTitle() = R.string.gaming_mode_notification_overlay_blacklist_title
 
-    override fun getKey() = Settings.System.GAMING_MODE_NOTIFICATION_APP_BLACKLIST
+    override fun getKey() = NOTIFICATION_APP_BLACKLIST_KEY
+
+    companion object {
+        private const val NOTIFICATION_APP_BLACKLIST_KEY = "gaming_mode_notification_app_blacklist"
+    }
 }

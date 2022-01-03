@@ -24,6 +24,7 @@ import android.app.PendingIntent
 import android.app.Service
 import android.content.ComponentName
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.os.IBinder
 import android.os.RemoteException
@@ -56,14 +57,14 @@ class GamingService : Hilt_GamingService() {
     @Inject
     lateinit var notificationOverlayController: NotificationOverlayController
 
+    @Inject
+    lateinit var sharedPreferences: SharedPreferences
+
     private val notificationService = NotificationService()
 
     override fun onCreate() {
         super.onCreate()
-        enabledMenuOverlay = Settings.System.getInt(
-            contentResolver,
-            Settings.System.GAMING_MODE_USE_OVERLAY_MENU, 1
-        ) == 1
+        enabledMenuOverlay = sharedPreferences.getBoolean(USE_OVERLAY_MENU_KEY, true)
         if (enabledMenuOverlay) {
             floatingViewController.get().init()
             callViewController.get().init()
@@ -182,5 +183,7 @@ class GamingService : Hilt_GamingService() {
         private const val OPEN_ACTIVITY_REQUEST_CODE = 1002
 
         private const val STOP_SERVICE_ACTION = "org.exthmui.game.GamingService.ACTION_STOP_SELF"
+
+        private const val USE_OVERLAY_MENU_KEY = "gaming_mode_use_overlay_menu"
     }
 }

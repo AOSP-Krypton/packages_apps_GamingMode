@@ -26,7 +26,6 @@ import android.graphics.Color
 import android.graphics.PixelFormat
 import android.graphics.drawable.ColorDrawable
 import android.os.SystemProperties
-import android.provider.Settings
 import android.view.*
 import android.widget.ImageView
 import android.widget.SeekBar
@@ -35,7 +34,6 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.Group
 import androidx.core.content.edit
 import androidx.core.math.MathUtils
-import androidx.preference.PreferenceManager
 
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.scopes.ServiceScoped
@@ -49,6 +47,7 @@ import org.exthmui.game.qs.tiles.*
 @ServiceScoped
 class FloatingViewController @Inject constructor(
     @ApplicationContext private val context: Context,
+    private val sharedPreferences: SharedPreferences,
     private val callViewController: CallViewController,
     autoBrightnessTile: AutoBrightnessTile,
     lockGestureTile: LockGestureTile,
@@ -77,8 +76,6 @@ class FloatingViewController @Inject constructor(
     private var changePerfLevel = true
     private var performanceLevel = DEFAULT_PERFORMANCE_LEVEL
 
-    private lateinit var sharedPrefs: SharedPreferences
-
     private var dialog: AlertDialog? = null
 
     override fun initController() {
@@ -87,7 +84,6 @@ class FloatingViewController @Inject constructor(
                 getBoolean(com.android.internal.R.bool.config_gamingmode_performance)
             floatingButtonSize = getDimension(R.dimen.game_button_size)
         }
-        sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context)
 
         loadSettings()
         tiles.forEach { it.host = this }
@@ -154,32 +150,21 @@ class FloatingViewController @Inject constructor(
     }
 
     private fun loadSettings() {
-        changePerfLevel = Settings.System.getInt(
-            context.contentResolver,
-            Settings.System.GAMING_MODE_CHANGE_PERFORMANCE_LEVEL,
-            1
-        ) == 1
-        performanceLevel = Settings.System.getInt(
-            context.contentResolver,
-            Settings.System.GAMING_MODE_PERFORMANCE_LEVEL,
-            DEFAULT_PERFORMANCE_LEVEL
-        )
-        menuOpacity = Settings.System.getInt(
-            context.contentResolver,
-            Settings.System.GAMING_MODE_MENU_OPACITY, DEFAULT_MENU_OPACITY
-        )
+        changePerfLevel = sharedPreferences.getBoolean(CHANGE_PERFORMANCE_LEVEL_KEY, true)
+        performanceLevel = sharedPreferences.getInt(PERFORMANCE_LEVEL_KEY, DEFAULT_PERFORMANCE_LEVEL)
+        menuOpacity = sharedPreferences.getInt(MENU_OPACITY_KEY, DEFAULT_MENU_OPACITY)
     }
 
     private fun restoreFloatingButtonOffset() {
         // 悬浮球位置调整
         val defaultX = ((floatingButtonSize - bounds.width()) / 2f).toInt()
         val defaultY = ((floatingButtonSize - bounds.height()) / 2f).toInt()
-        gamingFBLayoutParams.x = sharedPrefs.getInt(
+        gamingFBLayoutParams.x = sharedPreferences.getInt(
             if (isPortrait) FLOATING_BUTTON_COORDINATE_VERTICAL_X
             else FLOATING_BUTTON_COORDINATE_HORIZONTAL_X,
             defaultX
         )
-        gamingFBLayoutParams.y = sharedPrefs.getInt(
+        gamingFBLayoutParams.y = sharedPreferences.getInt(
             if (isPortrait) FLOATING_BUTTON_COORDINATE_VERTICAL_Y
             else FLOATING_BUTTON_COORDINATE_HORIZONTAL_Y,
             defaultY
@@ -289,7 +274,7 @@ class FloatingViewController @Inject constructor(
     }
 
     private fun saveCoordinates() {
-        sharedPrefs.edit(commit = true) {
+        sharedPreferences.edit(commit = true) {
             putInt(
                 if (isPortrait) FLOATING_BUTTON_COORDINATE_VERTICAL_X else FLOATING_BUTTON_COORDINATE_HORIZONTAL_X,
                 gamingFBLayoutParams.x
@@ -330,5 +315,9 @@ class FloatingViewController @Inject constructor(
         private const val FLOATING_BUTTON_COORDINATE_HORIZONTAL_Y = "floating_button_horizontal_y"
         private const val FLOATING_BUTTON_COORDINATE_VERTICAL_X = "floating_button_vertical_x"
         private const val FLOATING_BUTTON_COORDINATE_VERTICAL_Y = "floating_button_vertical_y"
+
+        private const val CHANGE_PERFORMANCE_LEVEL_KEY = "gaming_mode_change_performance_level"
+        private const val PERFORMANCE_LEVEL_KEY = "gaming_mode_performance_level"
+        private const val MENU_OPACITY_KEY = "gaming_mode_menu_opacity"
     }
 }

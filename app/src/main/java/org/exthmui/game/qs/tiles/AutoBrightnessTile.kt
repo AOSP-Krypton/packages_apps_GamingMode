@@ -18,6 +18,7 @@
 package org.exthmui.game.qs.tiles
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.provider.Settings
 import android.view.View
 
@@ -30,7 +31,8 @@ import org.exthmui.game.R
 
 @ServiceScoped
 class AutoBrightnessTile @Inject constructor(
-    @ApplicationContext private val context: Context
+    @ApplicationContext private val context: Context,
+    sharedPreferences: SharedPreferences,
 ) : QSTile() {
 
     private val initialMode = Settings.System.getInt(
@@ -44,11 +46,7 @@ class AutoBrightnessTile @Inject constructor(
     init {
         val isAuto = initialMode == Settings.System.SCREEN_BRIGHTNESS_MODE_AUTOMATIC
         if (isAuto) {
-            isSelected = Settings.System.getInt(
-                context.contentResolver,
-                Settings.System.GAMING_MODE_DISABLE_AUTO_BRIGHTNESS,
-                1
-            ) == 0
+            isSelected = sharedPreferences.getBoolean(DISABLE_AUTO_BRIGHTNESS_KEY, true)
             if (!isSelected) {
                 stateChanged = true
                 Settings.System.putInt(
@@ -83,5 +81,9 @@ class AutoBrightnessTile @Inject constructor(
             Settings.System.SCREEN_BRIGHTNESS_MODE,
             initialMode
         )
+    }
+
+    companion object {
+        private const val DISABLE_AUTO_BRIGHTNESS_KEY = "gaming_mode_disable_auto_brightness"
     }
 }

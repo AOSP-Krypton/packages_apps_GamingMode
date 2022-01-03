@@ -19,9 +19,10 @@ package org.exthmui.game.services
 
 import android.app.Notification
 import android.content.Context
-import android.provider.Settings
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
+
+import androidx.preference.PreferenceManager
 
 import org.exthmui.game.controller.NotificationOverlayController
 
@@ -63,17 +64,12 @@ class NotificationService : NotificationListenerService() {
 
     fun init(context: Context, controller: NotificationOverlayController?) {
         notificationOverlayController = controller
-        val blacklist = Settings.System.getString(
-            context.contentResolver,
-            Settings.System.GAMING_MODE_NOTIFICATION_APP_BLACKLIST
-        )
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+        val blacklist = sharedPreferences.getString(NOTIFICATION_APP_BLACKLIST_KEY, null)
         if (blacklist?.isNotBlank() == true) {
             notificationBlacklist = blacklist.split(",")
         }
-        useFilter = Settings.System.getInt(
-            context.contentResolver,
-            Settings.System.GAMING_MODE_DYNAMIC_NOTIFICATION_FILTER, 1
-        ) == 1
+        useFilter = sharedPreferences.getBoolean(DYNAMIC_NOTIFICATION_FILTER_KEY, true)
     }
 
     private fun isInBlackList(packageName: String): Boolean {
@@ -92,6 +88,9 @@ class NotificationService : NotificationListenerService() {
     }
 
     companion object {
+        private const val NOTIFICATION_APP_BLACKLIST_KEY = "gaming_mode_notification_app_blacklist"
+        private const val DYNAMIC_NOTIFICATION_FILTER_KEY = "gaming_mode_dynamic_notification_filter"
+
         // 最小编辑距离
         private fun levenshtein(a: CharSequence, b: CharSequence): Int {
             if (a.isBlank()) {
