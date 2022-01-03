@@ -1,8 +1,6 @@
 plugins {
     id 'com.android.application'
-    id 'dagger.hilt.android.plugin'
     id 'kotlin-android'
-    id 'kotlin-kapt'
 }
 
 ext.compiled_framework_dir = '../../../../out/soong/.intermediates'
@@ -50,5 +48,4 @@ dependencies {
     implementation "com.google.dagger:hilt-android:$hilt_version"
     implementation files("${compiled_framework_dir}/frameworks/base/packages/SettingsLib/SettingsLib/android_common/combined/SettingsLib.jar")
     implementation files("${compiled_framework_dir}/packages/resources/PreferenceExtensions/PreferenceExtensions/android_common/combined/PreferenceExtensions.jar")
-    kapt "com.google.dagger:hilt-android-compiler:$hilt_version"
 }
