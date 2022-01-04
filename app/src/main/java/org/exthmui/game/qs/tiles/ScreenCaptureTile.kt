@@ -47,8 +47,9 @@ class ScreenCaptureTile @Inject constructor(
         takeScreenshot = Runnable {
             screenshotHelper.takeScreenshot(
                 TAKE_SCREENSHOT_FULLSCREEN, true, true,
-                SCREENSHOT_GLOBAL_ACTIONS, handler, null
-            )
+                SCREENSHOT_GLOBAL_ACTIONS, handler) {
+                    host?.showFloatingLayout()
+                }
         }
         isToggleable = false
         isSelected = true
@@ -60,10 +61,15 @@ class ScreenCaptureTile @Inject constructor(
 
     override fun handleClick(v: View) {
         host?.hideGamingMenu()
-        handler.postDelayed(takeScreenshot, 300)
+        host?.hideFloatingLayout()
+        handler.postDelayed(takeScreenshot, SCREENSHOT_DELAY)
     }
 
     override fun destroy() {
         handler.removeCallbacks(takeScreenshot)
+    }
+
+    companion object {
+        private const val SCREENSHOT_DELAY = 200L
     }
 }

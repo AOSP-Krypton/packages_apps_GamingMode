@@ -93,7 +93,7 @@ class FloatingViewController @Inject constructor(
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         floatingButtonSize = context.resources.getDimension(R.dimen.game_button_size)
-        removeFloatingButton()
+        removeFloatingLayout()
         val wasShowing = dialog?.isShowing == true
         dialog?.dismiss()
         initGamingMenu()
@@ -101,8 +101,10 @@ class FloatingViewController @Inject constructor(
         restoreFloatingButtonOffset()
         if (wasShowing) {
             showGamingMenu()
+            hideFloatingLayout()
         } else {
             hideGamingMenu()
+            showFloatingLayout()
         }
     }
 
@@ -111,11 +113,11 @@ class FloatingViewController @Inject constructor(
         dialog?.dismiss()
         perfLevelSeekBar?.setOnSeekBarChangeListener(null)
         perfLevelSeekBar = null
-        removeFloatingButton()
+        removeFloatingLayout()
         gamingFloatingLayout = null
     }
 
-    private fun removeFloatingButton() {
+    private fun removeFloatingLayout() {
         if (gamingFloatingLayout?.parent != null) {
             windowManager.removeViewImmediate(gamingFloatingLayout)
         }
@@ -126,7 +128,6 @@ class FloatingViewController @Inject constructor(
             it.window?.attributes?.gravity = getOverlayViewGravity()
             it.show()
         }
-        gamingFloatingLayout?.visibility = View.GONE
     }
 
     private fun getOverlayViewGravity(): Int {
@@ -144,9 +145,16 @@ class FloatingViewController @Inject constructor(
         return overlayViewGravity
     }
 
+    fun showFloatingLayout() {
+        gamingFloatingLayout?.visibility = View.VISIBLE
+    }
+
+    fun hideFloatingLayout() {
+        gamingFloatingLayout?.visibility = View.GONE
+    }
+
     fun hideGamingMenu() {
         dialog?.hide()
-        gamingFloatingLayout?.visibility = View.VISIBLE
     }
 
     private fun loadSettings() {
@@ -208,7 +216,6 @@ class FloatingViewController @Inject constructor(
         dialog = AlertDialog.Builder(context, R.style.Theme_AlertDialog).let {
             it.setView(overlayView)
             it.setCancelable(true)
-            it.setOnCancelListener { gamingFloatingLayout?.visibility = View.VISIBLE }
             it.create()
         }.also {
             it.window?.apply {
