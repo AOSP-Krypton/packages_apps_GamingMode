@@ -24,6 +24,7 @@ import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.graphics.Color
 import android.graphics.PixelFormat
+import android.graphics.Rect
 import android.graphics.drawable.ColorDrawable
 import android.os.SystemProperties
 import android.view.*
@@ -34,6 +35,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.Group
 import androidx.core.content.edit
 import androidx.core.math.MathUtils
+import androidx.core.view.doOnLayout
 
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.scopes.ServiceScoped
@@ -78,12 +80,15 @@ class FloatingViewController @Inject constructor(
 
     private var dialog: AlertDialog? = null
 
+    private lateinit var movableRect: Rect
+
     override fun initController() {
         with(context.resources) {
             perfProfilesSupported =
                 getBoolean(com.android.internal.R.bool.config_gamingmode_performance)
             floatingButtonSize = getDimension(R.dimen.game_button_size)
         }
+        calculateMovableRect()
 
         loadSettings()
         tiles.forEach { it.host = this }
@@ -96,9 +101,10 @@ class FloatingViewController @Inject constructor(
         removeFloatingLayout()
         val wasShowing = dialog?.isShowing == true
         dialog?.dismiss()
+
+        calculateMovableRect()
         initGamingMenu()
         initFloatingLayout()
-        restoreFloatingButtonOffset()
         if (wasShowing) {
             showGamingMenu()
             hideFloatingLayout()
@@ -106,6 +112,23 @@ class FloatingViewController @Inject constructor(
             hideGamingMenu()
             showFloatingLayout()
         }
+    }
+
+    private fun calculateMovableRect() {
+        val insets = windowManager.currentWindowMetrics.windowInsets.getInsets(
+            WindowInsets.Type.statusBars() or
+                    WindowInsets.Type.navigationBars() or
+                    WindowInsets.Type.displayCutout()
+        )
+        val bounds = windowManager.currentWindowMetrics.bounds
+        val halfWidth = bounds.width() / 2
+        val halfHeight = bounds.height() / 2
+        movableRect = Rect(
+            -(halfWidth - insets.left),
+            -(halfHeight - insets.top),
+            (halfWidth - insets.right),
+            (halfHeight - insets.bottom)
+        )
     }
 
     override fun onDestroy() {
@@ -159,23 +182,23 @@ class FloatingViewController @Inject constructor(
 
     private fun loadSettings() {
         changePerfLevel = sharedPreferences.getBoolean(CHANGE_PERFORMANCE_LEVEL_KEY, true)
-        performanceLevel = sharedPreferences.getInt(PERFORMANCE_LEVEL_KEY, DEFAULT_PERFORMANCE_LEVEL)
+        performanceLevel =
+            sharedPreferences.getInt(PERFORMANCE_LEVEL_KEY, DEFAULT_PERFORMANCE_LEVEL)
         menuOpacity = sharedPreferences.getInt(MENU_OPACITY_KEY, DEFAULT_MENU_OPACITY)
     }
 
     private fun restoreFloatingButtonOffset() {
-        // 悬浮球位置调整
-        val defaultX = ((floatingButtonSize - bounds.width()) / 2f).toInt()
-        val defaultY = ((floatingButtonSize - bounds.height()) / 2f).toInt()
-        gamingFBLayoutParams.x = sharedPreferences.getInt(
-            if (isPortrait) FLOATING_BUTTON_COORDINATE_VERTICAL_X
-            else FLOATING_BUTTON_COORDINATE_HORIZONTAL_X,
-            defaultX
-        )
-        gamingFBLayoutParams.y = sharedPreferences.getInt(
-            if (isPortrait) FLOATING_BUTTON_COORDINATE_VERTICAL_Y
-            else FLOATING_BUTTON_COORDINATE_HORIZONTAL_Y,
-            defaultY
+        clampLayoutParams(
+            x = sharedPreferences.getInt(
+                if (isPortrait) FLOATING_BUTTON_COORDINATE_VERTICAL_X
+                else FLOATING_BUTTON_COORDINATE_HORIZONTAL_X,
+                movableRect.left
+            ),
+            y = sharedPreferences.getInt(
+                if (isPortrait) FLOATING_BUTTON_COORDINATE_VERTICAL_Y
+                else FLOATING_BUTTON_COORDINATE_HORIZONTAL_Y,
+                0
+            )
         )
         windowManager.updateViewLayout(gamingFloatingLayout, gamingFBLayoutParams)
     }
@@ -232,8 +255,10 @@ class FloatingViewController @Inject constructor(
             windowManager.addView(it, gamingFBLayoutParams)
             initFloatingButton(it.findViewById(R.id.floating_button))
             callViewController.initView(it.findViewById(R.id.call_control_button))
+            it.doOnLayout {
+                restoreFloatingButtonOffset()
+            }
         }
-        restoreFloatingButtonOffset()
     }
 
     private fun initFloatingButton(button: ImageView) {
@@ -255,10 +280,7 @@ class FloatingViewController @Inject constructor(
                         }
                         MotionEvent.ACTION_MOVE -> {
                             moved = true
-                            gamingFBLayoutParams.x =
-                                getClampedValue(x + diffX, bounds.width())
-                            gamingFBLayoutParams.y =
-                                getClampedValue(y + diffY, bounds.height())
+                            clampLayoutParams(x = x + diffX, y = y + diffY)
                             windowManager.updateViewLayout(
                                 gamingFloatingLayout,
                                 gamingFBLayoutParams
@@ -293,9 +315,19 @@ class FloatingViewController @Inject constructor(
         }
     }
 
-    private fun getClampedValue(value: Int, max: Int): Int {
-        val allowedMax = ((max - floatingButtonSize) / 2f).toInt()
-        return MathUtils.clamp(value, -allowedMax, allowedMax)
+    private fun clampLayoutParams(x: Int, y: Int) {
+        val xOffset = gamingFloatingLayout!!.measuredWidth / 2
+        val yOffset = gamingFloatingLayout!!.measuredHeight
+        gamingFBLayoutParams.x = MathUtils.clamp(
+            x,
+            movableRect.left + xOffset,
+            movableRect.right - xOffset
+        )
+        gamingFBLayoutParams.y = MathUtils.clamp(
+            y,
+            movableRect.top,
+            movableRect.bottom - yOffset,
+        )
     }
 
     private fun getFloatingButtonLP() =

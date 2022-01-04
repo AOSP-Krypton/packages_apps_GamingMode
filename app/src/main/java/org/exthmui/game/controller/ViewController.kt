@@ -27,7 +27,6 @@ open class ViewController(private val context: Context) {
     protected var isPortrait: Boolean =
         context.resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT
     protected val windowManager: WindowManager = context.getSystemService(WindowManager::class.java)
-    protected var bounds = windowManager.currentWindowMetrics.bounds
     protected var layoutInflater: LayoutInflater = LayoutInflater.from(context)
 
     fun init() {
@@ -40,7 +39,6 @@ open class ViewController(private val context: Context) {
 
     fun updateConfiguration(newConfig: Configuration) {
         isPortrait = newConfig.orientation == Configuration.ORIENTATION_PORTRAIT
-        bounds = windowManager.currentWindowMetrics.bounds
         onConfigurationChanged(newConfig)
     }
 
