@@ -76,4 +76,6 @@
     <string name="search_apps">搜索应用</string>
     <string name="application_icon">应用图标</string>
     <string name="performance_level">性能等级</string>
+    <string name="gaming_mode_miscellaneous">杂项</string>
+    <string name="gaming_mode_disable_adb_title">关闭 USB 调试</string>
 </resources>
