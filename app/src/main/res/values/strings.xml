@@ -40,8 +40,6 @@
     <string name="gaming_mode_disable_auto_brightness_summary">Disable auto brightness when entering game mode</string>
     <string name="gaming_mode_notification_overlay_title">Notification overlay</string>
     <string name="gaming_mode_notification_overlay_summary">Display the notification content as a transparent overlay on top</string>
-    <string name="gaming_mode_use_overlay_menu_title">Enable overlay menu</string>
-    <string name="gaming_mode_use_overlay_menu_summary">Show a floating button which opens a window with quick settings on tap</string>
     <string name="gaming_mode_menu_opacity_title">Overlay menu opacity level</string>
 
     <string name="gaming_mode_performance">Performance</string>

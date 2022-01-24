@@ -40,8 +40,6 @@
     <string name="gaming_mode_disable_auto_brightness_summary">Desativar o brilho automático ao entrar no modo de jogo</string>
     <string name="gaming_mode_notification_overlay_title">Sobreposição de notificações</string>
     <string name="gaming_mode_notification_overlay_summary">Mostrar o conteúdo da notificação como uma sobreposição transparente no topo</string>
-    <string name="gaming_mode_use_overlay_menu_title">Habilitar menu de sobreposição</string>
-    <string name="gaming_mode_use_overlay_menu_summary">Mostrar um botão flutuante que abre uma janela com ajustes rápidos ao tocar</string>
     <string name="gaming_mode_menu_opacity_title">Nível de opacidade do menu de sobreposição</string>
 
     <string name="gaming_mode_performance">Performance</string>

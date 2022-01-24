@@ -39,8 +39,6 @@
     <string name="gaming_mode_disable_auto_brightness_summary">游戏模式启用时关闭自动亮度</string>
     <string name="gaming_mode_notification_overlay_title">浮动通知</string>
     <string name="gaming_mode_notification_overlay_summary">将浮动通知作为一个透明的覆盖层显示在上面</string>
-    <string name="gaming_mode_use_overlay_menu_title">浮动按钮</string>
-    <string name="gaming_mode_use_overlay_menu_summary">显示一个浮动按钮，点击后打开快速设置窗口</string>
     <string name="gaming_mode_menu_opacity_title">不透明度</string>
 
     <string name="gaming_mode_performance">性能</string>

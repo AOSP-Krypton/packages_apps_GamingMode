@@ -40,8 +40,6 @@
     <string name="gaming_mode_disable_auto_brightness_summary">Desactivar el brillo automático al entrar en el modo de juego</string>
     <string name="gaming_mode_notification_overlay_title">Superposición de notificaciones</string>
     <string name="gaming_mode_notification_overlay_summary">Mostrar el contenido de la notificación como una superposición transparente en la parte superior</string>
-    <string name="gaming_mode_use_overlay_menu_title">Activar el menú de superposición</string>
-    <string name="gaming_mode_use_overlay_menu_summary">Mostrar un botón flotante que abra una ventana con ajustes rápidos al tocarlo</string>
     <string name="gaming_mode_menu_opacity_title">Nivel de opacidad del menú de superposición</string>
 
     <string name="gaming_mode_performance">Rendimiento</string>

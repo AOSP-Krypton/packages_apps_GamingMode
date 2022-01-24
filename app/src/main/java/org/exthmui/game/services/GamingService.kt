@@ -24,14 +24,12 @@ import android.app.PendingIntent
 import android.app.Service
 import android.content.ComponentName
 import android.content.Intent
-import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.os.IBinder
 import android.os.RemoteException
 import android.os.UserHandle
 import android.provider.Settings
 import android.util.Log
-import dagger.Lazy
 
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -46,29 +44,21 @@ import org.exthmui.game.ui.MainActivity
 @AndroidEntryPoint(Service::class)
 class GamingService : Hilt_GamingService() {
 
-    private var enabledMenuOverlay = false
+    @Inject
+    lateinit var callViewController: CallViewController
 
     @Inject
-    lateinit var callViewController: Lazy<CallViewController>
-
-    @Inject
-    lateinit var floatingViewController: Lazy<FloatingViewController>
+    lateinit var floatingViewController: FloatingViewController
 
     @Inject
     lateinit var notificationOverlayController: NotificationOverlayController
-
-    @Inject
-    lateinit var sharedPreferences: SharedPreferences
 
     private val notificationService = NotificationService()
 
     override fun onCreate() {
         super.onCreate()
-        enabledMenuOverlay = sharedPreferences.getBoolean(USE_OVERLAY_MENU_KEY, true)
-        if (enabledMenuOverlay) {
-            floatingViewController.get().init()
-            callViewController.get().init()
-        }
+        floatingViewController.init()
+        callViewController.init()
         notificationOverlayController.init()
         notificationService.init(this, notificationOverlayController)
         registerNotificationListener()
@@ -144,10 +134,8 @@ class GamingService : Hilt_GamingService() {
     override fun onDestroy() {
         unregisterNotificationListener()
         notificationOverlayController.destroy()
-        if (enabledMenuOverlay) {
-            callViewController.get().destroy()
-            floatingViewController.get().destroy()
-        }
+        callViewController.destroy()
+        floatingViewController.destroy()
         Settings.System.putInt(contentResolver, Settings.System.GAMING_MODE_ACTIVE, 0)
         super.onDestroy()
     }
@@ -157,10 +145,8 @@ class GamingService : Hilt_GamingService() {
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
-        if (enabledMenuOverlay) {
-            floatingViewController.get().updateConfiguration(newConfig)
-            callViewController.get().updateConfiguration(newConfig)
-        }
+        floatingViewController.updateConfiguration(newConfig)
+        callViewController.updateConfiguration(newConfig)
         notificationOverlayController.updateConfiguration(newConfig)
     }
 
@@ -183,7 +169,5 @@ class GamingService : Hilt_GamingService() {
         private const val OPEN_ACTIVITY_REQUEST_CODE = 1002
 
         private const val STOP_SERVICE_ACTION = "org.exthmui.game.GamingService.ACTION_STOP_SELF"
-
-        private const val USE_OVERLAY_MENU_KEY = "gaming_mode_use_overlay_menu"
     }
 }
