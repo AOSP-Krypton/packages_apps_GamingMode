@@ -18,6 +18,7 @@
 package org.exthmui.game.qs.tiles
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.os.RemoteException
 import android.os.ServiceManager
 import android.util.Log
@@ -32,11 +33,22 @@ import javax.inject.Inject
 import org.exthmui.game.R
 
 @ServiceScoped
-class LockGestureTile @Inject constructor() : QSTile() {
+class LockGestureTile @Inject constructor(
+    sharedPreferences: SharedPreferences,
+) : QSTile() {
 
     private val statusBarService = IStatusBarService.Stub.asInterface(
         ServiceManager.getService(Context.STATUS_BAR_SERVICE)
     )
+
+    init {
+        isSelected = sharedPreferences.getBoolean(DISABLE_GESTURE_KEY, false)
+        try {
+            statusBarService.setBlockedGesturalNavigation(isSelected)
+        } catch (e: RemoteException) {
+            Log.e(TAG, "Failed to toggle gesture")
+        }
+    }
 
     override fun getTitleRes(): Int = R.string.qs_lock_gesture
 
@@ -57,5 +69,7 @@ class LockGestureTile @Inject constructor() : QSTile() {
 
     companion object {
         private const val TAG = "LockGestureTile"
+
+        private const val DISABLE_GESTURE_KEY = "gaming_mode_disable_gesture"
     }
 }
