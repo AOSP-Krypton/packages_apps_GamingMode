@@ -34,10 +34,11 @@ class NotificationOverlayController @Inject constructor(
         gravity = Gravity.CENTER
         maxLines = 2
         setTextColor(Color.WHITE)
+        isFocusable = false
+        isClickable = false
     }
 
     private var layoutParams: LayoutParams = LayoutParams().apply {
-        width = LayoutParams.MATCH_PARENT
         height = LayoutParams.WRAP_CONTENT
         flags = flags or LayoutParams.FLAG_NOT_FOCUSABLE or
                 LayoutParams.FLAG_NOT_TOUCHABLE or
@@ -99,6 +100,9 @@ class NotificationOverlayController @Inject constructor(
                 getDimensionPixelSize(R.dimen.notification_vertical_offset_portrait)
         }
         layoutParams.y = getOffsetForPosition()
+        layoutParams.width = (context.resources.getInteger(
+            R.integer.notification_overlay_max_width
+        ) * windowManager.currentWindowMetrics.bounds.width()) / 100
         notificationOverlay.setTextSize(
             TypedValue.COMPLEX_UNIT_PX,
             (if (isPortrait) sizePortrait else sizeLandscape).toFloat()
@@ -110,8 +114,14 @@ class NotificationOverlayController @Inject constructor(
     }
 
     private fun loadSettings() {
-        sizePortrait = sharedPreferences.getInt(NOTIFICATION_SIZE_PORTRAIT_KEY, DEFAULT_NOTIFICATION_SIZE_PORTRAIT)
-        sizeLandscape = sharedPreferences.getInt(NOTIFICATION_SIZE_LANDSCAPE_KEY, DEFAULT_NOTIFICATION_SIZE_LANDSCAPE)
+        sizePortrait = sharedPreferences.getInt(
+            NOTIFICATION_SIZE_PORTRAIT_KEY,
+            DEFAULT_NOTIFICATION_SIZE_PORTRAIT
+        )
+        sizeLandscape = sharedPreferences.getInt(
+            NOTIFICATION_SIZE_LANDSCAPE_KEY,
+            DEFAULT_NOTIFICATION_SIZE_LANDSCAPE
+        )
         showNotificationOverlay = sharedPreferences.getBoolean(SHOW_NOTIFICATION_OVERLAY_KEY, true)
     }
 
@@ -132,18 +142,19 @@ class NotificationOverlayController @Inject constructor(
     private fun popNotification() {
         val start = getOffsetForPosition().toFloat()
         val end = start * (1 + SLIDE_ANIMATION_DISTANCE_FACTOR)
-        overlayPositionAnimator = getPositionAnimator(DISAPPEAR_ANIMATION_DURATION, start, end).also {
-            it.addListener(onEnd = {
-                if (notificationStack.isEmpty()) {
-                    removeViewSafely()
-                } else {
-                    notificationOverlay.alpha = 0f
-                    notificationOverlay.text = notificationStack.pop()
-                    pushNotification()
-                }
-            })
-            it.start()
-        }
+        overlayPositionAnimator =
+            getPositionAnimator(DISAPPEAR_ANIMATION_DURATION, start, end).also {
+                it.addListener(onEnd = {
+                    if (notificationStack.isEmpty()) {
+                        removeViewSafely()
+                    } else {
+                        notificationOverlay.alpha = 0f
+                        notificationOverlay.text = notificationStack.pop()
+                        pushNotification()
+                    }
+                })
+                it.start()
+            }
         startAlphaAnimation(DISAPPEAR_ANIMATION_DURATION, 1f, 0f)
     }
 
@@ -186,7 +197,8 @@ class NotificationOverlayController @Inject constructor(
 
         private const val SHOW_NOTIFICATION_OVERLAY_KEY = "gaming_mode_show_notification_overlay"
 
-        private const val NOTIFICATION_SIZE_LANDSCAPE_KEY = "gaming_mode_notification_size_landscape"
+        private const val NOTIFICATION_SIZE_LANDSCAPE_KEY =
+            "gaming_mode_notification_size_landscape"
         private const val DEFAULT_NOTIFICATION_SIZE_LANDSCAPE = 60
 
         private const val NOTIFICATION_SIZE_PORTRAIT_KEY = "gaming_mode_notification_size_portrait"

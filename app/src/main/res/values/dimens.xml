@@ -26,4 +26,5 @@
     <dimen name="perf_indicator_text_size">12sp</dimen>
     <dimen name="notification_vertical_offset_landscape">48dp</dimen>
     <dimen name="notification_vertical_offset_portrait">36dp</dimen>
+    <integer name="notification_overlay_max_width">75</integer>
 </resources>
