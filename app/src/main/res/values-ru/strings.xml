@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+     Copyright (C) 2020 The exTHmUI Open Source Project
+     Copyright (C) 2021 AOSP-Krypton Project
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="game_space">Игровое пространство</string>
+
+    <string name="channel_gaming_mode_status">Статус игрового режима</string>
+    <string name="action_stop_gaming_mode">Стоп</string>
+    <string name="gaming_mode_active">Игровой режим активен</string>
+
+    <string name="date_format" translatable="false">dd.MM.yyyy</string>
+    <string name="battery_format">Батарея: <xliff:g id="percentage" example="100">%1$d%%</xliff:g></string>
+
+    <string name="performance">Производительность</string>
+    <string name="power_save">Энергосбережение</string>
+
+    <string name="qs_auto_brightness">Автояркость</string>
+    <string name="qs_notification_overlay">Наложение уведомлений</string>
+    <string name="qs_ringer_mode">Режим тишины</string>
+    <string name="qs_lock_gesture">Жест блокировки</string>
+    <string name="qs_screen_capture">Скриншот</string>
+
+    <string name="enable_gaming_mode">Включить игровой режим</string>
+    <string name="gaming_mode_intro_text">Дополнительные функции для захватывающего игрового процесса</string>
+    <string name="gaming_mode_disable_auto_brightness_title">Отключить автоматическую яркость</string>
+    <string name="gaming_mode_disable_auto_brightness_summary">Отключить автояркость при входе в игровой режим</string>
+    <string name="gaming_mode_notification_overlay_title">Наложение уведомлений</string>
+    <string name="gaming_mode_notification_overlay_summary">Отображение содержимого уведомления в виде прозрачного наложения сверху</string>
+    <string name="gaming_mode_menu_opacity_title">Уровень прозрачности меню наложения</string>
+
+    <string name="gaming_mode_performance">Производительность</string>
+    <string name="gaming_mode_change_performance_title">Настройка производительности</string>
+    <string name="gaming_mode_change_performance_summary">Настройка уровня производительности при запуске игры</string>
+    <string name="gaming_mode_performance_title">Уровень производительности</string>
+
+    <string name="gaming_mode_dnd">Не беспокоить</string>
+    <string name="gaming_mode_disable_notification_alert_title">Отключить оповещение об уведомлении</string>
+    <string name="gaming_mode_disable_notification_alert_summary">Запретить всплывающие уведомления и диалоговые окна, кроме входящих вызовов и сигналов тревоги</string>
+    <string name="gaming_mode_disable_ringtone_title">Без звука</string>
+    <string name="gaming_mode_disable_ringtone_summary">Отключить звук входящих вызовов и уведомлений в игровом режиме</string>
+    <string name="gaming_mode_auto_answer_call_title">Автоматический ответ на звонки</string>
+    <string name="gaming_mode_auto_answer_call_summary">Ответ на звонки автоматически в игре и без помощи рук, когда наушники не подключены</string>
+
+    <string name="gaming_mode_prevent_accidental_touch">Предотвратить случайное прикосновение</string>
+    <string name="gaming_mode_disable_gesture_title">Отключить жесты смахивания</string>
+
+    <string name="gaming_mode_apps_title">Список игр</string>
+    <string name="gaming_mode_apps_summary">Выберите приложения для запуска игрового режима при их открытии</string>
+    <string name="gaming_mode_dynamic_add_title">Динамический режим</string>
+    <string name="gaming_mode_dynamic_add_summary">Обнаруживает игры при открытии и автоматически добавляет их в список</string>
+
+    <string name="gaming_mode_show_notification_overlay_title">Включить наложение уведомлений</string>
+    <string name="gaming_mode_dynamic_notification_filter_title">Уведомление о динамической фильтрации</string>
+    <string name="gaming_mode_dynamic_notification_filter_summary">Автоматически фильтровать уведомления, такие как ход загрузки</string>
+    <string name="gaming_mode_notification_overlay_size_landscape_title">Размер наложения в ландшафтном режиме</string>
+    <string name="gaming_mode_notification_overlay_size_portrait_title">Размер наложения в портретном режиме</string>
+    <string name="gaming_mode_notification_overlay_blacklist_title">Приложения из черного списка</string>
+    <string name="gaming_mode_notification_overlay_blacklist_summary">Запретить выбранным приложениям отображать наложение уведомлений во время игры</string>
+
+    <string name="search">Поиск</string>
+    <string name="search_apps">Поиск приложений</string>
+    <string name="application_icon">Значок приложения</string>
+    <string name="performance_level">Уровень производительности</string>
+    <string name="gaming_mode_miscellaneous">Разное</string>
+    <string name="gaming_mode_disable_adb_title">Отключить отладку по USB</string>
+</resources>
