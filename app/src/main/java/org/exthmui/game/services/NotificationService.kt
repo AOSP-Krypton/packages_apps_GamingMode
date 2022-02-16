@@ -34,7 +34,7 @@ class NotificationService : NotificationListenerService() {
 
     override fun onNotificationPosted(sbn: StatusBarNotification) {
         if (notificationOverlayController?.showNotificationOverlay != true) return
-        if (!sbn.isClearable || sbn.isOngoing) return
+        if (!sbn.isClearable || sbn.isOngoing || sbn.getIsContentSecure()) return
         val extras = sbn.notification.extras
         if (!isInBlackList(sbn.packageName)) {
             val lastNotification = lastNotificationMap.getOrDefault(sbn.packageName, "")
