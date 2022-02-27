@@ -22,7 +22,7 @@ android_app {
         "com.google.android.material_material",
         "hilt_android",
         "jsr330",
-        "PreferenceExtensions",
+        "vendor_support",
     ],
 
     platform_apis: true,
