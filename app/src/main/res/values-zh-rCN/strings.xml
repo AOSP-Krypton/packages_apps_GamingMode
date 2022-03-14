@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
+     Copyright (C) 2020 The exTHmUI Open Source Project
      Copyright (C) 2021 AOSP-Krypton Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
@@ -38,7 +39,7 @@
     <string name="gaming_mode_disable_auto_brightness_title">自动亮度</string>
     <string name="gaming_mode_disable_auto_brightness_summary">游戏模式启用时关闭自动亮度</string>
     <string name="gaming_mode_notification_overlay_title">浮动通知</string>
-    <string name="gaming_mode_notification_overlay_summary">将浮动通知作为一个透明的覆盖层显示在上面</string>
+    <string name="gaming_mode_notification_overlay_summary">将将通知内容显示为透明叠加层</string>
     <string name="gaming_mode_menu_opacity_title">不透明度</string>
 
     <string name="gaming_mode_performance">性能</string>
@@ -52,17 +53,17 @@
     <string name="gaming_mode_disable_ringtone_title">无响铃</string>
     <string name="gaming_mode_disable_ringtone_summary">在游戏模式时，关闭来电铃声和通知</string>
     <string name="gaming_mode_auto_answer_call_title">自动接听</string>
-    <string name="gaming_mode_auto_answer_call_summary">在游戏模式时自动接听电话，无耳机连接时将免提</string>
+    <string name="gaming_mode_auto_answer_call_summary">>游戏中自动接听来电，未连接耳机时将开启免提</string>
 
     <string name="gaming_mode_prevent_accidental_touch">防误触</string>
     <string name="gaming_mode_disable_gesture_title">禁用滑动手势</string>
 
     <string name="gaming_mode_apps_title">游戏列表</string>
-    <string name="gaming_mode_apps_summary">在这些应用打开时将启用游戏模式</string>
+    <string name="gaming_mode_apps_summary">选定的应用打开时将启用游戏模式</string>
     <string name="gaming_mode_dynamic_add_title">动态模式</string>
-    <string name="gaming_mode_dynamic_add_summary">打开时检测游戏并自动将其添加到列表中</string>
+    <string name="gaming_mode_dynamic_add_summary">打开后将自动检测游戏并将其添加到列表中</string>
 
-    <string name="gaming_mode_show_notification_overlay_title">启用浮动通知</string>
+    <string name="gaming_mode_show_notification_overlay_title">浮动通知</string>
     <string name="gaming_mode_dynamic_notification_filter_title">动态过滤通知</string>
     <string name="gaming_mode_dynamic_notification_filter_summary">自动过滤通知，如下载进度</string>
     <string name="gaming_mode_notification_overlay_size_landscape_title">横屏时叠加层尺寸</string>
