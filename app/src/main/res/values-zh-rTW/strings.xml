@@ -34,12 +34,12 @@
     <string name="qs_lock_gesture">手勢鎖定</string>
     <string name="qs_screen_capture">截圖</string>
 
-    <string name="enable_gaming_mode">啟用遊戲模式</string>
-    <string name="gaming_mode_intro_text">額外的功能，讓您有身臨其境的遊戲體驗</string>
+    <string name="enable_gaming_mode">遊戲模式</string>
+    <string name="gaming_mode_intro_text">盡情享受遊戲吧！</string>
     <string name="gaming_mode_disable_auto_brightness_title">自動亮度</string>
     <string name="gaming_mode_disable_auto_brightness_summary">遊戲模式啟用時關閉自動亮度</string>
     <string name="gaming_mode_notification_overlay_title">浮動通知</string>
-    <string name="gaming_mode_notification_overlay_summary">將將通知內容顯示為透明疊加層</string>
+    <string name="gaming_mode_notification_overlay_summary">將通知內容顯示為透明疊加層</string>
     <string name="gaming_mode_menu_opacity_title">不透明度</string>
 
     <string name="gaming_mode_performance">效能</string>
@@ -53,7 +53,7 @@
     <string name="gaming_mode_disable_ringtone_title">無響鈴</string>
     <string name="gaming_mode_disable_ringtone_summary">在遊戲模式時，關閉來電鈴聲和通知</string>
     <string name="gaming_mode_auto_answer_call_title">自動接聽</string>
-    <string name="gaming_mode_auto_answer_call_summary">>遊戲中自動接聽來電，未連線耳機時將開啟擴音</string>
+    <string name="gaming_mode_auto_answer_call_summary">遊戲時將自動接聽來電，如未連線耳機則開啟擴音</string>
 
     <string name="gaming_mode_prevent_accidental_touch">防誤觸</string>
     <string name="gaming_mode_disable_gesture_title">禁用滑動手勢</string>
@@ -69,7 +69,7 @@
     <string name="gaming_mode_notification_overlay_size_landscape_title">橫屏時疊加層尺寸</string>
     <string name="gaming_mode_notification_overlay_size_portrait_title">豎屏時疊加層尺寸</string>
     <string name="gaming_mode_notification_overlay_blacklist_title">黑名單應用</string>
-    <string name="gaming_mode_notification_overlay_blacklist_summary">在遊戲時防止選定的應用程式顯示通知疊加層</string>
+    <string name="gaming_mode_notification_overlay_blacklist_summary">在遊戲時禁止選定的應用顯示通知疊加層</string>
 
     <string name="search">搜尋</string>
     <string name="search_apps">搜尋應用</string>
